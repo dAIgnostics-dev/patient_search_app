@@ -1,5 +1,5 @@
 /**
- * Generate practitioner login accounts from app_healthlake mock-data.
+ * Generate practitioner login accounts from mock-data/practitioners/.
  *
  * Usage: npm run auth:generate
  */
@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const scriptDir = fileURLToPath(new URL('.', import.meta.url));
-const practitionersDir = join(scriptDir, '../../app_healthlake/mock-data/practitioners');
+const practitionersDir = join(scriptDir, '../mock-data/practitioners');
 const accountsDir = join(scriptDir, '../auth/accounts');
 const lambdaAccountsPath = join(scriptDir, '../amplify/functions/auth-proxy/accounts.json');
 const DEFAULT_PASSWORD = 'cezih-demo';

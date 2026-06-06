@@ -1,0 +1,11 @@
+{
+  "resourceType": "Practitioner",
+  "id": "2466",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+      "value": "2233445"
+    }
+  ],
+  "name": [{ "family": "Novak", "given": ["Luka"] }]
+}

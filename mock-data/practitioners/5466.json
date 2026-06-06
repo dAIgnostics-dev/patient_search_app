@@ -1,0 +1,11 @@
+{
+  "resourceType": "Practitioner",
+  "id": "5466",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+      "value": "1234568"
+    }
+  ],
+  "name": [{ "family": "Knezevic", "given": ["Ana"] }]
+}

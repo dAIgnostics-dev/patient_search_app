@@ -15,21 +15,20 @@ Practitioner-facing app to look up patient kartons from **AWS HealthLake** via a
 
 - Node.js 20+
 - AWS credentials configured
-- HealthLake datastore with FHIR data imported (see [`../app_healthlake/`](../app_healthlake/))
+- HealthLake datastore with CEZIH FHIR data imported (bulk import into your datastore)
 
 ## Setup
 
 ```bash
-cd app_patient_search
 npm install
 
 # Deploy Lambda FHIR proxy (writes amplify_outputs.json)
 export HEALTHLAKE_DATASTORE_ID=your-datastore-id
 export HEALTHLAKE_REGION=us-east-1
-export AWS_REGION=eu-north-1   # or your bootstrapped Amplify region
+export AWS_REGION=eu-north-1   # local sandbox only — where Amplify deploys the Lambda
 npm run sandbox
 
-# Generate practitioner login accounts
+# Regenerate practitioner login accounts (optional — accounts are already committed)
 npm run auth:generate
 
 # Run the UI
@@ -135,7 +134,8 @@ Each line is a flat JSON object with nested `actor`, `patient`, `resource`, and 
 | [`amplify/functions/auth-proxy/`](amplify/functions/auth-proxy/) | Lambda login (bundled `accounts.json`) |
 | [`amplify/functions/audit-proxy/`](amplify/functions/audit-proxy/) | Lambda access audit → S3 |
 | [`src/data/healthlakeApiClient.ts`](src/data/healthlakeApiClient.ts) | Karton + patient search |
-| [`auth/accounts/`](auth/accounts/) | POC practitioner credentials |
+| [`auth/accounts/`](auth/accounts/) | POC practitioner credentials (local dev) |
+| [`mock-data/practitioners/`](mock-data/practitioners/) | FHIR Practitioner JSON for `npm run auth:generate` |
 
 ## Account files
 
@@ -150,15 +150,20 @@ firstName=Ana
 lastName=Marković
 ```
 
-Regenerate when mock practitioners change: `npm run auth:generate` (updates both `auth/accounts/*.txt` and `amplify/functions/auth-proxy/accounts.json`).
+Regenerate when mock practitioners change: `npm run auth:generate` (reads `mock-data/practitioners/`, updates `auth/accounts/*.txt` and `amplify/functions/auth-proxy/accounts.json`).
+
+To edit accounts manually without regenerating, update both `auth/accounts/<fhirId>.txt` and the matching entry in `amplify/functions/auth-proxy/accounts.json`.
 
 **Note:** Text-file / bundled JSON auth is for POC only. Replace with real authentication before production.
 
 ## Amplify Hosting
 
-After connecting the repo in Amplify Console (app root: `app_patient_search`):
+After connecting this repo in Amplify Console (app root: **repository root**):
 
-1. Set backend env vars: `HEALTHLAKE_DATASTORE_ID`, `HEALTHLAKE_REGION`, `AWS_REGION`
-2. Deploy — Amplify generates `amplify_outputs.json` with `healthlakeApiUrl`, `authApiUrl`, `auditApiUrl`
-3. The UI automatically uses the Lambda URLs from outputs (no `VITE_*` overrides needed)
-4. Download audit log: `aws s3 cp s3://<auditBucketName>/access.jsonl .`
+1. Set backend env vars: `HEALTHLAKE_DATASTORE_ID`, `HEALTHLAKE_REGION` (do **not** set `AWS_*` vars — Amplify blocks them and sets the deploy region automatically)
+2. Build uses [`amplify.yml`](amplify.yml): Node 20, `npm ci`, backend `ampx pipeline-deploy`, frontend `npm run build` → artifacts in `dist/`
+3. Deploy generates `amplify_outputs.json` with `healthlakeApiUrl`, `authApiUrl`, `auditApiUrl`
+4. The UI automatically uses the Lambda URLs from outputs (no `VITE_*` overrides needed)
+5. Download audit log: `aws s3 cp s3://<auditBucketName>/access.jsonl .`
+
+For local sandbox only, set `AWS_REGION` in your terminal before `npm run sandbox` (see Environment table above).

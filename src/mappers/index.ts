@@ -1,0 +1,10 @@
+export { mapFhirPatient } from './mapFhirPatient';
+export { mapFhirEncounter } from './mapFhirEncounter';
+export { mapFhirCondition } from './mapFhirCondition';
+export { mapFhirPractitioner } from './mapFhirPractitioner';
+export { mapFhirOrganization } from './mapFhirOrganization';
+export { mapFhirMedicationRequest } from './mapFhirMedicationRequest';
+export { mapFhirAllergyIntolerance } from './mapFhirAllergyIntolerance';
+export { mapFhirProcedure } from './mapFhirProcedure';
+export { mapFhirDocumentReference } from './mapFhirDocumentReference';
+export { mapFhirServiceRequest } from './mapFhirServiceRequest';

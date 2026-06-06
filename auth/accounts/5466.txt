@@ -1,0 +1,6 @@
+username=ana.knezevic
+password=cezih-demo
+practitionerId=5466
+hzjzId=1234568
+firstName=Ana
+lastName=Knezevic

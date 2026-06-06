@@ -1,0 +1,11 @@
+{
+  "version": "1",
+  "custom": {
+    "healthlakeApiUrl": "https://YOUR_HEALTHLAKE_FUNCTION_URL.lambda-url.eu-north-1.on.aws/",
+    "healthlakeRegion": "us-east-1",
+    "healthlakeDatastoreId": "YOUR_DATASTORE_ID",
+    "authApiUrl": "https://YOUR_AUTH_FUNCTION_URL.lambda-url.eu-north-1.on.aws/",
+    "auditApiUrl": "https://YOUR_AUDIT_FUNCTION_URL.lambda-url.eu-north-1.on.aws/",
+    "auditBucketName": "amplify-cezihpatientsearch-main-auditaccessbucket-xxxxxxxx"
+  }
+}

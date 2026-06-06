@@ -1,0 +1,6 @@
+username=luka.novak
+password=cezih-demo
+practitionerId=2466
+hzjzId=2233445
+firstName=Luka
+lastName=Novak

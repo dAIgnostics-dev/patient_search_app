@@ -1,0 +1,6 @@
+username=ana.markovic
+password=cezih-demo
+practitionerId=1466
+hzjzId=1234567
+firstName=Ana
+lastName=Marković

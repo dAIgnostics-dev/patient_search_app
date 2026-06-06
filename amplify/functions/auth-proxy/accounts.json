@@ -1,0 +1,34 @@
+[
+  {
+    "username": "ana.markovic",
+    "password": "cezih-demo",
+    "practitionerId": "1466",
+    "hzjzId": "1234567",
+    "firstName": "Ana",
+    "lastName": "Marković"
+  },
+  {
+    "username": "luka.novak",
+    "password": "cezih-demo",
+    "practitionerId": "2466",
+    "hzjzId": "2233445",
+    "firstName": "Luka",
+    "lastName": "Novak"
+  },
+  {
+    "username": "ivana.juric",
+    "password": "cezih-demo",
+    "practitionerId": "3466",
+    "hzjzId": "3344556",
+    "firstName": "Ivana",
+    "lastName": "Jurić"
+  },
+  {
+    "username": "ana.knezevic",
+    "password": "cezih-demo",
+    "practitionerId": "5466",
+    "hzjzId": "1234568",
+    "firstName": "Ana",
+    "lastName": "Knezevic"
+  }
+]

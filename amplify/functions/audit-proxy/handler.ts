@@ -28,18 +28,11 @@ const VALID_RESOURCE_TYPES = new Set([
 const AUDIT_OBJECT_KEY = 'access.jsonl';
 const s3 = new S3Client({});
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': '*',
-};
-
 function jsonResponse(statusCode: number, body: unknown): APIGatewayProxyResultV2 {
   return {
     statusCode,
     headers: {
       'Content-Type': 'application/json',
-      ...corsHeaders,
     },
     body: JSON.stringify(body),
   };
@@ -226,7 +219,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
   const path = normalizePath(event.rawPath || event.requestContext.http.path || '/');
 
   if (method === 'OPTIONS') {
-    return { statusCode: 204, headers: corsHeaders };
+    return { statusCode: 204 };
   }
 
   if (method !== 'POST' || !isAccessPath(path)) {
@@ -243,7 +236,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
     const line = JSON.stringify({ ...body, recordedAt: new Date().toISOString() });
     await appendAuditLine(line);
 
-    return { statusCode: 204, headers: corsHeaders };
+    return { statusCode: 204 };
   } catch {
     return jsonResponse(400, { error: 'Invalid request body.' });
   }

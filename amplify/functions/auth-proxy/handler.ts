@@ -10,12 +10,6 @@ interface PractitionerAccount {
   lastName: string;
 }
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': '*',
-};
-
 function normalizePath(rawPath: string): string {
   const collapsed = rawPath.replace(/\/+/g, '/');
   if (collapsed.length > 1 && collapsed.endsWith('/')) {
@@ -29,7 +23,6 @@ function jsonResponse(statusCode: number, body: unknown): APIGatewayProxyResultV
     statusCode,
     headers: {
       'Content-Type': 'application/json',
-      ...corsHeaders,
     },
     body: JSON.stringify(body),
   };
@@ -56,7 +49,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
   const path = normalizePath(event.rawPath || event.requestContext.http.path || '/');
 
   if (method === 'OPTIONS') {
-    return { statusCode: 204, headers: corsHeaders };
+    return { statusCode: 204 };
   }
 
   const practitionerAccounts = accounts as PractitionerAccount[];

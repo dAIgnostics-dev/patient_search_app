@@ -5,59 +5,65 @@ import type {
   EncounterDetail,
   MedicationDetail,
   OrganizationDetail,
+  PatientDetail,
   PatientSummary,
   PractitionerDetail,
   PractitionerSummary,
   ProcedureDetail,
   ReferralDetail,
 } from '../domain/models';
-import { healthlakeApiClient } from './healthlakeApiClient';
+import { getAppRepository } from './repositories/registry';
+import { patientChartService } from './services/patientChartService';
 import { practitionerDisplayName } from '../utils/practitionerDisplayName';
 
 export async function getPractitionersForPatient(
   patient: PatientSummary,
 ): Promise<PractitionerSummary[]> {
-  return healthlakeApiClient.getPractitionersForPatient(patient);
+  return patientChartService.getPractitionersForPatient(null, patient);
+}
+
+export async function getPatientChart(patientId: string): Promise<PatientDetail | null> {
+  return patientChartService.getPatientChart(null, patientId);
 }
 
 export async function getEncounterDetail(encounterId: string): Promise<EncounterDetail | null> {
-  return healthlakeApiClient.getEncounterDetail(encounterId);
+  return getAppRepository().getEncounterDetail(encounterId);
 }
 
 export async function getConditionDetail(conditionId: string): Promise<ConditionDetail | null> {
-  return healthlakeApiClient.getConditionDetail(conditionId);
+  return getAppRepository().getConditionDetail(conditionId);
 }
 
 export async function getPractitionerDetail(
   practitionerId: string,
 ): Promise<PractitionerDetail | null> {
-  return healthlakeApiClient.getPractitionerDetail(practitionerId);
+  return getAppRepository().getPractitionerDetail(practitionerId);
 }
 
 export async function getOrganizationDetail(
   organizationId: string,
 ): Promise<OrganizationDetail | null> {
-  return healthlakeApiClient.getOrganizationDetail(organizationId);
+  return getAppRepository().getOrganizationDetail(organizationId);
 }
 
 export async function getMedicationDetail(id: string): Promise<MedicationDetail | null> {
-  return healthlakeApiClient.getMedicationDetail(id);
+  return getAppRepository().getMedicationDetail(id);
 }
 
 export async function getAllergyDetail(id: string): Promise<AllergyDetail | null> {
-  return healthlakeApiClient.getAllergyDetail(id);
+  return getAppRepository().getAllergyDetail(id);
 }
 
 export async function getProcedureDetail(id: string): Promise<ProcedureDetail | null> {
-  return healthlakeApiClient.getProcedureDetail(id);
+  return getAppRepository().getProcedureDetail(id);
 }
 
 export async function getDocumentDetail(id: string): Promise<DocumentDetail | null> {
-  return healthlakeApiClient.getDocumentDetail(id);
+  return getAppRepository().getDocumentDetail(id);
 }
 
 export async function getReferralDetail(id: string): Promise<ReferralDetail | null> {
-  return healthlakeApiClient.getReferralDetail(id);
+  return getAppRepository().getReferralDetail(id);
 }
 
 export { practitionerDisplayName };

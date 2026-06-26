@@ -7,5 +7,12 @@
       "value": "1234567"
     }
   ],
-  "name": [{ "family": "Marković", "given": ["Ana"] }]
+  "name": [
+    {
+      "family": "Marković",
+      "given": [
+        "Ana"
+      ]
+    }
+  ]
 }

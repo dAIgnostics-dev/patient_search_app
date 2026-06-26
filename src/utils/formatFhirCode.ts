@@ -3,6 +3,7 @@ import { translate, type TranslationKey } from '../i18n/translations';
 
 const STATUS_KEYS: Record<string, TranslationKey> = {
   active: 'fhir.status.active',
+  deleted: 'fhir.status.deleted',
   inactive: 'fhir.status.inactive',
   resolved: 'fhir.status.resolved',
   recurrence: 'fhir.status.recurrence',

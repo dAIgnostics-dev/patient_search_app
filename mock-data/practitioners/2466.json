@@ -7,5 +7,12 @@
       "value": "2233445"
     }
   ],
-  "name": [{ "family": "Novak", "given": ["Luka"] }]
+  "name": [
+    {
+      "family": "Novak",
+      "given": [
+        "Luka"
+      ]
+    }
+  ]
 }

@@ -11,7 +11,7 @@ export function mapFhirEncounter(fhir: FhirEncounter) {
   const orgId = fhir.serviceProvider?.identifier;
 
   return {
-    fhirId: fhir.id,
+    fhirId: fhir.id ?? '',
     status: fhir.status ?? null,
     start: fhir.period?.start ?? null,
     end: fhir.period?.end ?? null,
@@ -25,8 +25,13 @@ export function mapFhirEncounter(fhir: FhirEncounter) {
       practitionerId?.system === CEZIH_HZJZ_SYSTEM
         ? practitionerId.value ?? null
         : practitionerId?.value ?? null,
+    practitionerHzjzId:
+      practitionerId?.system === CEZIH_HZJZ_SYSTEM
+        ? practitionerId.value ?? null
+        : null,
     organizationFhirId:
       orgId?.system === CEZIH_HZZO_ORG_SYSTEM ? orgId.value ?? null : orgId?.value ?? null,
+    priorityCode: fhir.priority?.coding?.[0]?.code ?? null,
     subjectMbo: fhir.subject?.identifier?.value ?? null,
   };
 }

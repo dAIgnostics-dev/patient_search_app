@@ -1,0 +1,1605 @@
+{
+  "Patient": [
+    {
+      "resourceType": "Patient",
+      "id": "1442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Horvat",
+          "given": [
+            "Ivan"
+          ],
+          "text": "Ivan Horvat"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1985-04-12"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "2442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "290334170"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Kovacic",
+          "given": [
+            "Petra"
+          ],
+          "text": "Petra Kovacic"
+        }
+      ],
+      "gender": "female",
+      "birthDate": "1990-09-23"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "3442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Babic",
+          "given": [
+            "Marko"
+          ],
+          "text": "Marko Babic"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1978-01-30"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "4442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "480556182"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Horvat",
+          "given": [
+            "Ana"
+          ],
+          "text": "Ana Horvat"
+        }
+      ],
+      "gender": "female",
+      "birthDate": "1992-07-18"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "5442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "490667293"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Horvat",
+          "given": [
+            "Marko"
+          ],
+          "text": "Marko Horvat"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1970-11-03"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "6442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "501778304"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Kovacic",
+          "given": [
+            "Jana"
+          ],
+          "text": "Jana Kovacic"
+        }
+      ],
+      "gender": "female",
+      "birthDate": "1988-02-14"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "7442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "512889415"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Novak",
+          "given": [
+            "Tomislav"
+          ],
+          "text": "Tomislav Novak"
+        }
+      ],
+      "gender": "male",
+      "birthDate": "1965-08-22"
+    },
+    {
+      "resourceType": "Patient",
+      "id": "8442",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      ],
+      "active": true,
+      "name": [
+        {
+          "family": "Babic",
+          "given": [
+            "Lucija"
+          ],
+          "text": "Lucija Babic"
+        }
+      ],
+      "gender": "female",
+      "birthDate": "1995-12-01"
+    }
+  ],
+  "Practitioner": [
+    {
+      "resourceType": "Practitioner",
+      "id": "1466",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      ],
+      "name": [
+        {
+          "family": "Marković",
+          "given": [
+            "Ana"
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "2466",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "2233445"
+        }
+      ],
+      "name": [
+        {
+          "family": "Novak",
+          "given": [
+            "Luka"
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "3466",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      ],
+      "name": [
+        {
+          "family": "Jurić",
+          "given": [
+            "Ivana"
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "Practitioner",
+      "id": "5466",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234568"
+        }
+      ],
+      "name": [
+        {
+          "family": "Knezevic",
+          "given": [
+            "Ana"
+          ]
+        }
+      ]
+    }
+  ],
+  "Organization": [
+    {
+      "resourceType": "Organization",
+      "id": "1473",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234567"
+        }
+      ],
+      "name": "Privatna Klinika Zagreb"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "2473",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "2233445"
+        }
+      ],
+      "name": "Dom zdravlja Split"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "3473",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "3344556"
+        }
+      ],
+      "name": "Poliklinika Rijeka"
+    },
+    {
+      "resourceType": "Organization",
+      "id": "4473",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234568"
+        }
+      ],
+      "name": "Poliklinika Zagreb Centar"
+    }
+  ],
+  "Encounter": [
+    {
+      "resourceType": "Encounter",
+      "id": "1469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-001"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "9",
+        "display": "Interna uputnica"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "period": {
+        "start": "2026-05-01T10:00:00Z",
+        "end": "2026-05-01T10:30:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234567"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "2469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-002"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "3",
+        "display": "Specijalisticki pregled"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "290334170"
+        }
+      },
+      "period": {
+        "start": "2026-05-02T09:15:00Z",
+        "end": "2026-05-02T09:45:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "2233445"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "2233445"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "3469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-003"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Kontrolni pregled"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "period": {
+        "start": "2026-05-03T08:00:00Z",
+        "end": "2026-05-03T08:20:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "3344556"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "4469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-004"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Pregled obiteljskog lijecnika"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "480556182"
+        }
+      },
+      "period": {
+        "start": "2026-04-10T09:00:00Z",
+        "end": "2026-04-10T09:20:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234567"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "5469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-005"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Kontrolni pregled"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "490667293"
+        }
+      },
+      "period": {
+        "start": "2026-04-12T11:00:00Z",
+        "end": "2026-04-12T11:25:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234567"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "6469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-006"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "3",
+        "display": "Specijalisticki pregled"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "501778304"
+        }
+      },
+      "period": {
+        "start": "2026-04-15T08:30:00Z",
+        "end": "2026-04-15T09:00:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "2233445"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "2233445"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "7469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-007"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Pregled obiteljskog lijecnika"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "512889415"
+        }
+      },
+      "period": {
+        "start": "2026-04-18T10:00:00Z",
+        "end": "2026-04-18T10:20:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "2233445"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "2233445"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "8469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-008"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "9",
+        "display": "Interna uputnica"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      },
+      "period": {
+        "start": "2026-04-20T14:00:00Z",
+        "end": "2026-04-20T14:40:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "3344556"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "9469",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "visit-009"
+        }
+      ],
+      "status": "finished",
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Kontrolni pregled"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "290334170"
+        }
+      },
+      "period": {
+        "start": "2026-04-22T09:00:00Z",
+        "end": "2026-04-22T09:30:00Z"
+      },
+      "participant": [
+        {
+          "individual": {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234568"
+            }
+          }
+        }
+      ],
+      "serviceProvider": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234568"
+        }
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl8zeaoc9qu1w"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Hitna medicinska pomoć"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-19T10:25:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-1001"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clbago8lxm595"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Hitna medicinska pomoć"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "490667293"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-19T10:26:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-0011"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "entered-in-error",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clghcp64d98k6"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "9",
+        "display": "Interna uputnica"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-19T10:28:00.000Z",
+        "end": "2026-06-19T10:28:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-0012"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "finished",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clkjlg9isiitj"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Hitna medicinska pomoć"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-19T10:28:00.000Z",
+        "end": "2026-06-19T10:28:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "priority": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+            "code": "UR"
+          }
+        ]
+      },
+      "id": "mock-enc-1002"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "finished",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl85ch95zp4zf"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Hitna medicinska pomoć"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-23T08:30:00.000Z",
+        "end": "2026-06-23T09:00:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-0014"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/lokalni-identifikator-posjete",
+          "value": "novo_1"
+        },
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cln12nnbntw2b"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "9",
+        "display": "Interna uputnica"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-23T08:16:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-e08d059a-d406-45b6-be20-b92a0af2865d"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl22ug4etf146"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Ambulantno"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "512889415"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-23T08:18:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-81ec36b7-cc8c-4481-8d85-eb2470bdf6db"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl7r0el9lxs9h"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Ambulantno"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-23T16:08:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-9a7d2fe9-2f3f-4372-8d2d-ee9e10ffc1c1"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clproqpaa1ire"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Ambulantno"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "512889415"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-26T08:03:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-b32716bc-f5b0-41a1-ae1c-c43d182d513c"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl7nxfbjvml7t"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "9",
+        "display": "Interna uputnica"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-26T08:28:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-40a5f11d-c267-4e47-b34a-5528fe971020"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clg4jlbmnw91t"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "1",
+        "display": "Hitna medicinska pomoć"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "3344556"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-26T09:01:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-71a3736b-d1a3-4cf7-832c-6e053a1f00b2"
+    }
+  ],
+  "Condition": [
+    {
+      "resourceType": "Condition",
+      "id": "1471",
+      "identifier": [
+        {
+          "value": "case-001"
+        }
+      ],
+      "clinicalStatus": {
+        "coding": [
+          {
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "I10",
+            "display": "Hipertenzija"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "onsetDateTime": "2022-03-10",
+      "note": [
+        {
+          "text": "Pacijent redovito dolazi na kontrole."
+        }
+      ]
+    },
+    {
+      "resourceType": "Condition",
+      "id": "2471",
+      "identifier": [
+        {
+          "value": "case-002"
+        }
+      ],
+      "clinicalStatus": {
+        "coding": [
+          {
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "E11",
+            "display": "Dijabetes melitus tip 2"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "290334170"
+        }
+      },
+      "onsetDateTime": "2021-06-15",
+      "note": [
+        {
+          "text": "Pacijent na oralnoj terapiji."
+        }
+      ]
+    },
+    {
+      "resourceType": "Condition",
+      "id": "3471",
+      "identifier": [
+        {
+          "value": "case-003"
+        }
+      ],
+      "clinicalStatus": {
+        "coding": [
+          {
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "J45",
+            "display": "Astma"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "onsetDateTime": "2019-11-20",
+      "note": [
+        {
+          "text": "Koristi inhalator po potrebi."
+        }
+      ]
+    },
+    {
+      "resourceType": "Condition",
+      "id": "4471",
+      "identifier": [
+        {
+          "value": "case-004"
+        }
+      ],
+      "clinicalStatus": {
+        "coding": [
+          {
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "J06",
+            "display": "Akutna infekcija gornjih disajnih puteva"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "480556182"
+        }
+      },
+      "onsetDateTime": "2026-04-01"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "5471",
+      "identifier": [
+        {
+          "value": "case-005"
+        }
+      ],
+      "clinicalStatus": {
+        "coding": [
+          {
+            "code": "active"
+          }
+        ]
+      },
+      "verificationStatus": {
+        "coding": [
+          {
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "I10",
+            "display": "Hipertenzija"
+          }
+        ]
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "490667293"
+        }
+      },
+      "onsetDateTime": "2018-05-20"
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "09d1d5f2-6c51-47e7-99c0-3dae9a5155c7"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "provisional"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "M54",
+            "display": "Bol u leđima"
+          }
+        ],
+        "text": "Bol u leđima"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "512889415"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clproqpaa1ire"
+        }
+      },
+      "onsetDateTime": "2026-06-26",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      },
+      "id": "mock-cond-47f3adec-2a08-47ae-9387-73bcaedb7530",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "active"
+          }
+        ]
+      },
+      "recordedDate": "2026-06-26",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      }
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "b804dd6a-8082-4cd3-bf5e-ea2eaf3943c8"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "provisional"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "R51",
+            "display": "Glavobolja"
+          }
+        ],
+        "text": "Glavobolja"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl7nxfbjvml7t"
+        }
+      },
+      "onsetDateTime": "2026-06-26",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      },
+      "id": "mock-cond-3e2347a2-975a-43a7-9566-2a1b5c46ef9e",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "deleted"
+          }
+        ]
+      },
+      "recordedDate": "2026-06-26",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      },
+      "note": [
+        {
+          "extension": [
+            {
+              "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-annotation-type",
+              "valueCoding": {
+                "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/annotation-type",
+                "code": "1"
+              }
+            }
+          ],
+          "text": "pogreška"
+        }
+      ]
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "0012ed4f-2809-470b-bd7b-ee68bc13f729"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "unconfirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "E11",
+            "display": "Dijabetes melitus tip 2"
+          }
+        ],
+        "text": "Dijabetes melitus tip 2"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "523990526"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clg4jlbmnw91t"
+        }
+      },
+      "onsetDateTime": "2026-06-26",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      },
+      "id": "mock-cond-3e8a4189-051d-4722-ad43-eefb6c4392f8",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "resolved"
+          }
+        ]
+      },
+      "recordedDate": "2026-06-26",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "3344556"
+        }
+      },
+      "abatementDateTime": "2026-06-26"
+    }
+  ],
+  "DocumentReference": []
+}

@@ -1,0 +1,11 @@
+{
+  "resourceType": "Organization",
+  "id": "3473",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "3344556"
+    }
+  ],
+  "name": "Poliklinika Rijeka"
+}

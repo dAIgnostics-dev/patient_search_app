@@ -1,0 +1,14 @@
+{
+  "resourceType": "Patient",
+  "id": "4442",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "480556182"
+    }
+  ],
+  "active": true,
+  "name": [{ "family": "Horvat", "given": ["Ana"], "text": "Ana Horvat" }],
+  "gender": "female",
+  "birthDate": "1992-07-18"
+}

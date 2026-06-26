@@ -1,0 +1,11 @@
+{
+  "resourceType": "Organization",
+  "id": "1473",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "1234567"
+    }
+  ],
+  "name": "Privatna Klinika Zagreb"
+}

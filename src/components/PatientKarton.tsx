@@ -5,9 +5,11 @@ import {
   logPatientResourceView,
   type PatientAccessSource,
 } from '../data/auditAccess';
-import { healthlakeApiClient } from '../data/healthlakeApiClient';
+import { getPatientChart } from '../data/kartonApi';
 import { addRecentPatient } from '../data/recentPatients';
 import type {
+  ConditionSummary,
+  EncounterSummary,
   KartonSelection,
   PatientDetail as PatientDetailModel,
   PatientSectionKey,
@@ -19,6 +21,17 @@ import { formatFhirStatus, formatFhirStatusPair } from '../utils/formatFhirCode'
 import { formatDate } from '../utils/localeFormat';
 import { practitionerDisplayName } from '../utils/practitionerDisplayName';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
+import { CancelEncounterForm } from './CancelEncounterForm';
+import { CloseEncounterForm } from './CloseEncounterForm';
+import { CreateCaseForm } from './CreateCaseForm';
+import { CreateEncounterForm } from './CreateEncounterForm';
+import { DeleteCaseForm } from './DeleteCaseForm';
+import { ReopenEncounterForm } from './ReopenEncounterForm';
+import { RemissionCaseForm } from './RemissionCaseForm';
+import { RelapseCaseForm } from './RelapseCaseForm';
+import { ResolveCaseForm } from './ResolveCaseForm';
+import { UpdateCaseForm } from './UpdateCaseForm';
+import { UpdateEncounterForm } from './UpdateEncounterForm';
 import { EncounterTimeline } from './EncounterTimeline';
 import { KartonSection, type KartonSectionHandle } from './KartonSection';
 import { KartonSectionNav } from './KartonSectionNav';
@@ -71,6 +84,50 @@ function isSelected(selection: KartonSelection | null, kind: KartonSelection['ki
   return selection?.kind === kind && selection.id === id;
 }
 
+function isEncounterEditable(encounter: EncounterSummary | null | undefined): boolean {
+  if (!encounter?.visitId) return false;
+  return (encounter.status ?? '').toLowerCase() === 'in-progress';
+}
+
+function isEncounterCancellable(encounter: EncounterSummary | null | undefined): boolean {
+  if (!encounter?.visitId) return false;
+  const status = (encounter.status ?? '').toLowerCase();
+  return status === 'in-progress' || status === 'finished';
+}
+
+function isEncounterReopenable(encounter: EncounterSummary | null | undefined): boolean {
+  if (!encounter?.visitId) return false;
+  const status = (encounter.status ?? '').toLowerCase();
+  return status === 'finished' || status === 'entered-in-error';
+}
+
+function isCaseDeletable(condition: ConditionSummary | null | undefined): boolean {
+  if (!condition?.caseId) return false;
+  return (condition.clinicalStatus ?? '').toLowerCase() !== 'deleted';
+}
+
+function isCaseRelapsable(condition: ConditionSummary | null | undefined): boolean {
+  if (!condition?.caseId) return false;
+  return (condition.clinicalStatus ?? '').toLowerCase() === 'remission';
+}
+
+function isCaseRemissionable(condition: ConditionSummary | null | undefined): boolean {
+  if (!condition?.caseId) return false;
+  const status = (condition.clinicalStatus ?? '').toLowerCase();
+  return status === 'active' || status === 'relapse';
+}
+
+function isCaseResolvable(condition: ConditionSummary | null | undefined): boolean {
+  if (!condition?.caseId) return false;
+  const status = (condition.clinicalStatus ?? '').toLowerCase();
+  return status === 'active' || status === 'relapse' || status === 'remission';
+}
+
+function isCaseEditable(condition: ConditionSummary | null | undefined): boolean {
+  if (!condition?.caseId || !condition.clinicalStatus) return false;
+  return condition.clinicalStatus.toLowerCase() !== 'deleted';
+}
+
 export function PatientKarton({
   patient,
   viewerSession,
@@ -83,8 +140,321 @@ export function PatientKarton({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selection, setSelection] = useState<KartonSelection | null>(null);
+  const [showCreateEncounter, setShowCreateEncounter] = useState(false);
+  const [showUpdateEncounter, setShowUpdateEncounter] = useState(false);
+  const [showCloseEncounter, setShowCloseEncounter] = useState(false);
+  const [showCancelEncounter, setShowCancelEncounter] = useState(false);
+  const [showReopenEncounter, setShowReopenEncounter] = useState(false);
+  const [showCreateCase, setShowCreateCase] = useState(false);
+  const [showCreateCaseRecurrence, setShowCreateCaseRecurrence] = useState(false);
+  const [showUpdateCase, setShowUpdateCase] = useState(false);
+  const [showDeleteCase, setShowDeleteCase] = useState(false);
+  const [showRelapseCase, setShowRelapseCase] = useState(false);
+  const [showRemissionCase, setShowRemissionCase] = useState(false);
+  const [showResolveCase, setShowResolveCase] = useState(false);
+  const [createSuccessMessage, setCreateSuccessMessage] = useState<string | null>(null);
   const loggedRef = useRef<string | null>(null);
   const sectionRefs = useRef<Record<string, KartonSectionHandle | null>>({});
+
+  function mergeEncounter(encounter: EncounterSummary) {
+    setDetail((current) => {
+      if (!current) return current;
+      const exists = current.encounters.some((item) => item.id === encounter.id);
+      const encounters = exists
+        ? current.encounters.map((item) =>
+            item.id === encounter.id ? { ...item, ...encounter } : item,
+          )
+        : [...current.encounters, encounter];
+      encounters.sort((a, b) => {
+        const ta = a.start ? Date.parse(a.start) : 0;
+        const tb = b.start ? Date.parse(b.start) : 0;
+        return tb - ta;
+      });
+      return { ...current, encounters };
+    });
+  }
+
+  function mergeCondition(condition: ConditionSummary) {
+    setDetail((current) => {
+      if (!current) return current;
+      const exists = current.conditions.some((item) => item.id === condition.id);
+      const conditions = exists
+        ? current.conditions.map((item) =>
+            item.id === condition.id ? { ...item, ...condition } : item,
+          )
+        : [...current.conditions, condition];
+      conditions.sort((a, b) => {
+        const ta = a.onsetDate ? Date.parse(a.onsetDate) : 0;
+        const tb = b.onsetDate ? Date.parse(b.onsetDate) : 0;
+        return tb - ta;
+      });
+      return { ...current, conditions };
+    });
+  }
+
+  function handleEncounterCreated(encounter: EncounterSummary, visitId: string) {
+    mergeEncounter(encounter);
+    setSelection({ kind: 'encounter', id: encounter.id });
+    setCreateSuccessMessage(t('karton.encounterCreated', { visitId }));
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+  }
+
+  function handleEncounterUpdated(encounter: EncounterSummary, visitId: string) {
+    mergeEncounter(encounter);
+    setCreateSuccessMessage(t('karton.encounterUpdated', { visitId }));
+    setShowUpdateEncounter(false);
+  }
+
+  function handleEncounterClosed(encounter: EncounterSummary, visitId: string) {
+    mergeEncounter(encounter);
+    setCreateSuccessMessage(t('karton.encounterClosed', { visitId }));
+    setShowCloseEncounter(false);
+  }
+
+  function handleEncounterCancelled(encounter: EncounterSummary, visitId: string) {
+    mergeEncounter(encounter);
+    setCreateSuccessMessage(t('karton.encounterCancelled', { visitId }));
+    setShowCancelEncounter(false);
+  }
+
+  function handleEncounterReopened(encounter: EncounterSummary, visitId: string) {
+    mergeEncounter(encounter);
+    setCreateSuccessMessage(t('karton.encounterReopened', { visitId }));
+    setShowReopenEncounter(false);
+  }
+
+  function handleCaseCreated(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseCreated', { caseId }));
+    setShowCreateCase(false);
+  }
+
+  function handleCaseRecurrenceCreated(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseRecurrenceCreated', { caseId }));
+    setShowCreateCaseRecurrence(false);
+  }
+
+  function handleCaseUpdated(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseUpdated', { caseId }));
+    setShowUpdateCase(false);
+  }
+
+  function handleCaseDeleted(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseDeleted', { caseId }));
+    setShowDeleteCase(false);
+  }
+
+  function handleCaseRelapsed(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseRelapsed', { caseId }));
+    setShowRelapseCase(false);
+  }
+
+  function handleCaseRemissioned(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseChangedToRemission', { caseId }));
+    setShowRemissionCase(false);
+  }
+
+  function handleCaseResolved(condition: ConditionSummary, caseId: string) {
+    mergeCondition(condition);
+    setSelection({ kind: 'condition', id: condition.id });
+    setCreateSuccessMessage(t('karton.caseResolved', { caseId }));
+    setShowResolveCase(false);
+  }
+
+  const selectedEncounter = useMemo(() => {
+    if (!detail || selection?.kind !== 'encounter') return null;
+    return detail.encounters.find((item) => item.id === selection.id) ?? null;
+  }, [detail, selection]);
+
+  const selectedCondition = useMemo(() => {
+    if (!detail || selection?.kind !== 'condition') return null;
+    return detail.conditions.find((item) => item.id === selection.id) ?? null;
+  }, [detail, selection]);
+
+  const canUpdateSelectedEncounter = isEncounterEditable(selectedEncounter);
+  const canCloseSelectedEncounter = isEncounterEditable(selectedEncounter);
+  const canCancelSelectedEncounter = isEncounterCancellable(selectedEncounter);
+  const canReopenSelectedEncounter = isEncounterReopenable(selectedEncounter);
+  const canUpdateSelectedCase = isCaseEditable(selectedCondition);
+  const canDeleteSelectedCase = isCaseDeletable(selectedCondition);
+  const canRelapseSelectedCase = isCaseRelapsable(selectedCondition);
+  const canRemissionSelectedCase = isCaseRemissionable(selectedCondition);
+  const canResolveSelectedCase = isCaseResolvable(selectedCondition);
+
+  const openCaseEncounters = useMemo(() => {
+    if (!detail || !viewerSession) return [];
+    return detail.encounters.filter(
+      (encounter) =>
+        encounter.visitId &&
+        (encounter.status ?? '').toLowerCase() === 'in-progress' &&
+        encounter.practitionerHzjzId === viewerSession.hzjzId,
+    );
+  }, [detail, viewerSession]);
+
+  const resolvedCases = useMemo(() => {
+    if (!detail) return [];
+    return detail.conditions.filter(
+      (condition) => condition.caseId && (condition.clinicalStatus ?? '').toLowerCase() === 'resolved',
+    );
+  }, [detail]);
+
+  function openUpdateEncounter() {
+    setCreateSuccessMessage(null);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowUpdateEncounter(true);
+  }
+
+  function openCloseEncounter() {
+    setCreateSuccessMessage(null);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowCloseEncounter(true);
+  }
+
+  function openCancelEncounter() {
+    setCreateSuccessMessage(null);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowReopenEncounter(false);
+    setShowCancelEncounter(true);
+  }
+
+  function openReopenEncounter() {
+    setCreateSuccessMessage(null);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(true);
+  }
+
+  function openUpdateCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowUpdateCase(true);
+  }
+
+  function openDeleteCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowDeleteCase(true);
+  }
+
+  function openRelapseCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowRelapseCase(true);
+  }
+
+  function openRemissionCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowRemissionCase(true);
+  }
+
+  function openResolveCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowResolveCase(true);
+  }
 
   function navigateToSection(id: string) {
     const section = sectionRefs.current[id];
@@ -101,7 +471,7 @@ export function PatientKarton({
       setSelection(null);
       loggedRef.current = null;
       try {
-        const data = await healthlakeApiClient.getPatientDetailById(patient.id);
+        const data = await getPatientChart(patient.id);
         if (!cancelled) setDetail(data);
       } catch (err) {
         if (!cancelled) {
@@ -157,17 +527,86 @@ export function PatientKarton({
 
   const navHeader = (
     <div className="karton-nav-header">
-      {breadcrumbs && breadcrumbs.length > 0 ? (
-        <Breadcrumbs items={breadcrumbs} />
-      ) : (
+      <div className="karton-nav-leading">
         <button type="button" className="back-button" onClick={onBack}>
           {t('karton.back')}
         </button>
-      )}
-      {breadcrumbs && breadcrumbs.length > 0 && (
-        <button type="button" className="back-button back-button-compact" onClick={onBack} aria-label={t('karton.back')}>
-          {t('karton.back')}
-        </button>
+        {breadcrumbs && breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+      </div>
+      {viewerSession && (
+        <div className="karton-nav-actions">
+          <button
+            type="button"
+            className="secondary-button karton-nav-action"
+            onClick={() => {
+              setCreateSuccessMessage(null);
+              setShowCreateCase(false);
+              setShowCreateCaseRecurrence(false);
+              setShowUpdateCase(false);
+              setShowDeleteCase(false);
+              setShowRelapseCase(false);
+              setShowRemissionCase(false);
+              setShowResolveCase(false);
+              setShowCreateEncounter(true);
+            }}
+          >
+            {t('karton.newEncounter')}
+          </button>
+          <button
+            type="button"
+            className="secondary-button karton-nav-action"
+            disabled={openCaseEncounters.length === 0}
+            title={
+              openCaseEncounters.length === 0
+                ? t('karton.createCaseRequiresOpenEncounter')
+                : undefined
+            }
+            onClick={() => {
+              setCreateSuccessMessage(null);
+              setShowCreateEncounter(false);
+              setShowCreateCaseRecurrence(false);
+              setShowUpdateCase(false);
+              setShowDeleteCase(false);
+              setShowRelapseCase(false);
+              setShowRemissionCase(false);
+              setShowResolveCase(false);
+              setShowUpdateEncounter(false);
+              setShowCloseEncounter(false);
+              setShowCancelEncounter(false);
+              setShowReopenEncounter(false);
+              setShowCreateCase(true);
+            }}
+          >
+            {t('karton.createCase')}
+          </button>
+          <button
+            type="button"
+            className="secondary-button karton-nav-action"
+            disabled={openCaseEncounters.length === 0}
+            title={
+              openCaseEncounters.length === 0
+                ? t('karton.createCaseRequiresOpenEncounter')
+                : undefined
+            }
+            onClick={() => {
+              setCreateSuccessMessage(null);
+              setShowCreateEncounter(false);
+              setShowCreateCase(false);
+              setShowUpdateCase(false);
+              setShowDeleteCase(false);
+              setShowRelapseCase(false);
+              setShowRemissionCase(false);
+              setShowResolveCase(false);
+              setShowUpdateEncounter(false);
+              setShowCloseEncounter(false);
+              setShowCancelEncounter(false);
+              setShowReopenEncounter(false);
+              setShowCreateCaseRecurrence(true);
+            }}
+          >
+            {t('karton.createCaseRecurrence')}
+          </button>
+        </div>
       )}
     </div>
   );
@@ -206,6 +645,126 @@ export function PatientKarton({
   return (
     <section className="panel detail">
       {navHeader}
+
+      {createSuccessMessage && <p className="success-banner">{createSuccessMessage}</p>}
+
+      {showCreateEncounter && viewerSession && (
+        <CreateEncounterForm
+          patient={patient}
+          session={viewerSession}
+          onCancel={() => setShowCreateEncounter(false)}
+          onCreated={handleEncounterCreated}
+        />
+      )}
+
+      {showCreateCase && viewerSession && (
+        <CreateCaseForm
+          patient={patient}
+          session={viewerSession}
+          openEncounters={openCaseEncounters}
+          onCancel={() => setShowCreateCase(false)}
+          onCreated={handleCaseCreated}
+        />
+      )}
+
+      {showCreateCaseRecurrence && viewerSession && (
+        <CreateCaseForm
+          patient={patient}
+          session={viewerSession}
+          openEncounters={openCaseEncounters}
+          mode="recurrence"
+          previousCases={resolvedCases}
+          onCancel={() => setShowCreateCaseRecurrence(false)}
+          onCreated={handleCaseRecurrenceCreated}
+        />
+      )}
+
+      {showUpdateCase && viewerSession && selectedCondition?.caseId && (
+        <UpdateCaseForm
+          patient={patient}
+          session={viewerSession}
+          condition={selectedCondition}
+          onCancel={() => setShowUpdateCase(false)}
+          onUpdated={handleCaseUpdated}
+        />
+      )}
+
+      {showUpdateEncounter && viewerSession && selectedEncounter?.visitId && (
+        <UpdateEncounterForm
+          patient={patient}
+          session={viewerSession}
+          encounter={selectedEncounter}
+          onCancel={() => setShowUpdateEncounter(false)}
+          onUpdated={handleEncounterUpdated}
+        />
+      )}
+
+      {showCloseEncounter && viewerSession && selectedEncounter?.visitId && (
+        <CloseEncounterForm
+          session={viewerSession}
+          encounter={selectedEncounter}
+          onCancel={() => setShowCloseEncounter(false)}
+          onClosed={handleEncounterClosed}
+        />
+      )}
+
+      {showCancelEncounter && viewerSession && selectedEncounter?.visitId && (
+        <CancelEncounterForm
+          session={viewerSession}
+          encounter={selectedEncounter}
+          onCancel={() => setShowCancelEncounter(false)}
+          onCancelled={handleEncounterCancelled}
+        />
+      )}
+
+      {showReopenEncounter && viewerSession && selectedEncounter?.visitId && (
+        <ReopenEncounterForm
+          session={viewerSession}
+          encounter={selectedEncounter}
+          onCancel={() => setShowReopenEncounter(false)}
+          onReopened={handleEncounterReopened}
+        />
+      )}
+
+      {showDeleteCase && viewerSession && selectedCondition?.caseId && (
+        <DeleteCaseForm
+          patient={patient}
+          session={viewerSession}
+          condition={selectedCondition}
+          onCancel={() => setShowDeleteCase(false)}
+          onDeleted={handleCaseDeleted}
+        />
+      )}
+
+      {showRelapseCase && viewerSession && selectedCondition?.caseId && (
+        <RelapseCaseForm
+          patient={patient}
+          session={viewerSession}
+          condition={selectedCondition}
+          onCancel={() => setShowRelapseCase(false)}
+          onRelapsed={handleCaseRelapsed}
+        />
+      )}
+
+      {showRemissionCase && viewerSession && selectedCondition?.caseId && (
+        <RemissionCaseForm
+          patient={patient}
+          session={viewerSession}
+          condition={selectedCondition}
+          onCancel={() => setShowRemissionCase(false)}
+          onRemissioned={handleCaseRemissioned}
+        />
+      )}
+
+      {showResolveCase && viewerSession && selectedCondition?.caseId && (
+        <ResolveCaseForm
+          patient={patient}
+          session={viewerSession}
+          condition={selectedCondition}
+          onCancel={() => setShowResolveCase(false)}
+          onResolved={handleCaseResolved}
+        />
+      )}
 
       <PatientBanner detail={detail} />
       <KartonSummary detail={detail} />
@@ -397,6 +956,25 @@ export function PatientKarton({
         {selection && (
           <KartonSelectionPanel
             selection={selection}
+            encounterSummary={selectedEncounter}
+            canUpdateEncounter={canUpdateSelectedEncounter}
+            canCloseEncounter={canCloseSelectedEncounter}
+            canCancelEncounter={canCancelSelectedEncounter}
+            canReopenEncounter={canReopenSelectedEncounter}
+            canUpdateCase={canUpdateSelectedCase}
+            canDeleteCase={canDeleteSelectedCase}
+            canRelapseCase={canRelapseSelectedCase}
+            canRemissionCase={canRemissionSelectedCase}
+            canResolveCase={canResolveSelectedCase}
+            onUpdateEncounter={openUpdateEncounter}
+            onCloseEncounter={openCloseEncounter}
+            onCancelEncounter={openCancelEncounter}
+            onReopenEncounter={openReopenEncounter}
+            onUpdateCase={openUpdateCase}
+            onDeleteCase={openDeleteCase}
+            onRelapseCase={openRelapseCase}
+            onRemissionCase={openRemissionCase}
+            onResolveCase={openResolveCase}
             onSelectPractitioner={(id) => setSelection({ kind: 'practitioner', id })}
             onSelectOrganization={(id) => setSelection({ kind: 'organization', id })}
             onClear={() => setSelection(null)}

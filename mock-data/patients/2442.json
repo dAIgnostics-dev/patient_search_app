@@ -1,0 +1,22 @@
+{
+  "resourceType": "Patient",
+  "id": "2442",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "290334170"
+    }
+  ],
+  "active": true,
+  "name": [
+    {
+      "family": "Kovacic",
+      "given": [
+        "Petra"
+      ],
+      "text": "Petra Kovacic"
+    }
+  ],
+  "gender": "female",
+  "birthDate": "1990-09-23"
+}

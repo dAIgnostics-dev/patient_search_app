@@ -118,8 +118,10 @@ export interface EncounterSummary {
   visitId?: string | null;
   practitionerFhirId?: string | null;
   practitionerHzjzId?: string | null;
+  practitionerName?: string | null;
   organizationFhirId?: string | null;
   organizationName?: string | null;
+  priorityCode?: string | null;
 }
 
 export type Encounter = EncounterSummary;
@@ -138,6 +140,11 @@ export interface ConditionSummary {
   verificationStatus?: string | null;
   caseId?: string | null;
   onsetDate?: string | null;
+  abatementDate?: string | null;
+  recordedDate?: string | null;
+  encounterVisitId?: string | null;
+  asserterHzjzId?: string | null;
+  recorderHzjzId?: string | null;
   note?: string | null;
 }
 

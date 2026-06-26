@@ -15,12 +15,14 @@ import { useLocale } from '../i18n/LocaleContext';
 import { formatFhirStatus } from '../utils/formatFhirCode';
 import { formatDate, formatDateTime } from '../utils/localeFormat';
 import { practitionerDisplayName } from '../utils/practitionerDisplayName';
+import { formatPriorityLabel } from '../data/encounter-management/encounterMessageShared';
 import { DetailGrid } from './DetailGrid';
 import type {
   AllergyDetail,
   ConditionDetail,
   DocumentDetail,
   EncounterDetail,
+  EncounterSummary,
   MedicationDetail,
   OrganizationDetail,
   PractitionerDetail,
@@ -30,6 +32,25 @@ import type {
 
 interface KartonSelectionPanelProps {
   selection: KartonSelection;
+  encounterSummary?: EncounterSummary | null;
+  canUpdateEncounter?: boolean;
+  canCloseEncounter?: boolean;
+  canCancelEncounter?: boolean;
+  canReopenEncounter?: boolean;
+  canUpdateCase?: boolean;
+  canDeleteCase?: boolean;
+  canRelapseCase?: boolean;
+  canRemissionCase?: boolean;
+  canResolveCase?: boolean;
+  onUpdateEncounter?: () => void;
+  onCloseEncounter?: () => void;
+  onCancelEncounter?: () => void;
+  onReopenEncounter?: () => void;
+  onUpdateCase?: () => void;
+  onDeleteCase?: () => void;
+  onRelapseCase?: () => void;
+  onRemissionCase?: () => void;
+  onResolveCase?: () => void;
   onSelectPractitioner: (id: string) => void;
   onSelectOrganization: (id: string) => void;
   onClear: () => void;
@@ -37,6 +58,25 @@ interface KartonSelectionPanelProps {
 
 export function KartonSelectionPanel({
   selection,
+  encounterSummary = null,
+  canUpdateEncounter = false,
+  canCloseEncounter = false,
+  canCancelEncounter = false,
+  canReopenEncounter = false,
+  canUpdateCase = false,
+  canDeleteCase = false,
+  canRelapseCase = false,
+  canRemissionCase = false,
+  canResolveCase = false,
+  onUpdateEncounter,
+  onCloseEncounter,
+  onCancelEncounter,
+  onReopenEncounter,
+  onUpdateCase,
+  onDeleteCase,
+  onRelapseCase,
+  onRemissionCase,
+  onResolveCase,
   onSelectPractitioner,
   onSelectOrganization,
   onClear,
@@ -123,7 +163,12 @@ export function KartonSelectionPanel({
   }
 
   if (selection.kind === 'encounter') {
-    if (!encounter) return <p className="empty">{t('panel.notFoundEncounter')}</p>;
+    if (!encounter && encounterSummary?.id !== selection.id) {
+      return <p className="empty">{t('panel.notFoundEncounter')}</p>;
+    }
+
+    const summary = encounterSummary?.id === selection.id ? encounterSummary : null;
+    const priorityCode = encounter?.priorityCode ?? summary?.priorityCode ?? null;
 
     return (
       <aside className="selection-panel">
@@ -133,28 +178,68 @@ export function KartonSelectionPanel({
             {t('panel.close')}
           </button>
         </div>
+        {(canUpdateEncounter || canCloseEncounter || canCancelEncounter || canReopenEncounter) && (
+          <div className="selection-panel-actions">
+            {canUpdateEncounter && onUpdateEncounter && (
+              <button type="button" className="secondary-button" onClick={onUpdateEncounter}>
+                {t('karton.updateEncounter')}
+              </button>
+            )}
+            {canCloseEncounter && onCloseEncounter && (
+              <button type="button" className="secondary-button" onClick={onCloseEncounter}>
+                {t('karton.closeEncounter')}
+              </button>
+            )}
+            {canCancelEncounter && onCancelEncounter && (
+              <button type="button" className="secondary-button" onClick={onCancelEncounter}>
+                {t('karton.cancelEncounter')}
+              </button>
+            )}
+            {canReopenEncounter && onReopenEncounter && (
+              <button type="button" className="secondary-button" onClick={onReopenEncounter}>
+                {t('karton.reopenEncounter')}
+              </button>
+            )}
+          </div>
+        )}
         <DetailGrid
           rows={[
-            { label: t('panel.fhirId'), value: encounter.fhirId },
-            { label: t('panel.visitId'), value: encounter.visitId },
-            { label: t('panel.status'), value: fmtStatus(encounter.status) },
-            { label: t('panel.classCode'), value: encounter.classCode },
-            { label: t('panel.class'), value: encounter.classDisplay },
-            { label: t('panel.start'), value: fmtDateTime(encounter.start) },
-            { label: t('panel.end'), value: fmtDateTime(encounter.end) },
+            { label: t('panel.fhirId'), value: encounter?.fhirId ?? summary?.fhirId },
+            { label: t('panel.visitId'), value: encounter?.visitId ?? summary?.visitId },
+            {
+              label: t('panel.status'),
+              value: fmtStatus(encounter?.status ?? summary?.status ?? null),
+            },
+            { label: t('panel.classCode'), value: encounter?.classCode ?? summary?.classCode },
+            { label: t('panel.class'), value: encounter?.classDisplay ?? summary?.classDisplay },
+            {
+              label: t('panel.priority'),
+              value: formatPriorityLabel(priorityCode, locale) ?? t('encounterUpdate.priorityNone'),
+            },
+            { label: t('panel.start'), value: fmtDateTime(encounter?.start ?? summary?.start) },
+            { label: t('panel.end'), value: fmtDateTime(encounter?.end ?? summary?.end) },
             {
               label: t('panel.practitioner'),
-              value: encounter.practitioner
+              value: encounter?.practitioner
                 ? practitionerDisplayName(encounter.practitioner)
-                : null,
+                : summary?.practitionerName,
             },
-            { label: t('panel.hzjzId'), value: encounter.practitioner?.hzjzId },
-            { label: t('panel.organization'), value: encounter.organization?.name },
-            { label: t('panel.hzzoCode'), value: encounter.organization?.hzzoCode },
+            {
+              label: t('panel.hzjzId'),
+              value: encounter?.practitioner?.hzjzId ?? summary?.practitionerHzjzId,
+            },
+            {
+              label: t('panel.organization'),
+              value: encounter?.organization?.name ?? summary?.organizationName,
+            },
+            {
+              label: t('panel.hzzoCode'),
+              value: encounter?.organization?.hzzoCode ?? summary?.organizationFhirId,
+            },
           ]}
         />
         <div className="selection-links">
-          {encounter.practitioner && (
+          {encounter?.practitioner && (
             <button
               type="button"
               className="link-button"
@@ -163,7 +248,7 @@ export function KartonSelectionPanel({
               {t('panel.viewPractitioner')}
             </button>
           )}
-          {encounter.organization && (
+          {encounter?.organization && (
             <button
               type="button"
               className="link-button"
@@ -188,6 +273,39 @@ export function KartonSelectionPanel({
             {t('panel.close')}
           </button>
         </div>
+        {((canUpdateCase && onUpdateCase) ||
+          (canRemissionCase && onRemissionCase) ||
+          (canResolveCase && onResolveCase) ||
+          (canRelapseCase && onRelapseCase) ||
+          (canDeleteCase && onDeleteCase)) && (
+          <div className="selection-panel-actions">
+            {canUpdateCase && onUpdateCase && (
+              <button type="button" className="secondary-button" onClick={onUpdateCase}>
+                {t('karton.updateCase')}
+              </button>
+            )}
+            {canRemissionCase && onRemissionCase && (
+              <button type="button" className="secondary-button" onClick={onRemissionCase}>
+                {t('karton.remissionCase')}
+              </button>
+            )}
+            {canResolveCase && onResolveCase && (
+              <button type="button" className="secondary-button" onClick={onResolveCase}>
+                {t('karton.resolveCase')}
+              </button>
+            )}
+            {canRelapseCase && onRelapseCase && (
+              <button type="button" className="secondary-button" onClick={onRelapseCase}>
+                {t('karton.relapseCase')}
+              </button>
+            )}
+            {canDeleteCase && onDeleteCase && (
+              <button type="button" className="secondary-button" onClick={onDeleteCase}>
+                {t('karton.deleteCase')}
+              </button>
+            )}
+          </div>
+        )}
         <DetailGrid
           rows={[
             { label: t('panel.fhirId'), value: condition.fhirId },
@@ -197,6 +315,11 @@ export function KartonSelectionPanel({
             { label: t('panel.clinicalStatus'), value: fmtStatus(condition.clinicalStatus) },
             { label: t('panel.verification'), value: fmtStatus(condition.verificationStatus) },
             { label: t('panel.onsetDate'), value: fmtDate(condition.onsetDate) },
+            { label: t('panel.abatementDate'), value: fmtDate(condition.abatementDate) },
+            { label: t('panel.recordedDate'), value: fmtDate(condition.recordedDate) },
+            { label: t('panel.encounterVisitId'), value: condition.encounterVisitId },
+            { label: t('panel.asserterHzjzId'), value: condition.asserterHzjzId },
+            { label: t('panel.recorderHzjzId'), value: condition.recorderHzjzId },
             { label: t('panel.note'), value: condition.note },
           ]}
         />

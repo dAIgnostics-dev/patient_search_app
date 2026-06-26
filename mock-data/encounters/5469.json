@@ -1,0 +1,39 @@
+{
+  "resourceType": "Encounter",
+  "id": "5469",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+      "value": "visit-005"
+    }
+  ],
+  "status": "finished",
+  "class": {
+    "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+    "code": "2",
+    "display": "Kontrolni pregled"
+  },
+  "subject": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "490667293"
+    }
+  },
+  "period": { "start": "2026-04-12T11:00:00Z", "end": "2026-04-12T11:25:00Z" },
+  "participant": [
+    {
+      "individual": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      }
+    }
+  ],
+  "serviceProvider": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "1234567"
+    }
+  }
+}

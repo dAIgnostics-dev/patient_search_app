@@ -7,5 +7,12 @@
       "value": "3344556"
     }
   ],
-  "name": [{ "family": "Jurić", "given": ["Ivana"] }]
+  "name": [
+    {
+      "family": "Jurić",
+      "given": [
+        "Ivana"
+      ]
+    }
+  ]
 }

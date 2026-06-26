@@ -83,7 +83,7 @@ function toEncounterSummary(resource: FhirEncounter): EncounterSummary {
     : null;
 
   return {
-    id: resource.id,
+    id: resource.id ?? mapped.fhirId,
     fhirId: mapped.fhirId,
     status: mapped.status,
     start: mapped.start,
@@ -92,8 +92,10 @@ function toEncounterSummary(resource: FhirEncounter): EncounterSummary {
     classDisplay: mapped.classDisplay,
     visitId: mapped.visitId,
     practitionerFhirId: practitionerRef ?? mapped.practitionerFhirId,
-    practitionerHzjzId: individual?.identifier?.value ?? null,
+    practitionerHzjzId:
+      individual?.identifier?.value ?? mapped.practitionerHzjzId ?? null,
     organizationFhirId: mapped.organizationFhirId,
+    priorityCode: mapped.priorityCode,
   };
 }
 
@@ -697,7 +699,7 @@ export const healthlakeApiClient = {
     const conditions: ConditionDetail[] = conditionResources.map((resource) => {
       const mapped = mapFhirCondition(resource);
       return {
-        id: resource.id,
+        id: resource.id ?? mapped.fhirId,
         fhirId: mapped.fhirId,
         icd10Code: mapped.icd10Code,
         display: mapped.display,
@@ -705,6 +707,11 @@ export const healthlakeApiClient = {
         verificationStatus: mapped.verificationStatus,
         caseId: mapped.caseId,
         onsetDate: mapped.onsetDate,
+        abatementDate: mapped.abatementDate,
+        recordedDate: mapped.recordedDate,
+        encounterVisitId: mapped.encounterVisitId,
+        asserterHzjzId: mapped.asserterHzjzId,
+        recorderHzjzId: mapped.recorderHzjzId,
         note: mapped.note,
       };
     });
@@ -842,7 +849,7 @@ export const healthlakeApiClient = {
 
     const mapped = mapFhirCondition(resource);
     return {
-      id: resource.id,
+      id: resource.id ?? mapped.fhirId,
       fhirId: mapped.fhirId,
       icd10Code: mapped.icd10Code,
       display: mapped.display,
@@ -850,6 +857,11 @@ export const healthlakeApiClient = {
       verificationStatus: mapped.verificationStatus,
       caseId: mapped.caseId,
       onsetDate: mapped.onsetDate,
+      abatementDate: mapped.abatementDate,
+      recordedDate: mapped.recordedDate,
+      encounterVisitId: mapped.encounterVisitId,
+      asserterHzjzId: mapped.asserterHzjzId,
+      recorderHzjzId: mapped.recorderHzjzId,
       note: mapped.note,
     };
   },

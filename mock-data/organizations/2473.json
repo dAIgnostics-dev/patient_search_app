@@ -1,0 +1,11 @@
+{
+  "resourceType": "Organization",
+  "id": "2473",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "2233445"
+    }
+  ],
+  "name": "Dom zdravlja Split"
+}

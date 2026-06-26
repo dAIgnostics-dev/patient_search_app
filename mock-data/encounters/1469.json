@@ -1,0 +1,42 @@
+{
+  "resourceType": "Encounter",
+  "id": "1469",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+      "value": "visit-001"
+    }
+  ],
+  "status": "finished",
+  "class": {
+    "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+    "code": "9",
+    "display": "Interna uputnica"
+  },
+  "subject": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "180223069"
+    }
+  },
+  "period": {
+    "start": "2026-05-01T10:00:00Z",
+    "end": "2026-05-01T10:30:00Z"
+  },
+  "participant": [
+    {
+      "individual": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      }
+    }
+  ],
+  "serviceProvider": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "1234567"
+    }
+  }
+}

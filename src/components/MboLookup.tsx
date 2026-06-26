@@ -5,11 +5,12 @@ import {
   logPatientListSelect,
   type PatientAccessSource,
 } from '../data/auditAccess';
-import { findPatientByMbo } from '../data/practitionerPatients';
+import { findPatientByMbo, getPatientsForPractitioner } from '../data/practitionerPatients';
 import { getRecentPatients } from '../data/recentPatients';
-import type { PatientSummary } from '../domain/models';
+import type { EncounterSummary, PatientSummary } from '../domain/models';
 import { useLocale } from '../i18n/LocaleContext';
 import { formatDate } from '../utils/localeFormat';
+import { CreateEncounterForm } from './CreateEncounterForm';
 import { PatientKarton } from './PatientKarton';
 
 function isValidMbo(value: string): boolean {
@@ -23,10 +24,13 @@ export function MboLookup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [patient, setPatient] = useState<PatientSummary | null>(null);
+  const [foundPatient, setFoundPatient] = useState<PatientSummary | null>(null);
+  const [openedPatient, setOpenedPatient] = useState<PatientSummary | null>(null);
+  const [showCreateEncounter, setShowCreateEncounter] = useState(false);
   const [accessSource, setAccessSource] = useState<PatientAccessSource>('mbo');
   const [lastMbo, setLastMbo] = useState('');
   const [recentTick, setRecentTick] = useState(0);
+  const [recentLoadingPatientId, setRecentLoadingPatientId] = useState<string | null>(null);
 
   const recentPatients = useMemo(() => {
     if (!session) return [];
@@ -39,7 +43,9 @@ export function MboLookup() {
     setLoading(true);
     setError(null);
     setValidationError(null);
-    setPatient(null);
+    setFoundPatient(null);
+    setOpenedPatient(null);
+    setShowCreateEncounter(false);
     setAccessSource('mbo');
     setLastMbo(trimmed);
 
@@ -51,7 +57,11 @@ export function MboLookup() {
         return;
       }
       if (session) logMboLookup(session, trimmed, 'success', found, locale);
-      setPatient(found);
+      if (await hasPractitionerEncounter(found)) {
+        setOpenedPatient(found);
+        return;
+      }
+      setFoundPatient(found);
     } catch (err) {
       if (session) logMboLookup(session, trimmed, 'error', null, locale);
       const message = err instanceof Error ? err.message : t('mbo.lookupFailed');
@@ -79,28 +89,67 @@ export function MboLookup() {
     await runLookup(trimmed);
   }
 
-  function openRecent(entryPatient: PatientSummary) {
+  async function hasPractitionerEncounter(entryPatient: PatientSummary): Promise<boolean> {
+    if (!session) return false;
+    const myPatients = await getPatientsForPractitioner(session);
+    return myPatients.some(
+      (patient) =>
+        patient.id === entryPatient.id ||
+        patient.fhirId === entryPatient.fhirId ||
+        (Boolean(patient.mbo) && patient.mbo === entryPatient.mbo),
+    );
+  }
+
+  async function openRecent(entryPatient: PatientSummary) {
     setError(null);
     setValidationError(null);
+    setOpenedPatient(null);
+    setShowCreateEncounter(false);
     setAccessSource('recent');
     if (session) logPatientListSelect(session, entryPatient, 'recent', locale);
-    setPatient(entryPatient);
+
+    setRecentLoadingPatientId(entryPatient.id);
+    try {
+      if (await hasPractitionerEncounter(entryPatient)) {
+        setFoundPatient(null);
+        setOpenedPatient(entryPatient);
+        return;
+      }
+      setFoundPatient(entryPatient);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('mbo.lookupFailed');
+      if (message.toLowerCase().includes('fetch') || message.includes('FHIR')) {
+        setError(t('mbo.apiError'));
+      } else {
+        setError(message);
+      }
+    } finally {
+      setRecentLoadingPatientId(null);
+    }
   }
 
   function handleBack() {
-    setPatient(null);
+    setOpenedPatient(null);
+    setFoundPatient(null);
+    setShowCreateEncounter(false);
     setRecentTick((n) => n + 1);
   }
 
-  if (patient) {
+  function handleEncounterCreated(_encounter: EncounterSummary, _visitId: string) {
+    if (!foundPatient) return;
+    setShowCreateEncounter(false);
+    setOpenedPatient(foundPatient);
+  }
+
+  if (openedPatient) {
     return (
       <PatientKarton
-        patient={patient}
+        patient={openedPatient}
         viewerSession={session ?? undefined}
         accessSource={accessSource}
         breadcrumbs={[
           { label: t('tabs.mbo'), onClick: handleBack },
-          { label: `${patient.firstName} ${patient.lastName}` },
+          { label: `${openedPatient.firstName} ${openedPatient.lastName}` },
         ]}
         onBack={handleBack}
       />
@@ -128,7 +177,7 @@ export function MboLookup() {
         </label>
         <div className="search-actions">
           <button type="submit" disabled={loading}>
-            {loading ? t('mbo.searching') : t('mbo.openKarton')}
+            {loading ? t('mbo.searching') : t('mbo.findPatient')}
           </button>
           {error && (
             <button
@@ -145,6 +194,53 @@ export function MboLookup() {
       {validationError && <p className="error">{validationError}</p>}
       {error && <p className="error">{error}</p>}
 
+      {foundPatient && (
+        <div className="card patient-access-card">
+          <h3>{t('mbo.foundTitle')}</h3>
+          <p className="search-hint">{t('mbo.createEncounterRequired')}</p>
+          <dl className="detail-grid">
+            <div>
+              <dt>{t('mbo.patient')}</dt>
+              <dd>
+                {foundPatient.firstName} {foundPatient.lastName}
+              </dd>
+            </div>
+            <div>
+              <dt>{t('mbo.label')}</dt>
+              <dd>{foundPatient.mbo ?? t('common.emDash')}</dd>
+            </div>
+            <div>
+              <dt>{t('mbo.birthDate')}</dt>
+              <dd>{formatDate(foundPatient.birthDate, locale) ?? t('common.emDash')}</dd>
+            </div>
+          </dl>
+          <div className="search-actions">
+            <button type="button" onClick={() => setShowCreateEncounter(true)} disabled={!session}>
+              {t('mbo.startEncounter')}
+            </button>
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => {
+                setFoundPatient(null);
+                setShowCreateEncounter(false);
+              }}
+            >
+              {t('mbo.clearSelection')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showCreateEncounter && session && foundPatient && (
+        <CreateEncounterForm
+          patient={foundPatient}
+          session={session}
+          onCancel={() => setShowCreateEncounter(false)}
+          onCreated={handleEncounterCreated}
+        />
+      )}
+
       <div className="recent-patients">
         <h3>{t('mbo.recentTitle')}</h3>
         {recentPatients.length === 0 ? (
@@ -157,6 +253,7 @@ export function MboLookup() {
                   type="button"
                   className="link-button"
                   onClick={() => openRecent(entry.patient)}
+                  disabled={recentLoadingPatientId === entry.patient.id}
                 >
                   {entry.patient.firstName} {entry.patient.lastName}
                 </button>

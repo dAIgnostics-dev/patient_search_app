@@ -256,6 +256,7 @@ body::before {
 }
 
 .search-form input,
+.search-form select,
 .search-bar-label input,
 .control-label select {
   padding: 0.62rem 0.75rem;
@@ -269,6 +270,7 @@ body::before {
 }
 
 .search-form input:focus,
+.search-form select:focus,
 .search-bar-label input:focus,
 .control-label select:focus {
   outline: none;
@@ -284,6 +286,7 @@ body::before {
 }
 
 .search-form button,
+.search-actions button,
 .back-button,
 .secondary-button {
   padding: 0.62rem 1.15rem;
@@ -299,17 +302,20 @@ body::before {
   transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
 }
 
-.search-form button:hover:not(:disabled) {
+.search-form button:hover:not(:disabled),
+.search-actions button:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: var(--btn-shadow-hover);
   filter: brightness(1.03);
 }
 
-.search-form button:active:not(:disabled) {
+.search-form button:active:not(:disabled),
+.search-actions button:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.search-form button:disabled {
+.search-form button:disabled,
+.search-actions button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
@@ -463,7 +469,7 @@ body::before {
 
 @media (min-width: 768px) {
   .karton-layout:has(.selection-panel) {
-    grid-template-columns: 1fr minmax(260px, 340px);
+    grid-template-columns: 1fr minmax(360px, 460px);
   }
 }
 
@@ -815,6 +821,131 @@ code {
   cursor: pointer;
 }
 
+.karton-nav-leading {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.karton-nav-action {
+  flex-shrink: 0;
+}
+
+.karton-nav-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.karton-nav-header .back-button {
+  margin-bottom: 0;
+}
+
+.selection-panel-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.selection-panel-actions .secondary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 8.25rem;
+  min-width: 8.25rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.form-hint {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--color-ink-muted);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.modal-panel {
+  width: min(100%, 32rem);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 1.25rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.modal-close {
+  flex-shrink: 0;
+}
+
+.encounter-create-form select {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  background: var(--color-surface);
+}
+
+.encounter-fieldset {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.encounter-fieldset legend {
+  padding: 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.error-list {
+  margin: 0.75rem 0 0;
+  padding-left: 1.25rem;
+  color: var(--color-danger, #b42318);
+}
+
+.success-banner {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  background: #ecfdf3;
+  border: 1px solid #abefc6;
+  border-radius: var(--radius-sm);
+  color: #067647;
+}
+
 @keyframes shimmer {
   0% {
     background-position: -400px 0;
@@ -911,14 +1042,10 @@ code {
 
 .karton-nav-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 1rem;
-}
-
-.back-button-compact {
-  flex-shrink: 0;
 }
 
 .karton-section-nav {

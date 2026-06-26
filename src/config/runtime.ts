@@ -70,3 +70,30 @@ export function resolveAuditAccessUrl(): string {
 }
 
 export const API_BASE_URL = resolveApiBaseUrl();
+
+/**
+ * CEZIH FHIR base URL placeholder.
+ * When unset, CEZIH repositories can fall back to mock providers.
+ */
+export function resolveCezihApiBaseUrl(): string | null {
+  const fromEnv = (import.meta.env.VITE_CEZIH_API_BASE_URL as string | undefined)?.trim();
+  return fromEnv ? trimTrailingSlash(fromEnv) : null;
+}
+
+/** CEZIH FHIR message endpoint for encounter management (POST). */
+export function resolveCezihMessageUrl(): string | null {
+  const fromEnv = (import.meta.env.VITE_CEZIH_MESSAGE_URL as string | undefined)?.trim();
+  return fromEnv ? trimTrailingSlash(fromEnv) : null;
+}
+
+/** MessageHeader.source.endpoint for outbound CEZIH messages. */
+export function resolveCezihSourceEndpoint(): string {
+  const fromEnv = (import.meta.env.VITE_CEZIH_SOURCE_ENDPOINT as string | undefined)?.trim();
+  return fromEnv || 'urn:oid:1.2.3.4.5.6';
+}
+
+/** Default HZZO organization code for POC encounter forms. */
+export function resolveCezihDefaultOrgHzzo(): string {
+  const fromEnv = (import.meta.env.VITE_CEZIH_DEFAULT_ORG_HZZO as string | undefined)?.trim();
+  return fromEnv || '1234';
+}

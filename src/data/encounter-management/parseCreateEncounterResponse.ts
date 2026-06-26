@@ -1,0 +1,1 @@
+export { parseCreateEncounterResponse } from './parseEncounterManagementResponse';

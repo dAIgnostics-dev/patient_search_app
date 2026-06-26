@@ -1,0 +1,22 @@
+{
+  "resourceType": "Patient",
+  "id": "1442",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "180223069"
+    }
+  ],
+  "active": true,
+  "name": [
+    {
+      "family": "Horvat",
+      "given": [
+        "Ivan"
+      ],
+      "text": "Ivan Horvat"
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1985-04-12"
+}

@@ -86,11 +86,59 @@ Redeploy the Lambda proxy if you add new resource types (`npm run sandbox`).
 ## Architecture
 
 ```text
-React UI → HealthLakeClient → healthlake-proxy Lambda
+React UI → repository registry (config-based source routing)
+          ├─ CEZIH/Mock providers (placeholder FHIR R4 endpoints)
+          └─ HealthLake providers → healthlake-proxy Lambda
 Login    → auth-proxy Lambda (deployed) or Vite middleware (local dev)
 Audit    → audit-proxy Lambda → S3 access.jsonl (deployed) or Vite middleware → audit/access.jsonl (local)
                               ↓
                          HealthLake FHIR R4
+```
+
+### Source abstraction configuration
+
+Repository/provider abstraction is implemented under `src/data/repositories/` and `src/data/fhir-client/`.
+The UI consumes repository-backed APIs so data source changes stay in config and provider wiring.
+
+Per-resource routing config lives in `src/config/resourceSource.ts`.
+
+Environment variables for switching providers:
+
+| Variable | Example | Purpose |
+|----------|---------|---------|
+| `VITE_RESOURCE_SOURCE_DEFAULT` | `healthlake` | Global fallback source (`healthlake`, `cezih`, `mock-cezih`) |
+| `VITE_RESOURCE_SOURCE_MAP` | `Patient:cezih,DiagnosticReport:healthlake` | Per-resource source override map |
+| `VITE_CEZIH_API_BASE_URL` | `https://cezih.example.hr` | Placeholder CEZIH FHIR base (`/fhir/<Resource>` expected) |
+
+Default ownership model:
+- CEZIH: `Patient`, `Practitioner`, `Organization`, `Encounter`, `Condition`, `DocumentReference`
+- HealthLake: `DiagnosticReport`, `ImagingStudy`, `Binary`
+
+Future CEZIH resources (`PractitionerRole`, `HealthcareService`, `Location`, `Endpoint`, `ValueSet`, `CodeSystem`) are already included in source routing keys.
+
+Identity mapping extension points are in `src/data/identity/`.
+
+### Service layer (clinician workflow)
+
+To prepare CEZIH + HealthLake coexistence without UI rewrites, the clinician workflow now uses dedicated services:
+
+- `src/data/services/patientChartService.ts` — central patient chart entry point (`getPatientChart`) used by chart screens.
+- `src/data/services/stitching/patientChartAssembler.ts` — resource stitching layer that assembles a unified chart model and timeline view.
+- `src/data/services/patientSearchService.ts` — business-level search API (`findPatientByMbo`, `findPatientsByName`) decoupled from provider query syntax.
+- `src/data/services/myPatientsService.ts` — dedicated `My Patients` workflow service (`getMyPatients`, `findPatientByMbo`).
+
+Compatibility adapters:
+- `src/data/kartonApi.ts`
+- `src/data/practitionerPatients.ts`
+
+These adapters preserve existing component call signatures while delegating to the service layer.
+
+`ClinicianContext` is defined in `src/data/services/types.ts` and carried through service APIs so future CEZIH authorization requirements can be enforced without breaking consumers.
+
+### Local architecture validation
+
+```bash
+npm run validate:architecture
 ```
 
 ### Access audit log (POC)

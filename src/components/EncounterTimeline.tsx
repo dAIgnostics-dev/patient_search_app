@@ -3,6 +3,7 @@ import type { EncounterSummary } from '../domain/models';
 import { useLocale } from '../i18n/LocaleContext';
 import { formatFhirStatus } from '../utils/formatFhirCode';
 import { formatDate } from '../utils/localeFormat';
+import { formatPriorityLabel } from '../data/encounter-management/encounterMessageShared';
 
 interface EncounterTimelineProps {
   encounters: EncounterSummary[];
@@ -41,6 +42,15 @@ export function EncounterTimeline({
       {sorted.map((enc) => {
         const own = isOwnEncounter(enc, viewerSession);
         const statusLabel = formatFhirStatus(enc.status, locale) ?? enc.status;
+        const priorityLabel = formatPriorityLabel(enc.priorityCode, locale);
+        const orgLabel = enc.organizationName ?? enc.organizationFhirId ?? null;
+        const metaParts = [
+          statusLabel,
+          priorityLabel,
+          orgLabel,
+          enc.practitionerName,
+          enc.practitionerHzjzId ? `HZJZ ${enc.practitionerHzjzId}` : null,
+        ].filter(Boolean);
 
         return (
           <li key={enc.id}>
@@ -57,8 +67,7 @@ export function EncounterTimeline({
                 {own && <span className="timeline-badge">{t('karton.yourVisit')}</span>}
               </span>
               <span className="timeline-meta">
-                {statusLabel}
-                {enc.organizationName && ` · ${enc.organizationName}`}
+                {metaParts.join(' · ')}
               </span>
             </button>
           </li>

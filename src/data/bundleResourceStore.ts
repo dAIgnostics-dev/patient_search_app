@@ -41,7 +41,7 @@ async function loadByManifestIds<T extends FhirResourceType>(
     });
     if (fromSearch.length > 0) {
       const allowed = new Set(ids);
-      return fromSearch.filter((r) => allowed.has(r.id)) as Array<
+      return fromSearch.filter((r) => r.id != null && allowed.has(r.id)) as Array<
         NonNullable<Awaited<ReturnType<typeof healthLakeClient.read<T>>>>
       >;
     }

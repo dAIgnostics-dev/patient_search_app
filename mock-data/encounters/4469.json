@@ -1,0 +1,39 @@
+{
+  "resourceType": "Encounter",
+  "id": "4469",
+  "identifier": [
+    {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+      "value": "visit-004"
+    }
+  ],
+  "status": "finished",
+  "class": {
+    "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+    "code": "1",
+    "display": "Pregled obiteljskog lijecnika"
+  },
+  "subject": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+      "value": "480556182"
+    }
+  },
+  "period": { "start": "2026-04-10T09:00:00Z", "end": "2026-04-10T09:20:00Z" },
+  "participant": [
+    {
+      "individual": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      }
+    }
+  ],
+  "serviceProvider": {
+    "identifier": {
+      "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+      "value": "1234567"
+    }
+  }
+}

@@ -2,8 +2,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import type { ServerResponse } from 'node:http';
 import { dirname } from 'node:path';
 import type { Connect } from 'vite';
-import type { FhirResource } from '../src/fhir/types';
-import { CEZIH_MOCK_BUNDLES } from '../src/data/mock/cezihBundles';
+import type { FhirClinicalDocumentBundle, FhirResource } from '../src/fhir/types';
+import { CEZIH_MOCK_BUNDLES, CEZIH_MOCK_STORAGE, type CezihMockStorage } from '../src/data/mock/cezihBundles';
 import type { FhirReadableResourceType } from '../src/data/fhir-client/types';
 
 const SUPPORTED_RESOURCE_TYPES: FhirReadableResourceType[] = [
@@ -15,7 +15,7 @@ const SUPPORTED_RESOURCE_TYPES: FhirReadableResourceType[] = [
   'DocumentReference',
 ];
 
-type MockStoragePayload = Partial<Record<FhirReadableResourceType, FhirResource[]>>;
+type MockStoragePayload = CezihMockStorage;
 
 function readJsonBody(req: Connect.IncomingMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
@@ -44,6 +44,8 @@ function seededStorage(): MockStoragePayload {
   for (const type of SUPPORTED_RESOURCE_TYPES) {
     payload[type] = [...(CEZIH_MOCK_BUNDLES[type] ?? [])];
   }
+  payload.DocumentBundle = [...(CEZIH_MOCK_STORAGE.DocumentBundle ?? [])];
+  payload.Binary = [...(CEZIH_MOCK_STORAGE.Binary ?? [])];
   return payload;
 }
 
@@ -67,6 +69,12 @@ function normalizeStorage(raw: MockStoragePayload): MockStoragePayload {
   for (const type of SUPPORTED_RESOURCE_TYPES) {
     payload[type] = Array.isArray(raw[type]) ? raw[type] : [];
   }
+  payload.DocumentBundle = Array.isArray(raw.DocumentBundle)
+    ? (raw.DocumentBundle as FhirClinicalDocumentBundle[])
+    : [...(CEZIH_MOCK_STORAGE.DocumentBundle ?? [])];
+  payload.Binary = Array.isArray(raw.Binary)
+    ? (raw.Binary as import('../src/fhir/types').FhirBinary[])
+    : [...(CEZIH_MOCK_STORAGE.Binary ?? [])];
   return payload;
 }
 

@@ -1174,6 +1174,94 @@
         }
       },
       "id": "mock-enc-71a3736b-d1a3-4cf7-832c-6e053a1f00b2"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clmsqi8vsgdje"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Ambulantno"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "480556182"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-06-30T16:06:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-75dc5b4a-89aa-4f66-b8c2-589b8afd7187"
+    },
+    {
+      "resourceType": "Encounter",
+      "status": "in-progress",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl8w9wh4m5apd"
+        }
+      ],
+      "class": {
+        "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/nacin-prijema",
+        "code": "2",
+        "display": "Ambulantno"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "participant": [
+        {
+          "individual": {
+            "type": "Practitioner",
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+              "value": "1234567"
+            }
+          }
+        }
+      ],
+      "period": {
+        "start": "2026-07-03T09:25:00.000Z"
+      },
+      "serviceProvider": {
+        "type": "Organization",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "id": "mock-enc-7a55caea-580e-4563-a0bf-080dbbaa6bc5"
     }
   ],
   "Condition": [
@@ -1599,7 +1687,2332 @@
         }
       },
       "abatementDateTime": "2026-06-26"
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "cd9abcf6-ceff-4160-89be-b6458cb0c955"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "unconfirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "E11",
+            "display": "Dijabetes melitus tip 2"
+          }
+        ],
+        "text": "Dijabetes melitus tip 2"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "370445281"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl7r0el9lxs9h"
+        }
+      },
+      "onsetDateTime": "2026-06-30",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "id": "mock-cond-d3d5e5bc-823e-4ffe-8e05-c4398a735972",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "deleted"
+          }
+        ]
+      },
+      "recordedDate": "2026-06-30",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "abatementDateTime": "2026-06-30",
+      "note": [
+        {
+          "extension": [
+            {
+              "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-annotation-type",
+              "valueCoding": {
+                "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/annotation-type",
+                "code": "1"
+              }
+            }
+          ],
+          "text": "Pogrešan unos"
+        }
+      ]
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "9118a517-423f-4e70-a0a7-d34f3a4f71a6"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "unconfirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "J45",
+            "display": "Astma"
+          }
+        ],
+        "text": "Astma"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "480556182"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "clmsqi8vsgdje"
+        }
+      },
+      "onsetDateTime": "2026-06-30",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "id": "mock-cond-c851132f-2f4f-4025-b17d-6c15ed5debfa",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "resolved"
+          }
+        ]
+      },
+      "recordedDate": "2026-06-30",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "abatementDateTime": "2026-06-30"
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "50177c30-068c-472e-a447-ce0d4c9c1fa2"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "confirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "M54",
+            "display": "Bol u leđima"
+          }
+        ],
+        "text": "Bol u leđima"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl8zeaoc9qu1w"
+        }
+      },
+      "onsetDateTime": "2026-07-03",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "id": "mock-cond-05161450-83ae-42dd-bab8-7facfa705dae",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "resolved"
+          }
+        ]
+      },
+      "recordedDate": "2026-07-03",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "abatementDateTime": "2026-07-03"
+    },
+    {
+      "resourceType": "Condition",
+      "identifier": [
+        {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+          "value": "46defeda-7d4a-4f48-9f83-f15055e885e4"
+        }
+      ],
+      "verificationStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+            "code": "unconfirmed"
+          }
+        ]
+      },
+      "code": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+            "code": "G43",
+            "display": "Migrena"
+          }
+        ],
+        "text": "Migrena"
+      },
+      "subject": {
+        "type": "Patient",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "encounter": {
+        "type": "Encounter",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+          "value": "cl8w9wh4m5apd"
+        }
+      },
+      "onsetDateTime": "2026-07-03",
+      "asserter": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "id": "mock-cond-6bdead64-77e4-4e88-9e36-5f83ddaa4f4c",
+      "clinicalStatus": {
+        "coding": [
+          {
+            "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+            "code": "resolved"
+          }
+        ]
+      },
+      "recordedDate": "2026-07-03",
+      "recorder": {
+        "type": "Practitioner",
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+          "value": "1234567"
+        }
+      },
+      "abatementDateTime": "2026-07-03"
     }
   ],
-  "DocumentReference": []
+  "DocumentReference": [
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-001",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040001"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-06-19T10:45:00Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "1234567"
+          },
+          "display": "Ana Marković"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        },
+        "display": "Privatna ambulanta Zagreb"
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl8zeaoc9qu1w"
+            }
+          }
+        ]
+      },
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040001"
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "final"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl8zeaoc9qu1w"
+            },
+            {
+              "url": "caseId",
+              "valueString": "case-001"
+            },
+            {
+              "url": "caseDisplay",
+              "valueString": "Hipertenzija"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "1234567"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ana Marković"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "organizationName",
+              "valueString": "Privatna ambulanta Zagreb"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "Interna medicina"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "Pacijent se žali na povremenu glavobolju i umor."
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 0
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-002",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040002"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-06-23T09:00:00Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "3344556"
+          },
+          "display": "Ivana Jurić"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        },
+        "display": "Privatna ambulanta Zagreb"
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl85ch95zp4zf"
+            }
+          }
+        ]
+      },
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040002"
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "final"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl85ch95zp4zf"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "3344556"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ivana Jurić"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "organizationName",
+              "valueString": "Privatna ambulanta Zagreb"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "Opća medicina"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "Kontrolni pregled bez novih tegoba."
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 0
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-003",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040003"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-06-24T14:00:00Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "1234567"
+          },
+          "display": "Ana Marković"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        },
+        "display": "Privatna ambulanta Zagreb"
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl8zeaoc9qu1w"
+            }
+          }
+        ]
+      },
+      "content": [
+        {
+          "attachment": {
+            "title": "EKG izvješće",
+            "contentType": "application/pdf"
+          }
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040003"
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "final"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl8zeaoc9qu1w"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "1234567"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ana Marković"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "organizationName",
+              "valueString": "Privatna ambulanta Zagreb"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "Kardiologija"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "Povijest srčanih tegoba u obitelji."
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 1
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-6d898a2e-5690-45b9-9f94-bc8e35c14027",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783069973566"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-07-03T09:12:53.566Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "1234567"
+          },
+          "display": "Ana Marković"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl8zeaoc9qu1w"
+            }
+          }
+        ]
+      },
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783069973566"
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "final"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl8zeaoc9qu1w"
+            },
+            {
+              "url": "caseId",
+              "valueString": "case-001"
+            },
+            {
+              "url": "caseDisplay",
+              "valueString": "Hipertenzija"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "1234567"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ana Marković"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "s"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "sodas"
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 0
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-3bcee056",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783070200641"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-07-03T09:16:40.641Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "1234567"
+          },
+          "display": "Ana Marković"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl8zeaoc9qu1w"
+            }
+          }
+        ]
+      },
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783070200641"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl8zeaoc9qu1w"
+            },
+            {
+              "url": "caseId",
+              "valueString": "case-001"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "1234567"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ana Marković"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "s"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "sodas111"
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 0
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": false
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "entered-in-error"
+            }
+          ]
+        }
+      ],
+      "relatesTo": [
+        {
+          "code": "replaces",
+          "target": {
+            "reference": "DocumentReference/doc-6d898a2e-5690-45b9-9f94-bc8e35c14027"
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "DocumentReference",
+      "id": "doc-376174f6-1ae3-42d2-a3b8-0d77a48442f6",
+      "identifier": [
+        {
+          "system": "urn:ietf:rfc:3986",
+          "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783071020406"
+        }
+      ],
+      "status": "current",
+      "type": {
+        "coding": [
+          {
+            "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+            "code": "011",
+            "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+          }
+        ],
+        "text": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+      },
+      "subject": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+          "value": "180223069"
+        }
+      },
+      "date": "2026-07-03T09:30:20.406Z",
+      "description": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+      "author": [
+        {
+          "identifier": {
+            "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+            "value": "1234567"
+          },
+          "display": "Ana Marković"
+        }
+      ],
+      "custodian": {
+        "identifier": {
+          "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+          "value": "1234"
+        }
+      },
+      "context": {
+        "encounter": [
+          {
+            "identifier": {
+              "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+              "value": "cl8w9wh4m5apd"
+            }
+          }
+        ]
+      },
+      "content": [
+        {
+          "attachment": {
+            "title": "proba.pdf",
+            "contentType": "application/pdf"
+          }
+        }
+      ],
+      "extension": [
+        {
+          "url": "http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary",
+          "extension": [
+            {
+              "url": "documentId",
+              "valueString": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783071020406"
+            },
+            {
+              "url": "compositionStatus",
+              "valueCode": "final"
+            },
+            {
+              "url": "encounterVisitId",
+              "valueString": "cl8w9wh4m5apd"
+            },
+            {
+              "url": "caseId",
+              "valueString": "46defeda-7d4a-4f48-9f83-f15055e885e4"
+            },
+            {
+              "url": "caseDisplay",
+              "valueString": "Migrena"
+            },
+            {
+              "url": "authorHzjzId",
+              "valueString": "1234567"
+            },
+            {
+              "url": "authorName",
+              "valueString": "Ana Marković"
+            },
+            {
+              "url": "organizationHzzoCode",
+              "valueString": "1234"
+            },
+            {
+              "url": "healthcareServiceName",
+              "valueString": "Opća praksa"
+            },
+            {
+              "url": "anamnesisPreview",
+              "valueString": "Glavobolja"
+            },
+            {
+              "url": "outcomeDisplay",
+              "valueString": "Pregled završen uspješno"
+            },
+            {
+              "url": "attachmentCount",
+              "valueInteger": 1
+            },
+            {
+              "url": "hasSignature",
+              "valueBoolean": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "DocumentBundle": [
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-001",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040001"
+      },
+      "type": "document",
+      "timestamp": "2026-06-19T11:00:00+00:00",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:comp-001",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "final",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              },
+              "display": "Ivan Horvat"
+            },
+            "encounter": {
+              "reference": "urn:uuid:enc-001"
+            },
+            "date": "2026-06-19T10:45:00Z",
+            "author": [
+              {
+                "reference": "urn:uuid:pract-001",
+                "display": "Ana Marković"
+              },
+              {
+                "reference": "urn:uuid:org-001",
+                "display": "Privatna ambulanta Zagreb"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "attester": [
+              {
+                "mode": "professional",
+                "party": {
+                  "reference": "urn:uuid:pract-001"
+                }
+              },
+              {
+                "mode": "official",
+                "party": {
+                  "reference": "urn:uuid:org-001"
+                }
+              }
+            ],
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:svc-001"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:obs-anam-001"
+                  },
+                  {
+                    "reference": "urn:uuid:cond-001"
+                  },
+                  {
+                    "reference": "urn:uuid:obs-out-001"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:enc-001",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl8zeaoc9qu1w"
+              }
+            ],
+            "status": "finished",
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:pract-001",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "1234567"
+              }
+            ],
+            "name": [
+              {
+                "family": "Marković",
+                "given": [
+                  "Ana"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:org-001",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ],
+            "name": "Privatna ambulanta Zagreb"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:svc-001",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/ID-djelatnosti",
+                "value": "3030000"
+              }
+            ],
+            "name": "Interna medicina",
+            "providedBy": {
+              "reference": "urn:uuid:org-001"
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:cond-001",
+          "resource": {
+            "resourceType": "Condition",
+            "identifier": [
+              {
+                "value": "case-001"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+                  "code": "I10",
+                  "display": "Hipertenzija"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-anam-001",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "Pacijent se žali na povremenu glavobolju i umor."
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-out-001",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/sifrarnik-zavrsetaka-pregleda",
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-002",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040002"
+      },
+      "type": "document",
+      "timestamp": "2026-06-23T09:15:00+00:00",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:comp-002",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "final",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              },
+              "display": "Ivan Horvat"
+            },
+            "encounter": {
+              "reference": "urn:uuid:enc-002"
+            },
+            "date": "2026-06-23T09:00:00Z",
+            "author": [
+              {
+                "reference": "urn:uuid:pract-002",
+                "display": "Ivana Jurić"
+              },
+              {
+                "reference": "urn:uuid:org-002",
+                "display": "Privatna ambulanta Zagreb"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:svc-002"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:obs-anam-002"
+                  },
+                  {
+                    "reference": "urn:uuid:obs-out-002"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:enc-002",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl85ch95zp4zf"
+              }
+            ],
+            "status": "finished",
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:pract-002",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "3344556"
+              }
+            ],
+            "name": [
+              {
+                "family": "Jurić",
+                "given": [
+                  "Ivana"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:org-002",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ],
+            "name": "Privatna ambulanta Zagreb"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:svc-002",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "name": "Opća medicina"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-anam-002",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "Kontrolni pregled bez novih tegoba."
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-out-002",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/sifrarnik-zavrsetaka-pregleda",
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-003",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.4000040003"
+      },
+      "type": "document",
+      "timestamp": "2026-06-24T14:30:00+00:00",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:comp-003",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "final",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            },
+            "encounter": {
+              "reference": "urn:uuid:enc-003"
+            },
+            "date": "2026-06-24T14:00:00Z",
+            "author": [
+              {
+                "reference": "urn:uuid:pract-003"
+              },
+              {
+                "reference": "urn:uuid:org-003"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:svc-003"
+                  }
+                ]
+              },
+              {
+                "title": "Priloženi dokumenti",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "16",
+                      "display": "Priloženi dokumenti"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:att-003"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:obs-anam-003"
+                  },
+                  {
+                    "reference": "urn:uuid:obs-out-003"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:enc-003",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl8zeaoc9qu1w"
+              }
+            ],
+            "status": "finished"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:pract-003",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "1234567"
+              }
+            ],
+            "name": [
+              {
+                "family": "Marković",
+                "given": [
+                  "Ana"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:org-003",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ],
+            "name": "Privatna ambulanta Zagreb"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:svc-003",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "name": "Kardiologija"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:att-003",
+          "resource": {
+            "resourceType": "DocumentReference",
+            "status": "current",
+            "content": [
+              {
+                "attachment": {
+                  "contentType": "application/pdf",
+                  "data": "UERGIG5hbGF6IGJhc2U2NCBlbmtvZGlyYW4u",
+                  "title": "EKG izvješće"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-anam-003",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "Povijest srčanih tegoba u obitelji."
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:obs-out-003",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "signature": {
+        "type": [
+          {
+            "system": "urn:iso-astm:E1762-95:2013",
+            "code": "1.2.840.10065.1.12.1.1",
+            "display": "Author's Signature"
+          }
+        ],
+        "when": "2026-06-24T14:30:00+00:00",
+        "who": {
+          "reference": "urn:uuid:pract-003"
+        },
+        "data": "cG90cGlz"
+      }
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-6d898a2e-5690-45b9-9f94-bc8e35c14027",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783069973566"
+      },
+      "type": "document",
+      "timestamp": "2026-07-03T09:12:53.566Z",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-composition",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "final",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            },
+            "encounter": {
+              "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-encounter"
+            },
+            "date": "2026-07-03T09:12:53.566Z",
+            "author": [
+              {
+                "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-practitioner",
+                "display": "Ana Marković"
+              },
+              {
+                "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-organization"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-service"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-anamnesis"
+                  },
+                  {
+                    "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-condition"
+                  },
+                  {
+                    "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-outcome"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-encounter",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl8zeaoc9qu1w"
+              }
+            ],
+            "status": "in-progress",
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-practitioner",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "1234567"
+              }
+            ],
+            "name": [
+              {
+                "text": "Ana Marković"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-organization",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-service",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "name": "s",
+            "providedBy": {
+              "reference": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-organization"
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-condition",
+          "resource": {
+            "resourceType": "Condition",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+                "value": "case-001"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+                  "code": "I10",
+                  "display": "Hipertenzija"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-anamnesis",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "sodas"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:1a39510c-6658-4dac-9255-3a946873ab50-outcome",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/sifrarnik-zavrsetaka-pregleda",
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-9c8d7d20-fad4-4f60-98e9-04b425dba765",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783070200641"
+      },
+      "type": "document",
+      "timestamp": "2026-07-03T09:16:40.641Z",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-composition",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "entered-in-error",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            },
+            "encounter": {
+              "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-encounter"
+            },
+            "date": "2026-07-03T09:16:40.641Z",
+            "author": [
+              {
+                "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-practitioner",
+                "display": "Ana Marković"
+              },
+              {
+                "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-organization"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-service"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-anamnesis"
+                  },
+                  {
+                    "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-condition"
+                  },
+                  {
+                    "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-outcome"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-encounter",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl8zeaoc9qu1w"
+              }
+            ],
+            "status": "in-progress",
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-practitioner",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "1234567"
+              }
+            ],
+            "name": [
+              {
+                "text": "Ana Marković"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-organization",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-service",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "name": "s",
+            "providedBy": {
+              "reference": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-organization"
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-condition",
+          "resource": {
+            "resourceType": "Condition",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+                "value": "case-001"
+              }
+            ],
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-anamnesis",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "sodas111"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:6a47a948-6940-48c6-aa99-b50122c300f6-outcome",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/sifrarnik-zavrsetaka-pregleda",
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "resourceType": "Bundle",
+      "id": "doc-bundle-376174f6-1ae3-42d2-a3b8-0d77a48442f6",
+      "identifier": {
+        "system": "urn:ietf:rfc:3986",
+        "value": "urn:oid:2.16.840.1.113883.2.7.50.2.1.1783071020406"
+      },
+      "type": "document",
+      "timestamp": "2026-07-03T09:30:20.406Z",
+      "entry": [
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-composition",
+          "resource": {
+            "resourceType": "Composition",
+            "status": "final",
+            "type": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-type",
+                  "code": "011",
+                  "display": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            },
+            "encounter": {
+              "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-encounter"
+            },
+            "date": "2026-07-03T09:30:20.406Z",
+            "author": [
+              {
+                "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-practitioner",
+                "display": "Ana Marković"
+              },
+              {
+                "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-organization"
+              }
+            ],
+            "title": "Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove",
+            "section": [
+              {
+                "title": "Djelatnost",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "12",
+                      "display": "Djelatnost"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-service"
+                  }
+                ]
+              },
+              {
+                "title": "Priloženi dokumenti",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "16",
+                      "display": "Priloženi dokumenti"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-attachment"
+                  }
+                ]
+              },
+              {
+                "title": "Medicinska informacija",
+                "code": {
+                  "coding": [
+                    {
+                      "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/document-section",
+                      "code": "18",
+                      "display": "Medicinska informacija"
+                    }
+                  ]
+                },
+                "entry": [
+                  {
+                    "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-anamnesis"
+                  },
+                  {
+                    "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-condition"
+                  },
+                  {
+                    "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-outcome"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-encounter",
+          "resource": {
+            "resourceType": "Encounter",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-posjete",
+                "value": "cl8w9wh4m5apd"
+              }
+            ],
+            "status": "in-progress",
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-practitioner",
+          "resource": {
+            "resourceType": "Practitioner",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZJZ-broj-zdravstvenog-djelatnika",
+                "value": "1234567"
+              }
+            ],
+            "name": [
+              {
+                "text": "Ana Marković"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-organization",
+          "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/HZZO-sifra-zdravstvene-organizacije",
+                "value": "1234"
+              }
+            ]
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-service",
+          "resource": {
+            "resourceType": "HealthcareService",
+            "name": "Opća praksa",
+            "providedBy": {
+              "reference": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-organization"
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-condition",
+          "resource": {
+            "resourceType": "Condition",
+            "identifier": [
+              {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/identifikator-slucaja",
+                "value": "46defeda-7d4a-4f48-9f83-f15055e885e4"
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/icd10-hr",
+                  "code": "G43",
+                  "display": "Migrena"
+                }
+              ]
+            },
+            "subject": {
+              "identifier": {
+                "system": "http://fhir.cezih.hr/specifikacije/identifikatori/MBO",
+                "value": "180223069"
+              }
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-anamnesis",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "15",
+                  "display": "Anamneza"
+                }
+              ]
+            },
+            "valueString": "Glavobolja"
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-outcome",
+          "resource": {
+            "resourceType": "Observation",
+            "status": "final",
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/observations",
+                  "code": "24",
+                  "display": "Ishod pregleda"
+                }
+              ]
+            },
+            "valueCodeableConcept": {
+              "coding": [
+                {
+                  "system": "http://fhir.cezih.hr/specifikacije/CodeSystem/sifrarnik-zavrsetaka-pregleda",
+                  "code": "1",
+                  "display": "Pregled završen uspješno"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "fullUrl": "urn:uuid:5702c08b-584b-4e81-a0d4-2d4d2b4aac9a-attachment",
+          "resource": {
+            "resourceType": "DocumentReference",
+            "status": "current",
+            "content": [
+              {
+                "attachment": {
+                  "contentType": "application/pdf",
+                  "title": "proba.pdf",
+                  "data": "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Oi8vbnMuYWRvYmUuY29tL3BkZi8xLjMvIj4KICAgPHBkZjpQcm9kdWNlcj5MaWJyZU9mZmljZSAyNS44LjQuMiAoQUFSQ0g2NCk8L3BkZjpQcm9kdWNlcj4KICAgPHBkZjpQREZWZXJzaW9uPjEuNzwvcGRmOlBERlZlcnNpb24+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgPHhtcDpDcmVhdG9yVG9vbD5Xcml0ZXI8L3htcDpDcmVhdG9yVG9vbD4KICAgPHhtcDpDcmVhdGVEYXRlPjIwMjYtMDctMDNUMTE6MjU6MTQrMDI6MDA8L3htcDpDcmVhdGVEYXRlPgogICA8eG1wOk1vZGlmeURhdGU+MjAyNi0wNy0wM1QxMToyNToxNCswMjowMDwveG1wOk1vZGlmeURhdGU+CiAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjYtMDctMDNUMTE6MjU6MTQrMDI6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+CgplbmRzdHJlYW0KZW5kb2JqCgo1IDAgb2JqCjw8L1R5cGUvU3RydWN0RWxlbS9TL1N0YW5kYXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSA8PC9PL0xheW91dC9QbGFjZW1lbnQvQmxvY2sKPj4KL0tbMCBdCj4+CmVuZG9iagoKNCAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0vUy9Eb2N1bWVudAovUCAxNSAwIFIKL1BnIDEgMCBSCi9LWzUgMCBSICBdCj4+CmVuZG9iagoKMTUgMCBvYmoKPDwvVHlwZS9TdHJ1Y3RUcmVlUm9vdAovUGFyZW50VHJlZSAxNiAwIFIvUm9sZU1hcDw8L1N0YW5kYXJkL1AKPj4KL0tbNCAwIFIgIF0KPj4KZW5kb2JqCgoxNiAwIG9iago8PC9OdW1zWwowIFsgNSAwIFIgXQpdPj4KZW5kb2JqCgo2IDAgb2JqCjw8L1R5cGUvUGFnZXMKL1Jlc291cmNlcyAxMyAwIFIKL0tpZHNbIDEgMCBSIF0KL0NvdW50IDE+PgplbmRvYmoKCjE3IDAgb2JqCjw8L1R5cGUvQ2F0YWxvZy9QYWdlcyA2IDAgUgovUGFnZU1vZGUvVXNlT3V0bGluZXMKL1N0cnVjdFRyZWVSb290IDE1IDAgUgovTGFuZyhoci1IUikKL01hcmtJbmZvPDwvTWFya2VkIHRydWU+PgovTWV0YWRhdGEgMTQgMCBSPj4KZW5kb2JqCgoxOCAwIG9iago8PC9DcmVhdG9yPEZFRkYwMDU3MDA3MjAwNjkwMDc0MDA2NTAwNzI+L1Byb2R1Y2VyPEZFRkYwMDRDMDA2OTAwNjIwMDcyMDA2NTAwNEYwMDY2MDA2NjAwNjkwMDYzMDA2NTAwMjAwMDMyMDAzNTAwMkUwMDM4MDAyRTAwMzQwMDJFMDAzMjAwMjAwMDI4MDA0MTAwNDEwMDUyMDA0MzAwNDgwMDM2MDAzNDAwMjk+L0NyZWF0aW9uRGF0ZShEOjIwMjYwNzAzMTEyNTE0KzAyJzAwJyk+PgplbmRvYmoKCnhyZWYKMCAxOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDU4ODcgMDAwMDAgbiAKMDAwMDAwMDAxOSAwMDAwMCBuIAowMDAwMDAwMjMwIDAwMDAwIG4gCjAwMDAwMTExNzUgMDAwMDAgbiAKMDAwMDAxMTA2NiAwMDAwMCBuIAowMDAwMDExMzk2IDAwMDAwIG4gCjAwMDAwMDAyNTAgMDAwMDAgbiAKMDAwMDAwNTA5MSAwMDAwMCBuIAowMDAwMDA1MTEyIDAwMDAwIG4gCjAwMDAwMDUzMDcgMDAwMDAgbiAKMDAwMDAwNTYyMSAwMDAwMCBuIAowMDAwMDA1ODAwIDAwMDAwIG4gCjAwMDAwMDU4MzMgMDAwMDAgbiAKMDAwMDAwNjAzNiAwMDAwMCBuIAowMDAwMDExMjU2IDAwMDAwIG4gCjAwMDAwMTEzNTQgMDAwMDAgbiAKMDAwMDAxMTQ3MCAwMDAwMCBuIAowMDAwMDExNjE4IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSAxOS9Sb290IDE3IDAgUgovSW5mbyAxOCAwIFIKL0lEIFsgPDkyQzUzMkQwRTNEMUMzNzBFNzNCODQxODQwQUY0RjZGPgo8OTJDNTMyRDBFM0QxQzM3MEU3M0I4NDE4NDBBRjRGNkY+IF0KL0RvY0NoZWNrc3VtIC9BNEVGMjRDODcwNEEzRDE5NTZEOTZENDVFQzkzNkVDQQo+PgpzdGFydHhyZWYKMTE4NTEKJSVFT0YK",
+                  "url": "Binary/bin-60fb5d07-b2ab-47b9-97b1-4eff55515fc6"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "Binary": [
+    {
+      "resourceType": "Binary",
+      "id": "bin-60fb5d07-b2ab-47b9-97b1-4eff55515fc6",
+      "contentType": "application/pdf",
+      "data": "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Oi8vbnMuYWRvYmUuY29tL3BkZi8xLjMvIj4KICAgPHBkZjpQcm9kdWNlcj5MaWJyZU9mZmljZSAyNS44LjQuMiAoQUFSQ0g2NCk8L3BkZjpQcm9kdWNlcj4KICAgPHBkZjpQREZWZXJzaW9uPjEuNzwvcGRmOlBERlZlcnNpb24+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAgPHhtcDpDcmVhdG9yVG9vbD5Xcml0ZXI8L3htcDpDcmVhdG9yVG9vbD4KICAgPHhtcDpDcmVhdGVEYXRlPjIwMjYtMDctMDNUMTE6MjU6MTQrMDI6MDA8L3htcDpDcmVhdGVEYXRlPgogICA8eG1wOk1vZGlmeURhdGU+MjAyNi0wNy0wM1QxMToyNToxNCswMjowMDwveG1wOk1vZGlmeURhdGU+CiAgIDx4bXA6TWV0YWRhdGFEYXRlPjIwMjYtMDctMDNUMTE6MjU6MTQrMDI6MDA8L3htcDpNZXRhZGF0YURhdGU+CiAgPC9yZGY6RGVzY3JpcHRpb24+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo8P3hwYWNrZXQgZW5kPSJ3Ij8+CgplbmRzdHJlYW0KZW5kb2JqCgo1IDAgb2JqCjw8L1R5cGUvU3RydWN0RWxlbS9TL1N0YW5kYXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSA8PC9PL0xheW91dC9QbGFjZW1lbnQvQmxvY2sKPj4KL0tbMCBdCj4+CmVuZG9iagoKNCAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0vUy9Eb2N1bWVudAovUCAxNSAwIFIKL1BnIDEgMCBSCi9LWzUgMCBSICBdCj4+CmVuZG9iagoKMTUgMCBvYmoKPDwvVHlwZS9TdHJ1Y3RUcmVlUm9vdAovUGFyZW50VHJlZSAxNiAwIFIvUm9sZU1hcDw8L1N0YW5kYXJkL1AKPj4KL0tbNCAwIFIgIF0KPj4KZW5kb2JqCgoxNiAwIG9iago8PC9OdW1zWwowIFsgNSAwIFIgXQpdPj4KZW5kb2JqCgo2IDAgb2JqCjw8L1R5cGUvUGFnZXMKL1Jlc291cmNlcyAxMyAwIFIKL0tpZHNbIDEgMCBSIF0KL0NvdW50IDE+PgplbmRvYmoKCjE3IDAgb2JqCjw8L1R5cGUvQ2F0YWxvZy9QYWdlcyA2IDAgUgovUGFnZU1vZGUvVXNlT3V0bGluZXMKL1N0cnVjdFRyZWVSb290IDE1IDAgUgovTGFuZyhoci1IUikKL01hcmtJbmZvPDwvTWFya2VkIHRydWU+PgovTWV0YWRhdGEgMTQgMCBSPj4KZW5kb2JqCgoxOCAwIG9iago8PC9DcmVhdG9yPEZFRkYwMDU3MDA3MjAwNjkwMDc0MDA2NTAwNzI+L1Byb2R1Y2VyPEZFRkYwMDRDMDA2OTAwNjIwMDcyMDA2NTAwNEYwMDY2MDA2NjAwNjkwMDYzMDA2NTAwMjAwMDMyMDAzNTAwMkUwMDM4MDAyRTAwMzQwMDJFMDAzMjAwMjAwMDI4MDA0MTAwNDEwMDUyMDA0MzAwNDgwMDM2MDAzNDAwMjk+L0NyZWF0aW9uRGF0ZShEOjIwMjYwNzAzMTEyNTE0KzAyJzAwJyk+PgplbmRvYmoKCnhyZWYKMCAxOQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDU4ODcgMDAwMDAgbiAKMDAwMDAwMDAxOSAwMDAwMCBuIAowMDAwMDAwMjMwIDAwMDAwIG4gCjAwMDAwMTExNzUgMDAwMDAgbiAKMDAwMDAxMTA2NiAwMDAwMCBuIAowMDAwMDExMzk2IDAwMDAwIG4gCjAwMDAwMDAyNTAgMDAwMDAgbiAKMDAwMDAwNTA5MSAwMDAwMCBuIAowMDAwMDA1MTEyIDAwMDAwIG4gCjAwMDAwMDUzMDcgMDAwMDAgbiAKMDAwMDAwNTYyMSAwMDAwMCBuIAowMDAwMDA1ODAwIDAwMDAwIG4gCjAwMDAwMDU4MzMgMDAwMDAgbiAKMDAwMDAwNjAzNiAwMDAwMCBuIAowMDAwMDExMjU2IDAwMDAwIG4gCjAwMDAwMTEzNTQgMDAwMDAgbiAKMDAwMDAxMTQ3MCAwMDAwMCBuIAowMDAwMDExNjE4IDAwMDAwIG4gCnRyYWlsZXIKPDwvU2l6ZSAxOS9Sb290IDE3IDAgUgovSW5mbyAxOCAwIFIKL0lEIFsgPDkyQzUzMkQwRTNEMUMzNzBFNzNCODQxODQwQUY0RjZGPgo8OTJDNTMyRDBFM0QxQzM3MEU3M0I4NDE4NDBBRjRGNkY+IF0KL0RvY0NoZWNrc3VtIC9BNEVGMjRDODcwNEEzRDE5NTZEOTZENDVFQzkzNkVDQQo+PgpzdGFydHhyZWYKMTE4NTEKJSVFT0YK"
+    }
+  ]
 }

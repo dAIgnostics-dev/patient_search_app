@@ -11,6 +11,8 @@ import {
   getProcedureDetail,
   getReferralDetail,
 } from '../data/kartonApi';
+import { getDocumentContent, getDocumentMetadata } from '../data/documentApi';
+import type { DocumentMetadataResult } from '../data/document-management/types';
 import { useLocale } from '../i18n/LocaleContext';
 import { formatFhirStatus } from '../utils/formatFhirCode';
 import { formatDate, formatDateTime } from '../utils/localeFormat';
@@ -42,6 +44,8 @@ interface KartonSelectionPanelProps {
   canRelapseCase?: boolean;
   canRemissionCase?: boolean;
   canResolveCase?: boolean;
+  canNewVersionDocument?: boolean;
+  canCancelDocument?: boolean;
   onUpdateEncounter?: () => void;
   onCloseEncounter?: () => void;
   onCancelEncounter?: () => void;
@@ -51,6 +55,8 @@ interface KartonSelectionPanelProps {
   onRelapseCase?: () => void;
   onRemissionCase?: () => void;
   onResolveCase?: () => void;
+  onNewVersionDocument?: () => void;
+  onCancelDocument?: () => void;
   onSelectPractitioner: (id: string) => void;
   onSelectOrganization: (id: string) => void;
   onClear: () => void;
@@ -68,6 +74,8 @@ export function KartonSelectionPanel({
   canRelapseCase = false,
   canRemissionCase = false,
   canResolveCase = false,
+  canNewVersionDocument = false,
+  canCancelDocument = false,
   onUpdateEncounter,
   onCloseEncounter,
   onCancelEncounter,
@@ -77,6 +85,8 @@ export function KartonSelectionPanel({
   onRelapseCase,
   onRemissionCase,
   onResolveCase,
+  onNewVersionDocument,
+  onCancelDocument,
   onSelectPractitioner,
   onSelectOrganization,
   onClear,
@@ -92,6 +102,12 @@ export function KartonSelectionPanel({
   const [procedure, setProcedure] = useState<ProcedureDetail | null>(null);
   const [document, setDocument] = useState<DocumentDetail | null>(null);
   const [referral, setReferral] = useState<ReferralDetail | null>(null);
+  const [documentMetadata, setDocumentMetadata] = useState<DocumentMetadataResult | null>(null);
+  const [metadataLoading, setMetadataLoading] = useState(false);
+  const [metadataError, setMetadataError] = useState<string | null>(null);
+  const [metadataOpen, setMetadataOpen] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const fmtDateTime = (value: string | null | undefined) =>
     formatDateTime(value, locale);
@@ -113,6 +129,10 @@ export function KartonSelectionPanel({
       setProcedure(null);
       setDocument(null);
       setReferral(null);
+      setDocumentMetadata(null);
+      setMetadataError(null);
+      setMetadataOpen(false);
+      setDownloadError(null);
 
       try {
         if (selection.kind === 'encounter') {
@@ -435,6 +455,57 @@ export function KartonSelectionPanel({
   if (selection.kind === 'document') {
     if (!document) return <p className="empty">{t('panel.notFoundDocument')}</p>;
 
+    const caseLabel =
+      document.caseId && document.caseDisplay
+        ? `${document.caseId} (${document.caseDisplay})`
+        : document.caseId;
+
+    async function handleOpenFullDocument() {
+      setMetadataLoading(true);
+      setMetadataError(null);
+      try {
+        const metadata = await getDocumentMetadata(selection.id);
+        if (!metadata) {
+          setMetadataError(t('panel.metadataLoadFailed'));
+          return;
+        }
+        setDocumentMetadata(metadata);
+        setMetadataOpen(true);
+      } catch {
+        setMetadataError(t('panel.metadataLoadFailed'));
+      } finally {
+        setMetadataLoading(false);
+      }
+    }
+
+    async function handleDownloadAttachment() {
+      setDownloadLoading(true);
+      setDownloadError(null);
+      try {
+        const content = await getDocumentContent(selection.id);
+        if (!content?.base64Data) {
+          setDownloadError(t('panel.contentLoadFailed'));
+          return;
+        }
+        const bytes = atob(content.base64Data);
+        const buffer = new Uint8Array(bytes.length);
+        for (let i = 0; i < bytes.length; i += 1) {
+          buffer[i] = bytes.charCodeAt(i);
+        }
+        const blob = new Blob([buffer], { type: content.contentType });
+        const url = URL.createObjectURL(blob);
+        const anchor = window.document.createElement('a');
+        anchor.href = url;
+        anchor.download = content.fileName;
+        anchor.click();
+        URL.revokeObjectURL(url);
+      } catch {
+        setDownloadError(t('panel.contentLoadFailed'));
+      } finally {
+        setDownloadLoading(false);
+      }
+    }
+
     return (
       <aside className="selection-panel">
         <div className="selection-panel-header">
@@ -446,15 +517,89 @@ export function KartonSelectionPanel({
         <DetailGrid
           rows={[
             { label: t('panel.fhirId'), value: document.fhirId },
-            { label: t('panel.title'), value: document.description },
-            { label: t('panel.type'), value: document.typeDisplay },
+            { label: t('panel.documentId'), value: document.documentId },
+            { label: t('panel.documentType'), value: document.typeDisplay },
             { label: t('panel.typeCode'), value: document.typeCode },
-            { label: t('panel.category'), value: document.category },
-            { label: t('panel.status'), value: fmtStatus(document.status) },
+            { label: t('panel.compositionStatus'), value: fmtStatus(document.compositionStatus) },
+            { label: t('panel.title'), value: document.title ?? document.description },
             { label: t('panel.date'), value: fmtDateTime(document.date) },
+            { label: t('panel.encounterVisitId'), value: document.encounterVisitId },
+            { label: t('panel.caseId'), value: caseLabel },
+            { label: t('panel.author'), value: document.authorName },
+            { label: t('panel.hzjzId'), value: document.authorHzjzId },
+            { label: t('panel.organization'), value: document.organizationName },
+            { label: t('panel.hzzoCode'), value: document.organizationHzzoCode },
+            { label: t('panel.healthcareService'), value: document.healthcareServiceName },
+            { label: t('panel.outcome'), value: document.outcomeDisplay },
+            { label: t('panel.anamnesis'), value: document.anamnesisPreview },
+            {
+              label: t('panel.attachments'),
+              value:
+                document.attachmentCount != null
+                  ? String(document.attachmentCount)
+                  : undefined,
+            },
+            {
+              label: t('panel.hasSignature'),
+              value:
+                document.hasSignature == null
+                  ? undefined
+                  : document.hasSignature
+                    ? t('panel.yes')
+                    : t('panel.no'),
+            },
             { label: t('panel.contentType'), value: document.contentType },
           ]}
         />
+        <div className="selection-panel-actions">
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => void handleOpenFullDocument()}
+            disabled={metadataLoading}
+          >
+            {metadataLoading ? t('panel.loading') : t('panel.openFullDocument')}
+          </button>
+          {(document.attachmentCount ?? 0) > 0 && (
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => void handleDownloadAttachment()}
+              disabled={downloadLoading}
+            >
+              {downloadLoading ? t('panel.downloading') : t('panel.downloadAttachment')}
+            </button>
+          )}
+          {canNewVersionDocument && onNewVersionDocument && (
+            <button type="button" className="secondary-button" onClick={onNewVersionDocument}>
+              {t('panel.newDocumentVersion')}
+            </button>
+          )}
+          {canCancelDocument && onCancelDocument && (
+            <button type="button" className="secondary-button" onClick={onCancelDocument}>
+              {t('panel.cancelDocument')}
+            </button>
+          )}
+        </div>
+        {metadataError && <p className="error">{metadataError}</p>}
+        {downloadError && <p className="error">{downloadError}</p>}
+        {metadataOpen && documentMetadata && (
+          <details open className="bundle-metadata">
+            <summary>{t('panel.bundleMetadata')}</summary>
+            <DetailGrid
+              rows={[
+                { label: t('panel.bundleId'), value: documentMetadata.bundleId },
+                { label: t('panel.documentId'), value: documentMetadata.documentId },
+                { label: t('panel.sectionCount'), value: String(documentMetadata.sectionCount) },
+                { label: t('panel.entryCount'), value: String(documentMetadata.entryCount) },
+                ...documentMetadata.sections.map((section) => ({
+                  label: t('panel.sectionCode', { code: section.code || '—' }),
+                  value: [section.title, `${section.entryCount} entries`].filter(Boolean).join(' · '),
+                })),
+              ]}
+            />
+          </details>
+        )}
       </aside>
     );
   }

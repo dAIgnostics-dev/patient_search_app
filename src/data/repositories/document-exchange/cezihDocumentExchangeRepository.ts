@@ -1,0 +1,1 @@
+export { CezihDocumentExchangeRepository } from './baseDocumentExchangeRepository';

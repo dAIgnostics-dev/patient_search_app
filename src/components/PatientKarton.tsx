@@ -6,11 +6,17 @@ import {
   type PatientAccessSource,
 } from '../data/auditAccess';
 import { getPatientChart } from '../data/kartonApi';
+import { searchDocuments } from '../data/documentApi';
 import { addRecentPatient } from '../data/recentPatients';
 import type {
   ConditionSummary,
+  DocumentSummary,
   EncounterSummary,
   KartonSelection,
+  MedicationSummary,
+  AllergySummary,
+  ProcedureSummary,
+  ReferralSummary,
   PatientDetail as PatientDetailModel,
   PatientSectionKey,
   PatientSummary,
@@ -19,11 +25,16 @@ import { useLocale } from '../i18n/LocaleContext';
 import type { TranslationKey } from '../i18n/translations';
 import { formatFhirStatus, formatFhirStatusPair } from '../utils/formatFhirCode';
 import { formatDate } from '../utils/localeFormat';
+import { CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA } from '../fhir/types';
+import { isWithinDocumentEditWindow } from '../data/document-management/documentEditWindow';
 import { practitionerDisplayName } from '../utils/practitionerDisplayName';
 import { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs';
 import { CancelEncounterForm } from './CancelEncounterForm';
 import { CloseEncounterForm } from './CloseEncounterForm';
 import { CreateCaseForm } from './CreateCaseForm';
+import { CreateClinicalDocumentForm } from './CreateClinicalDocumentForm';
+import { UpdateClinicalDocumentForm } from './UpdateClinicalDocumentForm';
+import { CancelClinicalDocumentForm } from './CancelClinicalDocumentForm';
 import { CreateEncounterForm } from './CreateEncounterForm';
 import { DeleteCaseForm } from './DeleteCaseForm';
 import { ReopenEncounterForm } from './ReopenEncounterForm';
@@ -128,6 +139,32 @@ function isCaseEditable(condition: ConditionSummary | null | undefined): boolean
   return condition.clinicalStatus.toLowerCase() !== 'deleted';
 }
 
+function isDocumentEditable(document: DocumentSummary | null | undefined): boolean {
+  if (!document) return false;
+  const status = (document.compositionStatus ?? '').toLowerCase();
+  if (status !== 'final') return false;
+  return isWithinDocumentEditWindow(document.date);
+}
+
+function formatSectionItemLabel(
+  section: Exclude<PatientSectionKey, 'documents'>,
+  item: MedicationSummary | AllergySummary | ProcedureSummary | ReferralSummary,
+  t: (key: TranslationKey) => string,
+): string {
+  if (section === 'medications' || section === 'allergies' || section === 'referrals') {
+    return item.display ?? item.code ?? t(FALLBACK_LABEL_KEYS[section]);
+  }
+  return item.display ?? item.code ?? t(FALLBACK_LABEL_KEYS[section]);
+}
+
+function formatSectionItemDate(
+  item: MedicationSummary | AllergySummary | ProcedureSummary | ReferralSummary,
+): string | null | undefined {
+  if ('authoredOn' in item) return item.authoredOn;
+  if ('performedDate' in item) return item.performedDate;
+  return null;
+}
+
 export function PatientKarton({
   patient,
   viewerSession,
@@ -152,6 +189,18 @@ export function PatientKarton({
   const [showRelapseCase, setShowRelapseCase] = useState(false);
   const [showRemissionCase, setShowRemissionCase] = useState(false);
   const [showResolveCase, setShowResolveCase] = useState(false);
+  const [showCreateDocument, setShowCreateDocument] = useState(false);
+  const [showUpdateDocument, setShowUpdateDocument] = useState(false);
+  const [showCancelDocument, setShowCancelDocument] = useState(false);
+  const [documents, setDocuments] = useState<DocumentSummary[]>([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [documentsError, setDocumentsError] = useState<string | null>(null);
+  const [documentFilters, setDocumentFilters] = useState({
+    dateFrom: '',
+    dateTo: '',
+    typeCode: CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA,
+    compositionStatus: '',
+  });
   const [createSuccessMessage, setCreateSuccessMessage] = useState<string | null>(null);
   const loggedRef = useRef<string | null>(null);
   const sectionRefs = useRef<Record<string, KartonSectionHandle | null>>({});
@@ -171,6 +220,21 @@ export function PatientKarton({
         return tb - ta;
       });
       return { ...current, encounters };
+    });
+  }
+
+  function mergeDocument(document: DocumentSummary) {
+    setDocuments((current) => {
+      const exists = current.some((item) => item.id === document.id);
+      const next = exists
+        ? current.map((item) => (item.id === document.id ? { ...item, ...document } : item))
+        : [document, ...current];
+      next.sort((a, b) => {
+        const ta = a.date ? Date.parse(a.date) : 0;
+        const tb = b.date ? Date.parse(b.date) : 0;
+        return tb - ta;
+      });
+      return next;
     });
   }
 
@@ -279,6 +343,27 @@ export function PatientKarton({
     setShowResolveCase(false);
   }
 
+  function handleDocumentSubmitted(summary: DocumentSummary, documentReferenceId: string) {
+    mergeDocument(summary);
+    setSelection({ kind: 'document', id: documentReferenceId });
+    setCreateSuccessMessage(t('karton.documentCreated', { documentId: documentReferenceId }));
+    setShowCreateDocument(false);
+  }
+
+  function handleDocumentUpdated(summary: DocumentSummary, documentReferenceId: string) {
+    mergeDocument(summary);
+    setSelection({ kind: 'document', id: documentReferenceId });
+    setCreateSuccessMessage(t('karton.documentUpdated', { documentId: documentReferenceId }));
+    setShowUpdateDocument(false);
+  }
+
+  function handleDocumentCancelled(summary: DocumentSummary, documentReferenceId: string) {
+    mergeDocument(summary);
+    setSelection({ kind: 'document', id: documentReferenceId });
+    setCreateSuccessMessage(t('karton.documentCancelled', { documentId: documentReferenceId }));
+    setShowCancelDocument(false);
+  }
+
   const selectedEncounter = useMemo(() => {
     if (!detail || selection?.kind !== 'encounter') return null;
     return detail.encounters.find((item) => item.id === selection.id) ?? null;
@@ -289,6 +374,11 @@ export function PatientKarton({
     return detail.conditions.find((item) => item.id === selection.id) ?? null;
   }, [detail, selection]);
 
+  const selectedDocument = useMemo(() => {
+    if (selection?.kind !== 'document') return null;
+    return documents.find((item) => item.id === selection.id) ?? null;
+  }, [selection, documents]);
+
   const canUpdateSelectedEncounter = isEncounterEditable(selectedEncounter);
   const canCloseSelectedEncounter = isEncounterEditable(selectedEncounter);
   const canCancelSelectedEncounter = isEncounterCancellable(selectedEncounter);
@@ -298,6 +388,8 @@ export function PatientKarton({
   const canRelapseSelectedCase = isCaseRelapsable(selectedCondition);
   const canRemissionSelectedCase = isCaseRemissionable(selectedCondition);
   const canResolveSelectedCase = isCaseResolvable(selectedCondition);
+  const canNewVersionSelectedDocument = isDocumentEditable(selectedDocument);
+  const canCancelSelectedDocument = isDocumentEditable(selectedDocument);
 
   const openCaseEncounters = useMemo(() => {
     if (!detail || !viewerSession) return [];
@@ -315,6 +407,88 @@ export function PatientKarton({
       (condition) => condition.caseId && (condition.clinicalStatus ?? '').toLowerCase() === 'resolved',
     );
   }, [detail]);
+
+  const patientCases = useMemo(() => {
+    if (!detail) return [];
+    return detail.conditions.filter((condition) => condition.caseId);
+  }, [detail]);
+
+  async function reloadDocuments() {
+    if (!patient.mbo || !viewerSession) return;
+    setDocumentsLoading(true);
+    setDocumentsError(null);
+    try {
+      const results = await searchDocuments(viewerSession, {
+        patientMbo: patient.mbo,
+        typeCode: documentFilters.typeCode || undefined,
+        dateFrom: documentFilters.dateFrom || undefined,
+        dateTo: documentFilters.dateTo || undefined,
+        compositionStatus: documentFilters.compositionStatus || undefined,
+      });
+      setDocuments(results);
+    } catch (err) {
+      setDocumentsError(err instanceof Error ? err.message : t('documentSearch.loadFailed'));
+    } finally {
+      setDocumentsLoading(false);
+    }
+  }
+
+  function openResolveCase() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowCreateDocument(false);
+    setShowUpdateDocument(false);
+    setShowCancelDocument(false);
+    setShowResolveCase(true);
+  }
+
+  function openNewDocumentVersion() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowCreateDocument(false);
+    setShowCancelDocument(false);
+    setShowUpdateDocument(true);
+  }
+
+  function openCancelDocument() {
+    setCreateSuccessMessage(null);
+    setShowCreateEncounter(false);
+    setShowCreateCase(false);
+    setShowCreateCaseRecurrence(false);
+    setShowUpdateCase(false);
+    setShowDeleteCase(false);
+    setShowRelapseCase(false);
+    setShowRemissionCase(false);
+    setShowResolveCase(false);
+    setShowUpdateEncounter(false);
+    setShowCloseEncounter(false);
+    setShowCancelEncounter(false);
+    setShowReopenEncounter(false);
+    setShowCreateDocument(false);
+    setShowUpdateDocument(false);
+    setShowCancelDocument(true);
+  }
 
   function openUpdateEncounter() {
     setCreateSuccessMessage(null);
@@ -440,22 +614,6 @@ export function PatientKarton({
     setShowRemissionCase(true);
   }
 
-  function openResolveCase() {
-    setCreateSuccessMessage(null);
-    setShowCreateEncounter(false);
-    setShowCreateCase(false);
-    setShowCreateCaseRecurrence(false);
-    setShowUpdateCase(false);
-    setShowDeleteCase(false);
-    setShowRelapseCase(false);
-    setShowRemissionCase(false);
-    setShowUpdateEncounter(false);
-    setShowCloseEncounter(false);
-    setShowCancelEncounter(false);
-    setShowReopenEncounter(false);
-    setShowResolveCase(true);
-  }
-
   function navigateToSection(id: string) {
     const section = sectionRefs.current[id];
     section?.expand();
@@ -510,6 +668,12 @@ export function PatientKarton({
     if (!selection || !viewerSession) return;
     logPatientResourceView(viewerSession, patient, selection, accessSource, locale);
   }, [selection, viewerSession, patient, accessSource, locale]);
+
+  useEffect(() => {
+    if (!patient.mbo || !viewerSession || loading) return;
+    void reloadDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload when filters or patient change
+  }, [patient.mbo, viewerSession, loading, documentFilters]);
 
   const sectionNav = useMemo(
     () => [
@@ -606,6 +770,34 @@ export function PatientKarton({
           >
             {t('karton.createCaseRecurrence')}
           </button>
+          <button
+            type="button"
+            className="secondary-button karton-nav-action"
+            disabled={openCaseEncounters.length === 0}
+            title={
+              openCaseEncounters.length === 0
+                ? t('documentCreate.requiresOpenEncounter')
+                : undefined
+            }
+            onClick={() => {
+              setCreateSuccessMessage(null);
+              setShowCreateEncounter(false);
+              setShowCreateCase(false);
+              setShowCreateCaseRecurrence(false);
+              setShowUpdateCase(false);
+              setShowDeleteCase(false);
+              setShowRelapseCase(false);
+              setShowRemissionCase(false);
+              setShowResolveCase(false);
+              setShowUpdateEncounter(false);
+              setShowCloseEncounter(false);
+              setShowCancelEncounter(false);
+              setShowReopenEncounter(false);
+              setShowCreateDocument(true);
+            }}
+          >
+            {t('karton.submitDocument')}
+          </button>
         </div>
       )}
     </div>
@@ -676,6 +868,46 @@ export function PatientKarton({
           previousCases={resolvedCases}
           onCancel={() => setShowCreateCaseRecurrence(false)}
           onCreated={handleCaseRecurrenceCreated}
+        />
+      )}
+
+      {showCreateDocument && viewerSession && (
+        <CreateClinicalDocumentForm
+          patient={patient}
+          session={viewerSession}
+          openEncounters={openCaseEncounters}
+          patientCases={patientCases}
+          onCancel={() => setShowCreateDocument(false)}
+          onCreated={(summary, documentReferenceId) => {
+            handleDocumentSubmitted(summary, documentReferenceId);
+            void reloadDocuments();
+          }}
+        />
+      )}
+
+      {showUpdateDocument && viewerSession && selectedDocument && (
+        <UpdateClinicalDocumentForm
+          patient={patient}
+          session={viewerSession}
+          sourceDocument={selectedDocument}
+          onCancel={() => setShowUpdateDocument(false)}
+          onUpdated={(summary, documentReferenceId) => {
+            handleDocumentUpdated(summary, documentReferenceId);
+            void reloadDocuments();
+          }}
+        />
+      )}
+
+      {showCancelDocument && viewerSession && selectedDocument && (
+        <CancelClinicalDocumentForm
+          patient={patient}
+          session={viewerSession}
+          document={selectedDocument}
+          onCancel={() => setShowCancelDocument(false)}
+          onCancelled={(summary, documentReferenceId) => {
+            handleDocumentCancelled(summary, documentReferenceId);
+            void reloadDocuments();
+          }}
         />
       )}
 
@@ -856,7 +1088,112 @@ export function PatientKarton({
             )}
           </KartonSection>
 
-          {(['medications', 'allergies', 'procedures', 'documents', 'referrals'] as const).map(
+          <KartonSection
+            ref={(handle) => {
+              sectionRefs.current[SECTION_ID_KEYS.documents] = handle;
+            }}
+            id={SECTION_ID_KEYS.documents}
+            title={t(SECTION_TITLE_KEYS.documents)}
+            count={documents.length}
+            defaultOpen={documents.length > 0}
+            error={documentsError ?? undefined}
+          >
+            <div className="document-filters">
+              <label>
+                {t('documentSearch.dateFrom')}
+                <input
+                  type="date"
+                  value={documentFilters.dateFrom}
+                  onChange={(e) =>
+                    setDocumentFilters((current) => ({ ...current, dateFrom: e.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                {t('documentSearch.dateTo')}
+                <input
+                  type="date"
+                  value={documentFilters.dateTo}
+                  onChange={(e) =>
+                    setDocumentFilters((current) => ({ ...current, dateTo: e.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                {t('documentSearch.type')}
+                <select
+                  value={documentFilters.typeCode}
+                  onChange={(e) =>
+                    setDocumentFilters((current) => ({ ...current, typeCode: e.target.value }))
+                  }
+                >
+                  <option value="">{t('documentSearch.typeAll')}</option>
+                  <option value={CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA}>
+                    {CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA} — 011
+                  </option>
+                </select>
+              </label>
+              <label>
+                {t('documentSearch.status')}
+                <select
+                  value={documentFilters.compositionStatus}
+                  onChange={(e) =>
+                    setDocumentFilters((current) => ({
+                      ...current,
+                      compositionStatus: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="">{t('documentSearch.statusAll')}</option>
+                  <option value="final">{formatFhirStatus('final', locale) ?? 'final'}</option>
+                  <option value="entered-in-error">
+                    {formatFhirStatus('entered-in-error', locale) ?? 'entered-in-error'}
+                  </option>
+                </select>
+              </label>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => void reloadDocuments()}
+                disabled={documentsLoading}
+              >
+                {documentsLoading ? t('documentSearch.loading') : t('documentSearch.refresh')}
+              </button>
+            </div>
+
+            {documentsLoading && documents.length === 0 ? (
+              <p className="empty-section">{t('documentSearch.loading')}</p>
+            ) : documents.length === 0 && !documentsError ? (
+              <p className="empty-section">{t(SECTION_EMPTY_KEYS.documents)}</p>
+            ) : (
+              <ul className="card-list interactive-list">
+                {documents.map((item) => {
+                  const label = item.typeDisplay ?? t(FALLBACK_LABEL_KEYS.documents);
+                  const statusLine =
+                    formatFhirStatus(item.compositionStatus, locale) ?? item.compositionStatus;
+
+                  return (
+                    <li key={item.id}>
+                      <button
+                        type="button"
+                        className={`card card-button ${isSelected(selection, 'document', item.id) ? 'card-selected' : ''}`}
+                        onClick={() => setSelection({ kind: 'document', id: item.id })}
+                      >
+                        <strong>{label}</strong>
+                        <span>
+                          {statusLine}
+                          {item.date &&
+                            ` · ${formatDate(item.date, locale) ?? t('common.emDash')}`}
+                        </span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </KartonSection>
+
+          {(['medications', 'allergies', 'procedures', 'referrals'] as const).map(
             (section) => {
               const items =
                 section === 'medications'
@@ -865,9 +1202,7 @@ export function PatientKarton({
                     ? detail.allergies
                     : section === 'procedures'
                       ? detail.procedures
-                      : section === 'documents'
-                        ? detail.documents
-                        : detail.referrals;
+                      : detail.referrals;
 
               const sectionError = detail.sectionErrors?.[section]
                 ? t('karton.sectionLoadFailed')
@@ -890,27 +1225,10 @@ export function PatientKarton({
                   ) : (
                     <ul className="card-list interactive-list">
                       {items.map((item) => {
-                        const label =
-                          'display' in item && item.display
-                            ? item.display
-                            : 'description' in item && item.description
-                              ? item.description
-                              : 'typeDisplay' in item && item.typeDisplay
-                                ? item.typeDisplay
-                                : 'code' in item && item.code
-                                  ? item.code
-                                  : t(FALLBACK_LABEL_KEYS[section]);
+                        const label = formatSectionItemLabel(section, item, t);
+                        const dateValue = formatSectionItemDate(item);
 
-                        const dateValue =
-                          'authoredOn' in item
-                            ? item.authoredOn
-                            : 'performedDate' in item
-                              ? item.performedDate
-                              : 'date' in item
-                                ? item.date
-                                : null;
-
-                        const statusLine =
+                        const statusLine: string =
                           'criticality' in item && item.criticality
                             ? `${item.criticality} · ${formatFhirStatus(item.clinicalStatus, locale) ?? item.clinicalStatus ?? ''}`
                             : 'status' in item
@@ -924,9 +1242,7 @@ export function PatientKarton({
                               ? 'allergy'
                               : section === 'procedures'
                                 ? 'procedure'
-                                : section === 'documents'
-                                  ? 'document'
-                                  : 'referral';
+                                : 'referral';
 
                         return (
                           <li key={item.id}>
@@ -966,6 +1282,8 @@ export function PatientKarton({
             canRelapseCase={canRelapseSelectedCase}
             canRemissionCase={canRemissionSelectedCase}
             canResolveCase={canResolveSelectedCase}
+            canNewVersionDocument={canNewVersionSelectedDocument}
+            canCancelDocument={canCancelSelectedDocument}
             onUpdateEncounter={openUpdateEncounter}
             onCloseEncounter={openCloseEncounter}
             onCancelEncounter={openCancelEncounter}
@@ -975,6 +1293,8 @@ export function PatientKarton({
             onRelapseCase={openRelapseCase}
             onRemissionCase={openRemissionCase}
             onResolveCase={openResolveCase}
+            onNewVersionDocument={openNewDocumentVersion}
+            onCancelDocument={openCancelDocument}
             onSelectPractitioner={(id) => setSelection({ kind: 'practitioner', id })}
             onSelectOrganization={(id) => setSelection({ kind: 'organization', id })}
             onClear={() => setSelection(null)}

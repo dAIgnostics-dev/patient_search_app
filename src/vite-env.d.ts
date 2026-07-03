@@ -7,6 +7,9 @@ interface ImportMetaEnv {
   readonly VITE_CEZIH_MESSAGE_URL?: string;
   readonly VITE_CEZIH_SOURCE_ENDPOINT?: string;
   readonly VITE_CEZIH_DEFAULT_ORG_HZZO?: string;
+  readonly VITE_CEZIH_MHD_URL?: string;
+  readonly VITE_DOCUMENT_EDIT_WINDOW_MS?: string;
+  readonly VITE_LOM_NOTIFICATION_URL?: string;
   readonly VITE_RESOURCE_SOURCE_DEFAULT?: string;
   readonly VITE_RESOURCE_SOURCE_MAP?: string;
 }

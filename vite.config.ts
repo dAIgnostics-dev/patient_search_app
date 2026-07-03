@@ -4,12 +4,14 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { createAuditMiddleware } from './server/auditMiddleware';
 import { createAuthMiddleware } from './server/authMiddleware';
+import { createLomNotificationMiddleware, defaultLomQueuePath } from './server/lomNotificationMiddleware';
 import { createMockCezihMiddleware } from './server/mockCezihMiddleware';
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 const accountsDir = path.join(rootDir, 'auth/accounts');
 const auditDir = path.join(rootDir, 'audit');
 const mockCezihStorageFile = path.join(rootDir, 'mock-data/cezih-fhir-store.json');
+const lomQueueFile = defaultLomQueuePath(rootDir);
 
 export default defineConfig({
   plugins: [
@@ -19,11 +21,13 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use(createAuditMiddleware(auditDir));
         server.middlewares.use(createAuthMiddleware(accountsDir));
+        server.middlewares.use(createLomNotificationMiddleware(lomQueueFile));
         server.middlewares.use(createMockCezihMiddleware(mockCezihStorageFile));
       },
       configurePreviewServer(server) {
         server.middlewares.use(createAuditMiddleware(auditDir));
         server.middlewares.use(createAuthMiddleware(accountsDir));
+        server.middlewares.use(createLomNotificationMiddleware(lomQueueFile));
         server.middlewares.use(createMockCezihMiddleware(mockCezihStorageFile));
       },
     },

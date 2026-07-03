@@ -33,12 +33,17 @@ export interface FhirReferenceIdentifier {
 export interface FhirReference {
   reference?: string;
   type?: string;
+  display?: string;
   identifier?: FhirReferenceIdentifier;
 }
 
 export interface FhirExtension {
   url: string;
   valueCoding?: FhirCoding;
+  valueString?: string;
+  valueCode?: string;
+  valueBoolean?: boolean;
+  valueInteger?: number;
   extension?: FhirExtension[];
 }
 
@@ -143,15 +148,101 @@ export interface FhirProcedure {
 export interface FhirDocumentReference {
   resourceType: 'DocumentReference';
   id: string;
+  identifier?: FhirIdentifier[];
   status?: string;
   type?: FhirCodeableConcept;
   category?: FhirCodeableConcept[];
   subject?: FhirReference;
   date?: string;
   description?: string;
-  content?: Array<{
-    attachment?: { title?: string; contentType?: string; url?: string };
+  author?: FhirReference[];
+  custodian?: FhirReference;
+  context?: {
+    encounter?: FhirReference[];
+    period?: FhirPeriod;
+  };
+  relatesTo?: Array<{
+    code?: string;
+    target?: FhirReference;
   }>;
+  content?: Array<{
+    attachment?: {
+      title?: string;
+      contentType?: string;
+      url?: string;
+      data?: string;
+    };
+  }>;
+  extension?: FhirExtension[];
+}
+
+export interface FhirCompositionSection {
+  title?: string;
+  code?: FhirCodeableConcept;
+  entry?: FhirReference[];
+}
+
+export interface FhirCompositionAttester {
+  mode?: string;
+  party?: FhirReference;
+}
+
+export interface FhirComposition {
+  resourceType: 'Composition';
+  id?: string;
+  status?: string;
+  type?: FhirCodeableConcept;
+  subject?: FhirReference;
+  encounter?: FhirReference;
+  date?: string;
+  author?: FhirReference[];
+  title?: string;
+  attester?: FhirCompositionAttester[];
+  section?: FhirCompositionSection[];
+}
+
+export interface FhirHealthcareService {
+  resourceType: 'HealthcareService';
+  id?: string;
+  identifier?: FhirIdentifier[];
+  name?: string;
+  providedBy?: FhirReference;
+}
+
+export interface FhirObservation {
+  resourceType: 'Observation';
+  id?: string;
+  status?: string;
+  code?: FhirCodeableConcept;
+  subject?: FhirReference;
+  valueString?: string;
+  valueCodeableConcept?: FhirCodeableConcept;
+}
+
+export interface FhirClinicalDocumentBundleEntry {
+  fullUrl?: string;
+  resource:
+    | FhirComposition
+    | FhirEncounter
+    | FhirPatient
+    | FhirPractitioner
+    | FhirOrganization
+    | FhirHealthcareService
+    | FhirCondition
+    | FhirDocumentReference
+    | FhirObservation
+    | FhirProcedure
+    | Record<string, unknown>;
+}
+
+export interface FhirClinicalDocumentBundle {
+  resourceType: 'Bundle';
+  id: string;
+  identifier?: FhirIdentifier;
+  type: 'document';
+  timestamp?: string;
+  entry: FhirClinicalDocumentBundleEntry[];
+  signature?: FhirBundleSignature;
 }
 
 export interface FhirServiceRequest {
@@ -187,6 +278,7 @@ export interface FhirBinary {
   resourceType: 'Binary';
   id: string;
   contentType?: string;
+  data?: string;
 }
 
 export interface FhirSeedBundle {
@@ -324,3 +416,21 @@ export const CEZIH_SUDJELOVANJE_SYSTEM =
   'http://fhir.cezih.hr/specifikacije/CodeSystem/sudjelovanje-u-troskovima';
 export const CEZIH_OSLOBODJENJE_SYSTEM =
   'http://fhir.cezih.hr/specifikacije/CodeSystem/sifra-oslobodjenja-od-sudjelovanja-u-troskovima';
+export const CEZIH_DOCUMENT_TYPE_SYSTEM =
+  'http://fhir.cezih.hr/specifikacije/CodeSystem/document-type';
+export const CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA = '011';
+export const CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA_DISPLAY =
+  'Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove';
+export const CEZIH_DOCUMENT_SECTION_SYSTEM =
+  'http://fhir.cezih.hr/specifikacije/CodeSystem/document-section';
+export const CEZIH_DOCUMENT_SECTION_DJELATNOST = '12';
+export const CEZIH_DOCUMENT_SECTION_PRILOZI = '16';
+export const CEZIH_DOCUMENT_SECTION_MEDICINSKA_INFORMACIJA = '18';
+export const CEZIH_OBSERVATIONS_SYSTEM =
+  'http://fhir.cezih.hr/specifikacije/CodeSystem/observations';
+export const CEZIH_OBSERVATION_ANAMNEZA_CODE = '15';
+export const CEZIH_OBSERVATION_ISHOD_PREGLEDA_CODE = '24';
+export const CEZIH_DJELATNOST_ID_SYSTEM =
+  'http://fhir.cezih.hr/specifikacije/identifikatori/ID-djelatnosti';
+export const CEZIH_CLINICAL_DOCUMENT_SUMMARY_EXTENSION_URL =
+  'http://fhir.cezih.hr/specifikacije/StructureDefinition/hr-clinical-document-summary';

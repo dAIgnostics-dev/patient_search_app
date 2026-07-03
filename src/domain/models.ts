@@ -67,6 +67,21 @@ export interface DocumentSummary {
   date?: string | null;
   description?: string | null;
   contentType?: string | null;
+  documentId?: string | null;
+  compositionStatus?: string | null;
+  title?: string | null;
+  encounterVisitId?: string | null;
+  caseId?: string | null;
+  caseDisplay?: string | null;
+  authorHzjzId?: string | null;
+  authorName?: string | null;
+  organizationHzzoCode?: string | null;
+  organizationName?: string | null;
+  healthcareServiceName?: string | null;
+  hasSignature?: boolean | null;
+  attachmentCount?: number | null;
+  anamnesisPreview?: string | null;
+  outcomeDisplay?: string | null;
 }
 
 export type DocumentDetail = DocumentSummary;

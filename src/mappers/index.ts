@@ -7,4 +7,5 @@ export { mapFhirMedicationRequest } from './mapFhirMedicationRequest';
 export { mapFhirAllergyIntolerance } from './mapFhirAllergyIntolerance';
 export { mapFhirProcedure } from './mapFhirProcedure';
 export { mapFhirDocumentReference } from './mapFhirDocumentReference';
+export { mapClinicalDocumentBundle } from './mapClinicalDocumentBundle';
 export { mapFhirServiceRequest } from './mapFhirServiceRequest';

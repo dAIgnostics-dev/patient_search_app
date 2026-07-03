@@ -73,6 +73,8 @@ After `npm run auth:generate`, default password for all accounts is **`cezih-dem
 | `VITE_AUTH_API_URL` | `.env` or Amplify env | Override auth Lambda URL (default: Vite middleware locally, `amplify_outputs.json` when deployed) |
 | `VITE_AUDIT_API_URL` | `.env` or Amplify env | Override audit Lambda URL (default: Vite middleware locally, `amplify_outputs.json` when deployed) |
 | `VITE_BUNDLE_SCOPE` | `.env` for `npm run dev` | Default **on** — only CEZIH bulk-import ids (~31 resources). Set `false` to search the full datastore (slower). Manifest: [`src/config/cezihBundleManifest.ts`](src/config/cezihBundleManifest.ts) |
+| `VITE_DOCUMENT_EDIT_WINDOW_MS` | `.env` for `npm run dev` | Max milliseconds after document date for edit/cancel; `unlimited` or unset = no limit |
+| `VITE_LOM_NOTIFICATION_URL` | `.env` for `npm run dev` | HTTP endpoint for LOM document-submitted notifications; unset = local mock queue (`mock-data/lom-notifications.jsonl`) |
 
 ### Adding clinical resources to the karton
 

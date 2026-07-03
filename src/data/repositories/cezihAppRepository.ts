@@ -387,6 +387,21 @@ export class CezihAppRepository implements AppRepository {
       date: mapped.date,
       description: mapped.description,
       contentType: mapped.contentType,
+      documentId: mapped.documentId,
+      compositionStatus: mapped.compositionStatus,
+      title: mapped.title,
+      encounterVisitId: mapped.encounterVisitId,
+      caseId: mapped.caseId,
+      caseDisplay: mapped.caseDisplay,
+      authorHzjzId: mapped.authorHzjzId,
+      authorName: mapped.authorName,
+      organizationHzzoCode: mapped.organizationHzzoCode,
+      organizationName: mapped.organizationName,
+      healthcareServiceName: mapped.healthcareServiceName,
+      hasSignature: mapped.hasSignature,
+      attachmentCount: mapped.attachmentCount,
+      anamnesisPreview: mapped.anamnesisPreview,
+      outcomeDisplay: mapped.outcomeDisplay,
     };
   }
 

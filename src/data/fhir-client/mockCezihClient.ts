@@ -1,5 +1,6 @@
 import type { FhirBundle, FhirBinary, FhirClinicalDocumentBundle, FhirCondition, FhirDocumentReference, FhirEncounter, FhirResource } from '../../fhir/types';
 import { CEZIH_MOCK_BUNDLES, CEZIH_MOCK_STORAGE, type CezihMockStorage } from '../mock/cezihBundles';
+import { TERMINOLOGY_MOCK_CODE_SYSTEMS, TERMINOLOGY_MOCK_VALUE_SETS } from '../mock/terminologyBundles';
 import {
   CEZIH_CASE_IDENTIFIER_SYSTEM,
   CEZIH_DOCUMENT_TYPE_SYSTEM,
@@ -16,6 +17,8 @@ const SUPPORTED_RESOURCE_TYPES: FhirReadableResourceType[] = [
   'Encounter',
   'Condition',
   'DocumentReference',
+  'CodeSystem',
+  'ValueSet',
 ];
 
 const MOCK_CEZIH_RESOURCES_URL = '/api/mock-cezih/resources';
@@ -65,7 +68,10 @@ async function initMockStorage(): Promise<void> {
   if (initialized) return;
   const persisted = await loadFileBackedMockStorage();
   for (const type of SUPPORTED_RESOURCE_TYPES) {
-    mockStorage.set(type, [...(persisted?.[type] ?? CEZIH_MOCK_BUNDLES[type] ?? [])]);
+    let fallback = CEZIH_MOCK_BUNDLES[type] ?? [];
+    if (type === 'CodeSystem') fallback = TERMINOLOGY_MOCK_CODE_SYSTEMS;
+    if (type === 'ValueSet') fallback = TERMINOLOGY_MOCK_VALUE_SETS;
+    mockStorage.set(type, [...(persisted?.[type] ?? fallback ?? [])]);
   }
   documentBundles = [...(persisted?.DocumentBundle ?? CEZIH_MOCK_STORAGE.DocumentBundle ?? [])];
   binaryResources = [...(persisted?.Binary ?? CEZIH_MOCK_STORAGE.Binary ?? [])];

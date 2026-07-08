@@ -45,6 +45,8 @@ const buildUpdateCaseMessage = read('src/data/case-management/buildUpdateCaseMes
 const buildRemissionCaseMessage = read('src/data/case-management/buildRemissionCaseMessage.ts');
 const buildRelapseCaseMessage = read('src/data/case-management/buildRelapseCaseMessage.ts');
 const buildResolveCaseMessage = read('src/data/case-management/buildResolveCaseMessage.ts');
+const terminologyService = read('src/data/services/terminologyService.ts');
+const terminologyApi = read('src/data/terminologyApi.ts');
 const cezihMockStore = read('mock-data/cezih-fhir-store.json');
 const parsedCezihMockStore = JSON.parse(cezihMockStore);
 const parseEncounterManagementResponse = read(
@@ -225,6 +227,21 @@ assertIncludes(
   parseCaseManagementResponse,
   'parseCaseManagementResponse',
   'parseCaseManagementResponse export',
+);
+assertIncludes(
+  terminologyService,
+  'class TerminologyService',
+  'Terminology service class',
+);
+assertIncludes(
+  terminologyService,
+  'getCodeSystemByUrl(',
+  'Terminology service getCodeSystemByUrl',
+);
+assertIncludes(
+  terminologyApi,
+  'syncTerminology(',
+  'Terminology API sync export',
 );
 assertNoDuplicateValues(
   (parsedCezihMockStore.Encounter ?? []).map((encounter) => encounter.id),

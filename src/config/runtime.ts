@@ -104,6 +104,16 @@ export function resolveCezihDefaultOrgHzzo(): string {
   return fromEnv || '1234';
 }
 
+export type TerminologyProviderMode = 'cezih' | 'mock' | 'static';
+
+export function resolveTerminologyProviderMode(): TerminologyProviderMode {
+  const fromEnv = (import.meta.env.VITE_TERMINOLOGY_PROVIDER as string | undefined)?.trim().toLowerCase();
+  if (fromEnv === 'cezih' || fromEnv === 'mock' || fromEnv === 'static') {
+    return fromEnv;
+  }
+  return resolveCezihApiBaseUrl() ? 'cezih' : 'mock';
+}
+
 export {
   resolveDocumentEditWindowMs,
   resolveLomNotificationUrl,

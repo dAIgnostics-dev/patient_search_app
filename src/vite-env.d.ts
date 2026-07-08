@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_BASE_URL?: string;
+  readonly VITE_AUTH_API_URL?: string;
+  readonly VITE_AUDIT_API_URL?: string;
   readonly VITE_BUNDLE_SCOPE?: string;
   readonly VITE_CEZIH_API_BASE_URL?: string;
   readonly VITE_CEZIH_MESSAGE_URL?: string;
@@ -12,6 +14,7 @@ interface ImportMetaEnv {
   readonly VITE_LOM_NOTIFICATION_URL?: string;
   readonly VITE_RESOURCE_SOURCE_DEFAULT?: string;
   readonly VITE_RESOURCE_SOURCE_MAP?: string;
+  readonly VITE_TERMINOLOGY_PROVIDER?: string;
 }
 
 interface ImportMeta {

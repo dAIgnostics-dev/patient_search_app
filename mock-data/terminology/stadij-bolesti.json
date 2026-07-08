@@ -1,0 +1,43 @@
+{
+  "resourceType": "CodeSystem",
+  "id": "stadij-bolesti",
+  "url": "http://fhir.cezih.hr/specifikacije/CodeSystem/stadij-bolesti",
+  "version": "2026-01",
+  "name": "StadijBolesti",
+  "status": "active",
+  "content": "complete",
+  "property": [
+    {
+      "code": "parent-id",
+      "uri": "http://fhir.cezih.hr/specifikacije/CodeSystem/stadij-bolesti/properties/parent-id",
+      "type": "code"
+    },
+    {
+      "code": "notSelectable",
+      "uri": "http://fhir.cezih.hr/specifikacije/CodeSystem/stadij-bolesti/properties/notSelectable",
+      "type": "boolean"
+    }
+  ],
+  "concept": [
+    {
+      "code": "1",
+      "display": "Stadij - Rak pluća",
+      "property": [
+        {
+          "code": "notSelectable",
+          "valueBoolean": true
+        }
+      ]
+    },
+    {
+      "code": "2",
+      "display": "Occult Carcinoma",
+      "property": [
+        {
+          "code": "parent-id",
+          "valueCode": "1"
+        }
+      ]
+    }
+  ]
+}

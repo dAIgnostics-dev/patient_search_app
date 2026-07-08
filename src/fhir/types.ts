@@ -1,3 +1,5 @@
+import type { FhirCodeSystem, FhirValueSet } from './terminologyTypes';
+
 export interface FhirIdentifier {
   system?: string;
   value?: string;
@@ -302,7 +304,9 @@ export type FhirResource =
   | FhirServiceRequest
   | FhirDiagnosticReport
   | FhirImagingStudy
-  | FhirBinary;
+  | FhirBinary
+  | FhirCodeSystem
+  | FhirValueSet;
 
 export interface FhirBundleEntry<T extends FhirResource = FhirResource> {
   resource: T;

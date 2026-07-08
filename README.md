@@ -1,219 +1,303 @@
-# CEZIH Patient Search (Practitioner PAA)
+# CEZIH PAA (Practitioner) — tehnička i certifikacijska dokumentacija
 
-Practitioner-facing app to look up patient kartons from **AWS HealthLake** via a Gen 2 Lambda FHIR proxy deployed from this project.
+Aplikacija za rad zdravstvenog djelatnika s pacijentskim kartonom. Ovaj README opisuje **samo lokalni POC razvoj** — bez AWS deploya, Amplify sandboxa i produkcijskih integracija.
 
-## Features
+## 1) Što je uključeno u lokalni POC
 
-- **Login** — plain-text account files per practitioner (POC only)
-- **MBO lookup** — enter patient MBO → open karton (no open name-only search); recently viewed patients on the MBO tab
-- **My patients** — patients who had an encounter with the logged-in practitioner; search, sort, and filter within your panel
-- **Patient karton** — sticky banner, at-a-glance summary, collapsible sections with jump nav, encounter timeline (highlights your visits), conditions, medications, allergies, procedures, documents, and referrals
-- **Localization** — Croatian (default) and English UI; FHIR status codes translated; Croatian uses `hr-HR` date format and 24-hour time
-- **Access audit (POC)** — MBO lookups, list selections, karton opens, and resource views logged locally (`audit/access.jsonl`) or to S3 (`access.jsonl` in the deployed audit bucket); not for production compliance
+- prijava djelatnika (tekstualni accounti)
+- MBO pretraga i „Moji pacijenti”
+- pregled kartona (timeline, sekcije, detalji)
+- lifecycle posjeta i slučajeva (CEZIH message eventi `1.x` i `2.x`)
+- lifecycle kliničkih dokumenata (MHD: submit/search/retrieve/update/cancel)
+- LOM outbound notifikacija nakon uspješnog submita dokumenta
+- terminology servisni sloj (mock/static provideri)
+- audit zapis u lokalni JSONL
 
-## Prerequisites
+Svi CEZIH/MHD/LOM pozivi u lokalnom modu idu na **mock implementacije** dok ne postavite live URL-ove i certifikat.
+
+## 2) Preduvjeti
 
 - Node.js 20+
-- AWS credentials configured
-- HealthLake datastore with CEZIH FHIR data imported (bulk import into your datastore)
+- `npm install` u root direktoriju projekta
 
-## Setup
+**Nije potrebno:** AWS račun, Amplify sandbox, HealthLake datastore, CEZIH certifikat.
+
+## 3) Brzo pokretanje
 
 ```bash
 npm install
 
-# Deploy Lambda FHIR proxy (writes amplify_outputs.json)
-export HEALTHLAKE_DATASTORE_ID=your-datastore-id
-export HEALTHLAKE_REGION=us-east-1
-export AWS_REGION=eu-north-1   # local sandbox only — where Amplify deploys the Lambda
-npm run sandbox
+# Potrebno za build (datoteka je u .gitignore)
+cp amplify_outputs.example.json amplify_outputs.json
 
-# Regenerate practitioner login accounts (optional — accounts are already committed)
-npm run auth:generate
-
-# Run the UI
 npm run dev
 ```
 
-Open http://localhost:5173
+Aplikacija je dostupna na `http://localhost:5173`.
 
-## Verify proxy
+### Demo korisnici
+
+Zadana lozinka za sve accounte: **`cezih-demo`**
+
+| Korisničko ime | Djelatnik    | HZJZ ID   |
+| -------------- | ------------ | --------- |
+| `ana.markovic` | Ana Marković | `1234567` |
+| `luka.novak`   | Luka Novak   | `2233445` |
+| `ivana.juric`  | Ivana Jurić  | `3344556` |
+| `ana.knezevic` | Ana Knezevic | `1234568` |
+
+Account datoteke: `auth/accounts/*.txt`
+
+### Primjer MBO-ova (mock podaci)
+
+| MBO         | Pacijent      |
+| ----------- | ------------- |
+| `180223069` | Ivan Horvat   |
+| `290334170` | Petra Kovačić |
+| `480556182` | Ana Horvat    |
+
+## 4) Lokalna arhitektura
+
+```mermaid
+flowchart TB
+  Browser[React UI localhost:5173]
+
+  subgraph viteMiddleware [Vite dev middleware]
+    AuthMw["/api/auth/*"]
+    AuditMw["/api/audit/*"]
+    LomMw["/api/lom-notifications"]
+    MockCezihMw["/api/mock-cezih/resources"]
+  end
+
+  subgraph mockStorage [Lokalni mock podaci]
+    Accounts[auth/accounts]
+    CezihStore[mock-data/cezih-fhir-store.json]
+    LomQueue[mock-data/lom-notifications.jsonl]
+    AuditLog[audit/access.jsonl]
+    Terminology[mock-data/terminology]
+  end
+
+  subgraph appServices [Aplikacijski servisi]
+    CaseSvc[CaseManagementService]
+    EncounterSvc[EncounterManagementService]
+    DocumentSvc[DocumentManagementService]
+    ChartSvc[PatientChartService]
+    TermSvc[TerminologyService]
+  end
+
+  Browser --> viteMiddleware
+  Browser --> appServices
+  AuthMw --> Accounts
+  AuditMw --> AuditLog
+  LomMw --> LomQueue
+  MockCezihMw --> CezihStore
+  appServices --> MockCezihMw
+  CaseSvc --> MockMessage[Mock CEZIH message client]
+  EncounterSvc --> MockMessage
+  DocumentSvc --> MockMhd[Mock MHD client]
+  TermSvc --> MockTerm[Mock terminology provider]
+  ChartSvc --> MockCezihClient[Mock CEZIH FHIR client]
+```
+
+### Kako lokalni fallback radi
+
+| Komponenta                        | Lokalno ponašanje                                               |
+| --------------------------------- | --------------------------------------------------------------- |
+| Auth                              | `POST /api/auth/login` (Vite middleware)                        |
+| Audit                             | `POST /api/audit/access` → `audit/access.jsonl`                 |
+| CEZIH FHIR read/search            | `MockCezihFhirClient` + `mock-data/cezih-fhir-store.json`       |
+| CEZIH message (posjete/slučajevi) | `MockCezihMessageClient` (bez `VITE_CEZIH_MESSAGE_URL`)         |
+| MHD (dokumenti)                   | `MockMhdClient` (bez `VITE_CEZIH_MHD_URL`)                      |
+| LOM notifikacija                  | lokalni queue `mock-data/lom-notifications.jsonl`               |
+| Terminologija                     | `VITE_TERMINOLOGY_PROVIDER=mock` (default kad nema CEZIH URL-a) |
+
+## 5) Korisnički tokovi
+
+```mermaid
+flowchart TD
+  Login[Prijava]
+  MboLookup[MBO pretraga]
+  MyPatients[Moji pacijenti]
+  Karton[Otvaranje kartona]
+  EncounterOps[Posjeta]
+  CaseOps[Slučaj]
+  DocumentOps[Dokument]
+
+  Login --> MboLookup
+  Login --> MyPatients
+  MboLookup --> Karton
+  MyPatients --> Karton
+  Karton --> EncounterOps
+  Karton --> CaseOps
+  Karton --> DocumentOps
+```
+
+Tipičan radni tok na kartonu:
+
+1. Kreiraj ili odaberi otvorenu posjetu
+2. Kreiraj slučaj na toj posjeti
+3. Pošalji klinički dokument za posjetu
+4. Po potrebi ažuriraj ili storniraj dokument unutar edit prozora
+
+## 6) Funkcionalni pregled (mapa za certifikaciju)
+
+### 6.1 Upravljanje slučajem
+
+| Funkcionalnost            | CEZIH  | API                    | UI                  |
+| ------------------------- | ------ | ---------------------- | ------------------- |
+| Kreiraj novi slučaj       | `2.1`  | `createCase`           | `CreateCaseForm`    |
+| Kreiraj ponovljeni slučaj | `2.2`  | `createCaseRecurrence` | `CreateCaseForm`    |
+| Promjena u remisiju       | `2.3`  | `remissionCase`        | `RemissionCaseForm` |
+| Zatvori slučaj            | `2.4`  | `resolveCase`          | `ResolveCaseForm`   |
+| Promjena u recidiv        | `2.5`  | `relapseCase`          | `RelapseCaseForm`   |
+| Obriši slučaj             | `2.7`  | `deleteCase`           | `DeleteCaseForm`    |
+| Izmijeni slučaj           | update | `updateCase`           | `UpdateCaseForm`    |
+
+### 6.2 Upravljanje posjetom
+
+| Funkcionalnost         | CEZIH | API               | UI                    |
+| ---------------------- | ----- | ----------------- | --------------------- |
+| Kreiraj posjetu        | `1.1` | `createEncounter` | `CreateEncounterForm` |
+| Izmijeni posjetu       | `1.2` | `updateEncounter` | `UpdateEncounterForm` |
+| Zatvori posjetu        | `1.3` | `closeEncounter`  | `CloseEncounterForm`  |
+| Obriši posjetu         | `1.4` | `cancelEncounter` | `CancelEncounterForm` |
+| Ponovno otvori posjetu | `1.5` | `reopenEncounter` | `ReopenEncounterForm` |
+
+### 6.3 Klinički dokumenti
+
+| Funkcionalnost   | IHE/MHD      | API                                         | UI                           |
+| ---------------- | ------------ | ------------------------------------------- | ---------------------------- |
+| Slanje dokumenta | ITI-65       | `submitDocument`                            | `CreateClinicalDocumentForm` |
+| Pretraživanje    | ITI-67       | `searchDocuments`                           | `PatientKarton`              |
+| Dohvat           | ITI-68       | `getDocumentMetadata`, `getDocumentContent` | selection panel              |
+| Ažuriranje       | nova verzija | `updateDocument`                            | `UpdateClinicalDocumentForm` |
+| Storniranje      | cancel       | `cancelDocument`                            | `CancelClinicalDocumentForm` |
+
+### 6.4 Terminologija
+
+| Funkcionalnost                             | IHE SVCM | API                                     |
+| ------------------------------------------ | -------- | --------------------------------------- |
+| Query CodeSystem                           | ITI-96   | `getCodeSystemByUrl`, `syncTerminology` |
+| Query ValueSet                             | ITI-95   | `getValueSetByUrl`                      |
+| Hijerarhija (`parent-id`, `notSelectable`) | parser   | `getConceptTreeByUrl`                   |
+
+Napomena: UI forme u POC-u još koriste statičke kataloge; terminology servis je pripremljen za buduću integraciju.
+
+### 6.5 Poslovna pravila
+
+Dostupnost akcija definirana je u `src/components/PatientKarton.tsx` (`isEncounter*`, `isCase*`, `isDocument*`), npr.:
+
+- recidiv samo iz statusa remisije
+- uređivanje dokumenta samo za `final` unutar edit prozora
+
+## 7) Konfiguracija lokalnog POC-a
+
+Za čisti lokalni rad **ne morate** postavljati `.env`. Default ponašanje koristi mock fallbacke.
+
+Ako želite eksplicitnu konfiguraciju, kreirajte `.env`:
 
 ```bash
-npm run verify:healthlake:proxy
+# Preporučeno za lokalni POC — svi resursi iz mock storea
+VITE_RESOURCE_SOURCE_DEFAULT=mock-cezih
+
+# CEZIH integracije — ostavite prazno za mock
+VITE_CEZIH_API_BASE_URL=
+VITE_CEZIH_MESSAGE_URL=
+VITE_CEZIH_MHD_URL=
+VITE_LOM_NOTIFICATION_URL=
+
+# Terminologija
+VITE_TERMINOLOGY_PROVIDER=mock
+
+# Dokumenti — bez vremenskog ograničenja za edit/cancel
+VITE_DOCUMENT_EDIT_WINDOW_MS=unlimited
+
+# CEZIH message metadata
+VITE_CEZIH_SOURCE_ENDPOINT=urn:oid:1.2.3.4.5.6
+VITE_CEZIH_DEFAULT_ORG_HZZO=1234
 ```
 
-## Demo credentials
+### Env varijable (referenca)
 
-After `npm run auth:generate`, default password for all accounts is **`cezih-demo`**:
+| Varijabla                      | Lokalni POC default      | Svrha                  |
+| ------------------------------ | ------------------------ | ---------------------- |
+| `VITE_RESOURCE_SOURCE_DEFAULT` | `mock-cezih` (preporuka) | Izvor FHIR podataka    |
+| `VITE_CEZIH_MESSAGE_URL`       | prazno → mock            | CEZIH message endpoint |
+| `VITE_CEZIH_MHD_URL`           | prazno → mock            | MHD endpoint           |
+| `VITE_CEZIH_API_BASE_URL`      | prazno → mock            | CEZIH FHIR base        |
+| `VITE_LOM_NOTIFICATION_URL`    | prazno → lokalni queue   | LOM outbound           |
+| `VITE_TERMINOLOGY_PROVIDER`    | `mock`                   | Terminology provider   |
+| `VITE_DOCUMENT_EDIT_WINDOW_MS` | `unlimited`              | Edit/cancel prozor     |
 
-| Username | Practitioner | HZJZ ID |
-|----------|--------------|---------|
-| `ana.markovic` | Ana Marković | 1234567 |
-| `luka.novak` | Luka Novak | 2233445 |
-| `ivana.juric` | Ivana Jurić | 3344556 |
-| `ana.knezevic` | Ana Knezevic | 1234568 |
+Varijable `VITE_API_BASE_URL`, `VITE_AUTH_API_URL`, `VITE_AUDIT_API_URL` **nisu potrebne** u lokalnom POC-u jer auth i audit idu kroz Vite middleware.
 
-## Example MBOs
+## 8) Validacija lokalnog rada
 
-| MBO | Patient |
-|-----|---------|
-| `180223069` | Ivan Horvat |
-| `290334170` | Petra Kovacic |
-| `480556182` | Ana Horvat |
-
-## Environment
-
-| Variable | Where | Purpose |
-|----------|--------|---------|
-| `HEALTHLAKE_DATASTORE_ID` | Shell when running `npm run sandbox` | Datastore ID for Lambda + IAM |
-| `HEALTHLAKE_REGION` | Shell when running sandbox | Region where HealthLake datastore exists |
-| `AWS_REGION` | Shell when running sandbox | Region where Amplify deploys the Lambda |
-| `VITE_API_BASE_URL` | `.env` or shell for `npm run dev` | Override FHIR proxy URL |
-| `VITE_AUTH_API_URL` | `.env` or Amplify env | Override auth Lambda URL (default: Vite middleware locally, `amplify_outputs.json` when deployed) |
-| `VITE_AUDIT_API_URL` | `.env` or Amplify env | Override audit Lambda URL (default: Vite middleware locally, `amplify_outputs.json` when deployed) |
-| `VITE_BUNDLE_SCOPE` | `.env` for `npm run dev` | Default **on** — only CEZIH bulk-import ids (~31 resources). Set `false` to search the full datastore (slower). Manifest: [`src/config/cezihBundleManifest.ts`](src/config/cezihBundleManifest.ts) |
-| `VITE_DOCUMENT_EDIT_WINDOW_MS` | `.env` for `npm run dev` | Max milliseconds after document date for edit/cancel; `unlimited` or unset = no limit |
-| `VITE_LOM_NOTIFICATION_URL` | `.env` for `npm run dev` | HTTP endpoint for LOM document-submitted notifications; unset = local mock queue (`mock-data/lom-notifications.jsonl`) |
-
-### Adding clinical resources to the karton
-
-Medications, allergies, procedures, documents, and referrals are loaded from HealthLake when present. After you import those FHIR resources:
-
-1. Add their resource ids to the matching arrays in [`src/config/cezihBundleManifest.ts`](src/config/cezihBundleManifest.ts) (e.g. `MedicationRequest`, `AllergyIntolerance`), **or**
-2. Set `VITE_BUNDLE_SCOPE=false` to search the full datastore.
-
-Redeploy the Lambda proxy if you add new resource types (`npm run sandbox`).
-
-## Architecture
-
-```text
-React UI → repository registry (config-based source routing)
-          ├─ CEZIH/Mock providers (placeholder FHIR R4 endpoints)
-          └─ HealthLake providers → healthlake-proxy Lambda
-Login    → auth-proxy Lambda (deployed) or Vite middleware (local dev)
-Audit    → audit-proxy Lambda → S3 access.jsonl (deployed) or Vite middleware → audit/access.jsonl (local)
-                              ↓
-                         HealthLake FHIR R4
-```
-
-### Source abstraction configuration
-
-Repository/provider abstraction is implemented under `src/data/repositories/` and `src/data/fhir-client/`.
-The UI consumes repository-backed APIs so data source changes stay in config and provider wiring.
-
-Per-resource routing config lives in `src/config/resourceSource.ts`.
-
-Environment variables for switching providers:
-
-| Variable | Example | Purpose |
-|----------|---------|---------|
-| `VITE_RESOURCE_SOURCE_DEFAULT` | `healthlake` | Global fallback source (`healthlake`, `cezih`, `mock-cezih`) |
-| `VITE_RESOURCE_SOURCE_MAP` | `Patient:cezih,DiagnosticReport:healthlake` | Per-resource source override map |
-| `VITE_CEZIH_API_BASE_URL` | `https://cezih.example.hr` | Placeholder CEZIH FHIR base (`/fhir/<Resource>` expected) |
-
-Default ownership model:
-- CEZIH: `Patient`, `Practitioner`, `Organization`, `Encounter`, `Condition`, `DocumentReference`
-- HealthLake: `DiagnosticReport`, `ImagingStudy`, `Binary`
-
-Future CEZIH resources (`PractitionerRole`, `HealthcareService`, `Location`, `Endpoint`, `ValueSet`, `CodeSystem`) are already included in source routing keys.
-
-Identity mapping extension points are in `src/data/identity/`.
-
-### Service layer (clinician workflow)
-
-To prepare CEZIH + HealthLake coexistence without UI rewrites, the clinician workflow now uses dedicated services:
-
-- `src/data/services/patientChartService.ts` — central patient chart entry point (`getPatientChart`) used by chart screens.
-- `src/data/services/stitching/patientChartAssembler.ts` — resource stitching layer that assembles a unified chart model and timeline view.
-- `src/data/services/patientSearchService.ts` — business-level search API (`findPatientByMbo`, `findPatientsByName`) decoupled from provider query syntax.
-- `src/data/services/myPatientsService.ts` — dedicated `My Patients` workflow service (`getMyPatients`, `findPatientByMbo`).
-
-Compatibility adapters:
-- `src/data/kartonApi.ts`
-- `src/data/practitionerPatients.ts`
-
-These adapters preserve existing component call signatures while delegating to the service layer.
-
-`ClinicianContext` is defined in `src/data/services/types.ts` and carried through service APIs so future CEZIH authorization requirements can be enforced without breaking consumers.
-
-### Local architecture validation
+Pokrenite integracijske provjere:
 
 ```bash
 npm run validate:architecture
 ```
 
-### Access audit log (POC)
+Pojedinačne provjere:
 
-The UI sends fire-and-forget audit events. Locally, the Vite dev/preview server appends to **`audit/access.jsonl`** (gitignored). When deployed, **`audit-proxy`** appends to **`s3://<auditBucket>/access.jsonl`** (bucket name in `amplify_outputs.json` → `custom.auditBucketName`).
+| Skripta                      | Što provjerava                   |
+| ---------------------------- | -------------------------------- |
+| `validate:encounter-message` | CEZIH encounter poruke (`1.x`)   |
+| `validate:case-message`      | CEZIH case poruke (`2.x`)        |
+| `validate:document-submit`   | MHD submit (ITI-65)              |
+| `validate:document-search`   | MHD pretraga (ITI-67)            |
+| `validate:document-read`     | MHD dohvat (ITI-68)              |
+| `validate:document-update`   | Nova verzija dokumenta           |
+| `validate:document-cancel`   | Storno dokumenta                 |
+| `validate:terminology`       | Parser, hijerarhija, cache, sync |
+| `validate:lom-notification`  | LOM event nakon submita          |
 
-Locally the endpoint is `POST /api/audit/access`; deployed it is `POST <auditApiUrl>/access`.
+## 9) Struktura projekta (lokalni POC)
 
-Each line is a flat JSON object with nested `actor`, `patient`, `resource`, and `context` blocks:
+| Putanja                      | Opis                                           |
+| ---------------------------- | ---------------------------------------------- |
+| `src/components/`            | UI ekrani i forme                              |
+| `src/data/services/`         | Poslovna logika                                |
+| `src/data/fhir-client/`      | Mock CEZIH/message klijenti                    |
+| `src/data/mhd-client/`       | Mock MHD klijent                               |
+| `src/data/lom-notification/` | LOM klijent + lokalni queue                    |
+| `src/data/terminology/`      | Terminology servis                             |
+| `server/`                    | Vite middleware (auth, audit, LOM, mock-cezih) |
+| `mock-data/`                 | Mock FHIR store i terminology                  |
+| `auth/accounts/`             | POC login accounti                             |
+| `audit/`                     | Lokalni audit log (`access.jsonl`)             |
+| `scripts/`                   | Validacijske skripte                           |
 
-| Field | Purpose |
-|-------|---------|
-| `eventId` | Unique UUID per event |
-| `sessionId` | UUID created at login; ties events to one practitioner session |
-| `correlationId` | UUID per patient journey (lookup → karton → resource views) |
-| `action` | Event type (see table below) |
-| `outcome` | `success` \| `not_found` \| `error` |
-| `occurredAt` | Client timestamp |
-| `recordedAt` | Server append timestamp |
-| `actor` | `{ practitionerId, username, hzjzId, displayName }` |
-| `patient` | `{ id, mbo, displayName }` when applicable |
-| `resource` | `{ type, id }` for resource views |
-| `lookup` | `{ mbo }` for MBO searches |
-| `context` | `{ source, locale }` when applicable |
+## 10) Što nije u lokalnom POC opsegu
 
-| `action` | When |
-|----------|------|
-| `auth.login` | Successful practitioner login |
-| `auth.login.failed` | Failed login (`actor.username` only; no `sessionId`) |
-| `auth.logout` | User logs out |
-| `mbo.lookup` | MBO search submitted |
-| `patient.list.select` | Patient chosen from My patients or Recently viewed |
-| `patient.karton.open` | Patient karton load completes (any outcome) |
-| `patient.resource.view` | User opens a detail panel (visit, condition, practitioner, organization, etc.) |
+| Funkcionalnost                               | Status                                  |
+| -------------------------------------------- | --------------------------------------- |
+| CEZIH Pull notifikacije (`getNotifications`) | Nije implementirano                     |
+| CEZIH Push notifikacije (webhook)            | Nije implementirano                     |
+| Live CEZIH endpointi s certifikatom          | Nije konfigurirano                      |
+| Produkcijska autentifikacija                 | Nije implementirano (samo POC accounti) |
+| Dinamičke terminologije u UI formama         | Nije implementirano (servis postoji)    |
+| AWS Amplify deploy / HealthLake proxy        | Nije potrebno za lokalni POC            |
 
-## Project layout
+## 11) Master tablica za certifikacijsku dokumentaciju
 
-| Path | Purpose |
-|------|---------|
-| [`amplify/functions/healthlake-proxy/`](amplify/functions/healthlake-proxy/) | Lambda FHIR proxy |
-| [`amplify/functions/auth-proxy/`](amplify/functions/auth-proxy/) | Lambda login (bundled `accounts.json`) |
-| [`amplify/functions/audit-proxy/`](amplify/functions/audit-proxy/) | Lambda access audit → S3 |
-| [`src/data/healthlakeApiClient.ts`](src/data/healthlakeApiClient.ts) | Karton + patient search |
-| [`auth/accounts/`](auth/accounts/) | POC practitioner credentials (local dev) |
-| [`mock-data/practitioners/`](mock-data/practitioners/) | FHIR Practitioner JSON for `npm run auth:generate` |
+| Područje            | Funkcionalnost                       | Lokalni POC status             |
+| ------------------- | ------------------------------------ | ------------------------------ |
+| Slučajevi           | 7 operacija                          | Implementirano (mock message)  |
+| Posjete             | 5 operacija                          | Implementirano (mock message)  |
+| Dokumenti           | Submit/Search/Retrieve/Update/Cancel | Implementirano (mock MHD)      |
+| LOM                 | Outbound nakon submita               | Implementirano (lokalni queue) |
+| Terminologija       | Service layer                        | Djelomično (UI još statički)   |
+| CEZIH Notifications | Pull/Push                            | Nije implementirano            |
+| Auth                | Login                                | Implementirano (POC)           |
+| Audit               | Evidencija pristupa                  | Implementirano (lokalni JSONL) |
 
-## Account files
+## 12) Sljedeći koraci (izvan lokalnog POC-a)
 
-One file per practitioner in `auth/accounts/<fhirId>.txt`:
+Kad bude dostupan CEZIH certifikat i live endpointi:
 
-```txt
-username=ana.markovic
-password=cezih-demo
-practitionerId=1466
-hzjzId=1234567
-firstName=Ana
-lastName=Marković
-```
-
-Regenerate when mock practitioners change: `npm run auth:generate` (reads `mock-data/practitioners/`, updates `auth/accounts/*.txt` and `amplify/functions/auth-proxy/accounts.json`).
-
-To edit accounts manually without regenerating, update both `auth/accounts/<fhirId>.txt` and the matching entry in `amplify/functions/auth-proxy/accounts.json`.
-
-**Note:** Text-file / bundled JSON auth is for POC only. Replace with real authentication before production.
-
-## Amplify Hosting
-
-After connecting this repo in Amplify Console (app root: **repository root**):
-
-1. Set backend env vars: `HEALTHLAKE_DATASTORE_ID`, `HEALTHLAKE_REGION` (do **not** set `AWS_*` vars — Amplify blocks them and sets the deploy region automatically)
-2. Build uses [`amplify.yml`](amplify.yml): Node 20, `npm ci`, backend `ampx pipeline-deploy`, frontend `npm run build` → artifacts in `dist/`
-3. Deploy generates `amplify_outputs.json` with `healthlakeApiUrl`, `authApiUrl`, `auditApiUrl`
-4. The UI automatically uses the Lambda URLs from outputs (no `VITE_*` overrides needed)
-5. Download audit log: `aws s3 cp s3://<auditBucketName>/access.jsonl .`
-
-For local sandbox only, set `AWS_REGION` in your terminal before `npm run sandbox` (see Environment table above).
+1. Postaviti `VITE_CEZIH_MESSAGE_URL`, `VITE_CEZIH_MHD_URL`, `VITE_CEZIH_API_BASE_URL`
+2. Postaviti `VITE_TERMINOLOGY_PROVIDER=cezih`
+3. Pokrenuti `syncTerminology()` za inkrementalni dohvat šifrarnika
+4. Implementirati CEZIH notification servis (Pull/Push) u backend integracijskom sloju

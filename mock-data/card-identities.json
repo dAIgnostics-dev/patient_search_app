@@ -1,0 +1,14 @@
+[
+  {
+    "cardId": "mock-ana-001",
+    "givenName": "Ana",
+    "familyName": "Marković",
+    "practitionerId": "1466"
+  },
+  {
+    "cardId": "mock-luka-002",
+    "givenName": "Luka",
+    "familyName": "Novak",
+    "practitionerId": "2466"
+  }
+]

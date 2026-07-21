@@ -1,6 +1,6 @@
 import { useAuth } from './auth/AuthContext';
 import { AppShell } from './components/AppShell';
-import { LoginForm } from './components/LoginForm';
+import { CardLoginScreen } from './components/CardLoginScreen';
 import './App.css';
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
 
   return (
     <div className="app">
-      {session ? <AppShell /> : <LoginForm />}
+      {session ? <AppShell /> : <CardLoginScreen />}
     </div>
   );
 }

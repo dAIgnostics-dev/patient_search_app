@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import { createAuditMiddleware } from './server/auditMiddleware';
 import { createAuthMiddleware } from './server/authMiddleware';
+import { createCardReaderMiddleware } from './server/cardReaderMiddleware';
 import { createLomNotificationMiddleware, defaultLomQueuePath } from './server/lomNotificationMiddleware';
 import { createMockCezihMiddleware } from './server/mockCezihMiddleware';
 
@@ -20,12 +21,14 @@ export default defineConfig({
       name: 'auth-middleware',
       configureServer(server) {
         server.middlewares.use(createAuditMiddleware(auditDir));
+        server.middlewares.use(createCardReaderMiddleware());
         server.middlewares.use(createAuthMiddleware(accountsDir));
         server.middlewares.use(createLomNotificationMiddleware(lomQueueFile));
         server.middlewares.use(createMockCezihMiddleware(mockCezihStorageFile));
       },
       configurePreviewServer(server) {
         server.middlewares.use(createAuditMiddleware(auditDir));
+        server.middlewares.use(createCardReaderMiddleware());
         server.middlewares.use(createAuthMiddleware(accountsDir));
         server.middlewares.use(createLomNotificationMiddleware(lomQueueFile));
         server.middlewares.use(createMockCezihMiddleware(mockCezihStorageFile));

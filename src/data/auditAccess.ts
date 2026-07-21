@@ -41,6 +41,7 @@ interface AuditResource {
 interface AuditContext {
   source?: PatientAccessSource;
   locale?: string;
+  authMethod?: 'card' | 'password';
 }
 
 interface AuditEventBase {
@@ -115,16 +116,24 @@ function buildEvent(
   };
 }
 
-export function logAuthLogin(session: PractitionerSession, locale?: string): void {
+export function logAuthLogin(
+  session: PractitionerSession,
+  locale?: string,
+  authMethod: 'card' | 'password' = 'password',
+): void {
   const ensured = ensureAuditSessionId(session);
   postAuditEvent(
     buildEvent(ensured, 'auth.login', 'success', {
-      context: locale ? { locale } : undefined,
+      context: { ...(locale ? { locale } : {}), authMethod },
     }),
   );
 }
 
-export function logAuthLoginFailed(username: string, locale?: string): void {
+export function logAuthLoginFailed(
+  username: string,
+  locale?: string,
+  authMethod: 'card' | 'password' = 'password',
+): void {
   postAuditEvent({
     eventId: newEventId(),
     sessionId: null,
@@ -132,7 +141,7 @@ export function logAuthLoginFailed(username: string, locale?: string): void {
     occurredAt: new Date().toISOString(),
     outcome: 'error',
     actor: { username: username.trim() },
-    context: locale ? { locale } : undefined,
+    context: { ...(locale ? { locale } : {}), authMethod },
   });
 }
 

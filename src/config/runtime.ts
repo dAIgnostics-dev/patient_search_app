@@ -64,6 +64,19 @@ export function resolveAuthLoginUrl(): string {
   return base ? `${base}/login` : '/api/auth/login';
 }
 
+export function resolveCardReaderStatusUrl(): string {
+  return '/api/card-reader/status';
+}
+
+export function resolveCardReaderIdentityUrl(): string {
+  return '/api/card-reader/identity';
+}
+
+/** Card login always uses local Vite middleware (requires local card-reader bridge). */
+export function resolveCardReaderLoginUrl(): string {
+  return '/api/auth/login-with-card';
+}
+
 export function resolveAuditAccessUrl(): string {
   const base = resolveAuditApiBaseUrl();
   return base ? `${base}/access` : '/api/audit/access';

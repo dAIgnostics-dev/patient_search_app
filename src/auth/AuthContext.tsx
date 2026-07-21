@@ -6,14 +6,18 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { resolveAuthLoginUrl } from '../config/runtime';
+import { resolveCardReaderLoginUrl } from '../config/runtime';
 import { logAuthLogin, logAuthLogout } from '../data/auditAccess';
 import { createAuditSessionId, ensureAuditSessionId } from '../data/auditSession';
 import { SESSION_STORAGE_KEY, type PractitionerSession } from './types';
 
+export interface CardLoginInput {
+  givenName: string;
+}
+
 interface AuthContextValue {
   session: PractitionerSession | null;
-  login: (username: string, password: string, locale?: string) => Promise<void>;
+  loginWithCard: (input: CardLoginInput, locale?: string) => Promise<void>;
   logout: (locale?: string) => void;
 }
 
@@ -37,16 +41,18 @@ function loadSession(): PractitionerSession | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<PractitionerSession | null>(() => loadSession());
 
-  const login = useCallback(async (username: string, password: string, locale?: string) => {
-    const response = await fetch(resolveAuthLoginUrl(), {
+  const loginWithCard = useCallback(async (input: CardLoginInput, locale?: string) => {
+    const response = await fetch(resolveCardReaderLoginUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify({
+        givenName: input.givenName.trim(),
+      }),
     });
 
     const payload = (await response.json()) as PractitionerSession & { error?: string };
     if (!response.ok) {
-      throw new Error(payload.error ?? 'Login failed');
+      throw new Error(payload.error ?? 'card_login_failed');
     }
 
     const next: PractitionerSession = {
@@ -59,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(next));
     setSession(next);
-    logAuthLogin(next, locale);
+    logAuthLogin(next, locale, 'card');
   }, []);
 
   const logout = useCallback((locale?: string) => {
@@ -70,8 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ session, login, logout }),
-    [session, login, logout],
+    () => ({ session, loginWithCard, logout }),
+    [session, loginWithCard, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

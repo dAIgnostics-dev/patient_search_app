@@ -4,7 +4,7 @@ Aplikacija za rad zdravstvenog djelatnika s pacijentskim kartonom. Ovaj README o
 
 ## 1) Što je uključeno u lokalni POC
 
-- prijava djelatnika (tekstualni accounti)
+- prijava djelatnika putem čitača kartica (card-reader bridge)
 - MBO pretraga i „Moji pacijenti”
 - pregled kartona (timeline, sekcije, detalji)
 - lifecycle posjeta i slučajeva (CEZIH message eventi `1.x` i `2.x`)
@@ -26,16 +26,46 @@ Svi CEZIH/MHD/LOM pozivi u lokalnom modu idu na **mock implementacije** dok ne p
 
 ```bash
 npm install
+npm --prefix card-reader-bridge install
 
 # Potrebno za build (datoteka je u .gitignore)
 cp amplify_outputs.example.json amplify_outputs.json
 
-npm run dev
+# Pokretanje aplikacije + card-reader bridgea (mock mode)
+npm run dev:with-bridge
 ```
 
 Aplikacija je dostupna na `http://localhost:5173`.
 
-### Demo korisnici
+Za rad s **pravim čitačem kartica** postavite `PKCS11_MODULE` na putanju do eOI PKCS#11 biblioteke i pokrenite bridge u `pkcs11` modu (default):
+
+```bash
+export PKCS11_MODULE="/Applications/.../pkcs11/modul.dylib"
+
+CARD_READER_MODE=pkcs11 \
+PKCS11_MODULE="$PKCS11_MODULE" \
+npm run card-reader:bridge
+# u drugom terminalu:
+npm run dev
+```
+
+Potreban je `pkcs11-tool` (`brew install opensc`).
+
+### Prijava karticom
+
+Prijava je moguća **isključivo karticom**. UI prikazuje status čitača i kartice te gumb „Prijava karticom”.
+
+| Komponenta | Uloga |
+| ---------- | ----- |
+| `card-reader-bridge/` | Lokalni servis (`:4711`) — PKCS#11 detekcija i čitanje identiteta |
+| Vite middleware | Proxy `/api/card-reader/*`, mapiranje na `auth/accounts` |
+| `mock-data/card-identities.json` | Mock kartice za dev (`CARD_READER_MODE=mock`) |
+
+**Mapiranje (POC):** ako uneseno ime odgovara imenu s kartice, prijava ide na račun `ana.markovic` (1466). Za osobnu iskaznicu konfigurirajte `PKCS11_MODULE` u bridge okruženju kad AKD/eOI middleware bude dostupan.
+
+**Dev bez kartice:** na login ekranu (samo u dev modu) koristite gumbove „Mock kartica: Ana/Luka” — zahtijeva `CARD_READER_MODE=mock` (`npm run dev:with-bridge`).
+
+### Demo korisnici (mapiranje kartice / accounta)
 
 Zadana lozinka za sve accounte: **`cezih-demo`**
 
@@ -64,6 +94,7 @@ flowchart TB
 
   subgraph viteMiddleware [Vite dev middleware]
     AuthMw["/api/auth/*"]
+    CardMw["/api/card-reader/*"]
     AuditMw["/api/audit/*"]
     LomMw["/api/lom-notifications"]
     MockCezihMw["/api/mock-cezih/resources"]
@@ -87,6 +118,7 @@ flowchart TB
 
   Browser --> viteMiddleware
   Browser --> appServices
+  CardMw --> Bridge[card-reader-bridge :4711]
   AuthMw --> Accounts
   AuditMw --> AuditLog
   LomMw --> LomQueue
@@ -103,7 +135,7 @@ flowchart TB
 
 | Komponenta                        | Lokalno ponašanje                                               |
 | --------------------------------- | --------------------------------------------------------------- |
-| Auth                              | `POST /api/auth/login` (Vite middleware)                        |
+| Auth                              | `POST /api/auth/login-with-card` + card-reader bridge           |
 | Audit                             | `POST /api/audit/access` → `audit/access.jsonl`                 |
 | CEZIH FHIR read/search            | `MockCezihFhirClient` + `mock-data/cezih-fhir-store.json`       |
 | CEZIH message (posjete/slučajevi) | `MockCezihMessageClient` (bez `VITE_CEZIH_MESSAGE_URL`)         |
@@ -209,6 +241,12 @@ VITE_LOM_NOTIFICATION_URL=
 # Terminologija
 VITE_TERMINOLOGY_PROVIDER=mock
 
+# Card reader bridge (lokalni servis)
+CARD_READER_MODE=mock
+CARD_READER_BRIDGE_URL=http://127.0.0.1:4711
+# Za čitanje osobne (kad je AKD/eOI middleware instaliran):
+# PKCS11_MODULE=/path/to/eoi-pkcs11.so
+
 # Dokumenti — bez vremenskog ograničenja za edit/cancel
 VITE_DOCUMENT_EDIT_WINDOW_MS=unlimited
 
@@ -227,6 +265,9 @@ VITE_CEZIH_DEFAULT_ORG_HZZO=1234
 | `VITE_CEZIH_API_BASE_URL`      | prazno → mock            | CEZIH FHIR base        |
 | `VITE_LOM_NOTIFICATION_URL`    | prazno → lokalni queue   | LOM outbound           |
 | `VITE_TERMINOLOGY_PROVIDER`    | `mock`                   | Terminology provider   |
+| `CARD_READER_MODE`               | `pkcs11` (ili `mock`)    | Način rada bridgea     |
+| `CARD_READER_BRIDGE_URL`         | `http://127.0.0.1:4711`  | URL bridge servisa     |
+| `PKCS11_MODULE`                  | —                        | PKCS#11 lib za eOI/osobnu |
 | `VITE_DOCUMENT_EDIT_WINDOW_MS` | `unlimited`              | Edit/cancel prozor     |
 
 Varijable `VITE_API_BASE_URL`, `VITE_AUTH_API_URL`, `VITE_AUDIT_API_URL` **nisu potrebne** u lokalnom POC-u jer auth i audit idu kroz Vite middleware.
@@ -251,6 +292,7 @@ Pojedinačne provjere:
 | `validate:document-update`   | Nova verzija dokumenta           |
 | `validate:document-cancel`   | Storno dokumenta                 |
 | `validate:terminology`       | Parser, hijerarhija, cache, sync |
+| `validate:card-auth`         | Mapiranje kartice na practitioner account |
 | `validate:lom-notification`  | LOM event nakon submita          |
 
 ## 9) Struktura projekta (lokalni POC)
@@ -290,7 +332,7 @@ Pojedinačne provjere:
 | LOM                 | Outbound nakon submita               | Implementirano (lokalni queue) |
 | Terminologija       | Service layer                        | Djelomično (UI još statički)   |
 | CEZIH Notifications | Pull/Push                            | Nije implementirano            |
-| Auth                | Login                                | Implementirano (POC)           |
+| Auth                | Prijava karticom                     | Implementirano (POC)           |
 | Audit               | Evidencija pristupa                  | Implementirano (lokalni JSONL) |
 
 ## 12) Sljedeći koraci (izvan lokalnog POC-a)

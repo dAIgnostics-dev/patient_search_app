@@ -1,7 +1,16 @@
-import { readdirSync, readFileSync } from 'node:fs';
 import type { ServerResponse } from 'node:http';
-import { join } from 'node:path';
 import type { Connect } from 'vite';
+import {
+  fetchCardIdentityFromBridge,
+} from './cardReaderMiddleware';
+import {
+  cardIdentityNamesMatch,
+  findAccountByUsername,
+  loadAccounts,
+  MOCK_CARD_LOGIN_USERNAME,
+  toSessionPayload,
+  type CardIdentityInput,
+} from './cardAuthShared';
 
 export interface PractitionerAccount {
   username: string;
@@ -10,37 +19,7 @@ export interface PractitionerAccount {
   hzjzId: string;
   firstName: string;
   lastName: string;
-}
-
-function parseAccountFile(content: string): PractitionerAccount | null {
-  const fields: Record<string, string> = {};
-  for (const line of content.split('\n')) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith('#')) continue;
-    const eq = trimmed.indexOf('=');
-    if (eq <= 0) continue;
-    fields[trimmed.slice(0, eq).trim()] = trimmed.slice(eq + 1).trim();
-  }
-
-  const { username, password, practitionerId, hzjzId, firstName, lastName } = fields;
-  if (!username || !password || !practitionerId || !hzjzId || !firstName || !lastName) {
-    return null;
-  }
-
-  return { username, password, practitionerId, hzjzId, firstName, lastName };
-}
-
-function loadAccounts(accountsDir: string): PractitionerAccount[] {
-  const files = readdirSync(accountsDir).filter((f) => f.endsWith('.txt'));
-  const accounts: PractitionerAccount[] = [];
-
-  for (const file of files) {
-    const content = readFileSync(join(accountsDir, file), 'utf8');
-    const account = parseAccountFile(content);
-    if (account) accounts.push(account);
-  }
-
-  return accounts;
+  oib?: string;
 }
 
 function readJsonBody(req: Connect.IncomingMessage): Promise<unknown> {
@@ -103,13 +82,52 @@ export function createAuthMiddleware(accountsDir: string): Connect.NextHandleFun
           return;
         }
 
-        sendJson(res, 200, {
-          practitionerId: match.practitionerId,
-          hzjzId: match.hzjzId,
-          firstName: match.firstName,
-          lastName: match.lastName,
-          username: match.username,
-        });
+        sendJson(res, 200, toSessionPayload(match));
+      } catch {
+        sendJson(res, 400, { error: 'Invalid request body.' });
+      }
+      return;
+    }
+
+    if (url === '/api/auth/login-with-card' && req.method === 'POST') {
+      try {
+        const body = (await readJsonBody(req)) as {
+          givenName?: string;
+        };
+        const givenName = body.givenName?.trim();
+
+        if (!givenName) {
+          sendJson(res, 400, { error: 'Name is required.' });
+          return;
+        }
+
+        const bridgeResult = await fetchCardIdentityFromBridge();
+        if (!bridgeResult.ok || !bridgeResult.identity) {
+          const errorCode =
+            bridgeResult.status === 404
+              ? 'card_not_present'
+              : bridgeResult.status === 503
+                ? 'identity_not_available'
+                : 'bridge_unavailable';
+          sendJson(res, bridgeResult.status === 404 ? 404 : 503, { error: errorCode });
+          return;
+        }
+
+        const accounts = loadAccounts(accountsDir);
+        const cardIdentity = bridgeResult.identity as CardIdentityInput;
+
+        if (!cardIdentityNamesMatch({ givenName }, cardIdentity)) {
+          sendJson(res, 401, { error: 'card_identity_mismatch' });
+          return;
+        }
+
+        const account = findAccountByUsername(accounts, MOCK_CARD_LOGIN_USERNAME);
+        if (!account) {
+          sendJson(res, 401, { error: 'Card is not mapped to a practitioner account.' });
+          return;
+        }
+
+        sendJson(res, 200, toSessionPayload(account));
       } catch {
         sendJson(res, 400, { error: 'Invalid request body.' });
       }

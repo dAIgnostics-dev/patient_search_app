@@ -15,6 +15,7 @@ interface ImportMetaEnv {
   readonly VITE_RESOURCE_SOURCE_DEFAULT?: string;
   readonly VITE_RESOURCE_SOURCE_MAP?: string;
   readonly VITE_TERMINOLOGY_PROVIDER?: string;
+  readonly VITE_CARD_READER_BRIDGE_URL?: string;
 }
 
 interface ImportMeta {

@@ -1,0 +1,14 @@
+{
+  "name": "card-reader-bridge",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/server.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.19",
+    "tsx": "^4.22.4",
+    "typescript": "^5.7.3"
+  }
+}

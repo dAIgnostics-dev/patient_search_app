@@ -69,7 +69,7 @@ export function UpdateClinicalDocumentForm({
       setLoadingDefaults(true);
       setError(null);
       try {
-        const defaults = await getDocumentEditDefaults(sourceDocument.id);
+        const defaults = await getDocumentEditDefaults(session, sourceDocument.id);
         if (cancelled) return;
         if (!defaults) {
           setError(t("documentUpdate.loadFailed"));

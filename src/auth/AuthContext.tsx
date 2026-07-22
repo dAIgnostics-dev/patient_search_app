@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react';
 import { resolveCardReaderLoginUrl } from '../config/runtime';
+import { DEFAULT_PRACTITIONER_ROLE } from './roles';
 import { logAuthLogin, logAuthLogout } from '../data/auditAccess';
 import { createAuditSessionId, ensureAuditSessionId } from '../data/auditSession';
 import { SESSION_STORAGE_KEY, type PractitionerSession } from './types';
@@ -29,10 +30,14 @@ function loadSession(): PractitionerSession | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as PractitionerSession;
     const ensured = ensureAuditSessionId(parsed);
-    if (!parsed.auditSessionId) {
-      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(ensured));
+    const withRole: PractitionerSession = {
+      ...ensured,
+      role: ensured.role || DEFAULT_PRACTITIONER_ROLE,
+    };
+    if (!parsed.auditSessionId || !parsed.role) {
+      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(withRole));
     }
-    return ensured;
+    return withRole;
   } catch {
     return null;
   }
@@ -61,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       firstName: payload.firstName,
       lastName: payload.lastName,
       username: payload.username,
+      role: payload.role || DEFAULT_PRACTITIONER_ROLE,
       auditSessionId: createAuditSessionId(),
     };
     sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(next));

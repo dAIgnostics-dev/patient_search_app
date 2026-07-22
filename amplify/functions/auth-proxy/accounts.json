@@ -5,7 +5,8 @@
     "practitionerId": "1466",
     "hzjzId": "1234567",
     "firstName": "Ana",
-    "lastName": "Marković"
+    "lastName": "Marković",
+    "role": "private_care_specialist"
   },
   {
     "username": "luka.novak",
@@ -13,7 +14,8 @@
     "practitionerId": "2466",
     "hzjzId": "2233445",
     "firstName": "Luka",
-    "lastName": "Novak"
+    "lastName": "Novak",
+    "role": "private_care_specialist"
   },
   {
     "username": "ivana.juric",
@@ -21,7 +23,8 @@
     "practitionerId": "3466",
     "hzjzId": "3344556",
     "firstName": "Ivana",
-    "lastName": "Jurić"
+    "lastName": "Jurić",
+    "role": "private_care_specialist"
   },
   {
     "username": "ana.knezevic",
@@ -29,6 +32,7 @@
     "practitionerId": "5466",
     "hzjzId": "1234568",
     "firstName": "Ana",
-    "lastName": "Knezevic"
+    "lastName": "Knezevic",
+    "role": "private_care_specialist"
   }
 ]

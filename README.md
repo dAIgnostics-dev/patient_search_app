@@ -65,6 +65,49 @@ Prijava je moguća **isključivo karticom**. UI prikazuje status čitača i kart
 
 **Dev bez kartice:** na login ekranu (samo u dev modu) koristite gumbove „Mock kartica: Ana/Luka” — zahtijeva `CARD_READER_MODE=mock` (`npm run dev:with-bridge`).
 
+### Autorizacija po ulozi (operacije nad slučajevima)
+
+Za rad s operacijama nad slučajevima (kreiranje novog / ponovljenog, brisanje, recidiv, remisija, zatvaranje, izmjena) liječnik mora imati jednu od dozvoljenih uloga: `specialist`, `physicians`, `pediatrician`, `gynecologist`, `physician_school`, `emergency_tehnician`, `emergency_physician`, `specialist_colonoscopy`, `specialist_cytology`, `specialist_epidemiology`, `specialist_patology`, `specialist_pulmology`, `specialist_radiology`, `radiology_manager`, `private_care_specialist`, `resident`, `dentist`.
+
+- Popis i provjera: [src/auth/roles.ts](src/auth/roles.ts) (`canManageCases`).
+- Provjera se izvodi autoritativno u [src/data/caseApi.ts](src/data/caseApi.ts) (blokira slanje poruke) i u UI-u ([src/components/PatientKarton.tsx](src/components/PatientKarton.tsx), [src/components/KartonSelectionPanel.tsx](src/components/KartonSelectionPanel.tsx)) skrivanjem/onemogućavanjem akcija.
+- **POC default:** aplikacija je namijenjena privatnicima, pa liječnik pri prijavi dobiva ulogu `private_care_specialist` (polje `role=` u `auth/accounts/*.txt`, fallback ako izostane). Čitanje stvarne uloge s pametne kartice implementirat će se kad bude dostupna certifikacijska dokumentacija.
+
+### Autorizacija po ulozi (operacije nad posjetama)
+
+Za rad s operacijama nad posjetama (kreiranje, izmjena podataka, zatvaranje, brisanje/poništavanje, ponovno otvaranje) liječnik mora imati jednu od dozvoljenih uloga: `sgp_administrator`, `sgp_laboratory_technician`, `specialist`, `specialistic_nurse`, `specialistic_technician`, `admission_officer`, `physicians`, `pediatrician`, `gynecologist`, `physician_school`, `emergency_tehnician`, `emergency_physician`, `resident`, `specialist_colonoscopy`, `specialist_cytology`, `specialist_epidemiology`, `specialist_patology`, `specialist_pulmology`, `specialist_radiology`, `radiology_manager`, `radiology_engineer`, `private_care_specialist`, `private_care_specialistic_nurse`, `private_care_specialistic_technician`, `dentist`, `nurse`, `laboratory_technician`, `biochemistry_engineer`, `home_therapist`, `home_caregiver`.
+
+- Popis i provjera: [src/auth/roles.ts](src/auth/roles.ts) (`canManageEncounters`).
+- Provjera se izvodi autoritativno u [src/data/encounterApi.ts](src/data/encounterApi.ts) (blokira slanje poruke) i u UI-u ([src/components/PatientKarton.tsx](src/components/PatientKarton.tsx)) onemogućavanjem gumba „Nova posjeta" i skrivanjem per-posjeta akcija.
+- **POC default:** isti kao za slučajeve — `private_care_specialist` (na popisu je za posjete).
+
+### Autorizacija po ulozi (razmjena kliničkih dokumenata)
+
+Sigurnosni preduvjeti su isti kao za slučajeve i posjete (autentikacija, autorizacija, TLS, digitalni potpis). Uloge se razlikuju po vrsti operacije:
+
+- **Registracija / zamjena novom verzijom / storniranje dokumenta [ITI-65]** — dozvoljene uloge ovise o **tipu dokumenta**. Puna matrica iz specifikacije:
+  - `resident`, `specialist`, `specialist_colonoscopy`, `specialist_cytology`, `specialist_epidemiology`, `specialist_patology`, `specialist_pulmology`, `specialist_radiology` — Nalaz nakon hitnog prijema u bolnicu, Otpusno pismo nakon hitnog prijema u bolnicu, Opći nalaz na internu uputnicu
+  - `radiology_manager` — Opći nalaz na internu uputnicu
+  - `emergency_tehnician`, `emergency_physician` — Izvješće nakon intervencije hitne pomoći
+  - `private_care_specialist` — Izvješće nakon pregleda u ambulanti privatne zdravstvene ustanove (`011`), Nalazi iz specijalističke ordinacije privatne zdravstvene ustanove, Otpusno pismo iz privatne zdravstvene ustanove
+  - `helpdesk_clinical_documents` — sve vrste kliničkih dokumenata
+  - **POC napomena:** aplikacija trenutno implementira samo tip `011`, pa se provjera provodi samo za taj tip (`DOCUMENT_REGISTRATION_ROLES_BY_TYPE`); ostali tipovi dodaju se kad budu dostupni njihovi CEZIH kodovi.
+- **Pretraživanje dokumenata [ITI-67]** — dozvoljene uloge: `dentist`, `emergency_physician`, `emergency_tehnician`, `gynecologist`, `health_visitor`, `home_caregiver`, `home_therapist`, `occupational_physician`, `pediatrician`, `physician_school`, `physicians`, `radiology_manager`, `resident`, `specialist`, `specialist_colonoscopy`, `specialist_cytology`, `specialist_epidemiology`, `specialist_patology`, `specialist_pulmology`, `specialist_radiology`, `specialistic_nurse`, `specialistic_technician`, `private_care_specialist`, `private_care_specialistic_nurse`, `private_care_specialistic_technician`, `helpdesk_clinical_documents`.
+- **Dohvat dokumenta [ITI-68]** — dozvoljene uloge: `dentist`, `emergency_physician`, `emergency_tehnician`, `gynecologist`, `health_visitor`, `home_caregiver`, `home_therapist`, `occupational_physician`, `pediatrician`, `physician_school`, `physicians`, `radiology_manager`, `resident`, `specialist`, `specialist_colonoscopy`, `specialist_cytology`, `specialist_epidemiology`, `specialist_patology`, `specialist_pulmology`, `specialist_radiology`, `private_care_specialist`, `helpdesk_clinical_documents`.
+
+- Popis i provjera: [src/auth/roles.ts](src/auth/roles.ts) (`canRegisterDocument`, `canSearchDocuments`, `canRetrieveDocuments`).
+- Provjera se izvodi autoritativno u [src/data/documentApi.ts](src/data/documentApi.ts) (blokira slanje/pretragu/dohvat) i u UI-u ([src/components/PatientKarton.tsx](src/components/PatientKarton.tsx), [src/components/KartonSelectionPanel.tsx](src/components/KartonSelectionPanel.tsx)) onemogućavanjem gumba i skrivanjem akcija.
+- **POC default:** `private_care_specialist` je na sva tri popisa (registracija `011`, pretraga, dohvat), pa zadani tijek ostaje nepromijenjen.
+
+### Sigurnosni preduvjeti i transportni sloj
+
+Preduvjeti sigurnosti dijele se na:
+
+- **Autentikacija** — identitet s certifikata pametne kartice (PKCS#11).
+- **Autorizacija** — provjera uloge (gore).
+- **Digitalni potpis** — privatnim ključem na kartici (PKCS#11 `sign`).
+- **Sigurnost na transportnom sloju (TLS/HTTPS, po potrebi mTLS)** — **zaseban je od kartice**. Ostvaruje se šifriranim kanalom prema CEZIH endpointima i konfigurira na deploymentu (`https://` u `VITE_CEZIH_*` URL-ovima + eventualni klijentski certifikat koji izdaje CEZIH). Trenutno je sve na mock implementacijama pa TLS nije konfiguriran.
+
 ### Demo korisnici (mapiranje kartice / accounta)
 
 Zadana lozinka za sve accounte: **`cezih-demo`**
@@ -333,6 +376,8 @@ Pojedinačne provjere:
 | Terminologija       | Service layer                        | Djelomično (UI još statički)   |
 | CEZIH Notifications | Pull/Push                            | Nije implementirano            |
 | Auth                | Prijava karticom                     | Implementirano (POC)           |
+| Autorizacija        | Provjera uloge za slučajeve          | Implementirano (POC default `private_care_specialist`) |
+| Transportni sloj    | TLS/mTLS prema CEZIH-u               | Nije konfigurirano (mock)      |
 | Audit               | Evidencija pristupa                  | Implementirano (lokalni JSONL) |
 
 ## 12) Sljedeći koraci (izvan lokalnog POC-a)

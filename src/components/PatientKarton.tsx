@@ -1,4 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  canManageCases,
+  canManageEncounters,
+  canRegisterDocument,
+  canRetrieveDocuments,
+  canSearchDocuments,
+} from '../auth/roles';
 import type { PractitionerSession } from '../auth/types';
 import {
   logPatientKartonOpen,
@@ -379,17 +386,31 @@ export function PatientKarton({
     return documents.find((item) => item.id === selection.id) ?? null;
   }, [selection, documents]);
 
-  const canUpdateSelectedEncounter = isEncounterEditable(selectedEncounter);
-  const canCloseSelectedEncounter = isEncounterEditable(selectedEncounter);
-  const canCancelSelectedEncounter = isEncounterCancellable(selectedEncounter);
-  const canReopenSelectedEncounter = isEncounterReopenable(selectedEncounter);
-  const canUpdateSelectedCase = isCaseEditable(selectedCondition);
-  const canDeleteSelectedCase = isCaseDeletable(selectedCondition);
-  const canRelapseSelectedCase = isCaseRelapsable(selectedCondition);
-  const canRemissionSelectedCase = isCaseRemissionable(selectedCondition);
-  const canResolveSelectedCase = isCaseResolvable(selectedCondition);
-  const canNewVersionSelectedDocument = isDocumentEditable(selectedDocument);
-  const canCancelSelectedDocument = isDocumentEditable(selectedDocument);
+  const canManageEncountersRole = canManageEncounters(viewerSession?.role);
+  const canUpdateSelectedEncounter =
+    canManageEncountersRole && isEncounterEditable(selectedEncounter);
+  const canCloseSelectedEncounter =
+    canManageEncountersRole && isEncounterEditable(selectedEncounter);
+  const canCancelSelectedEncounter =
+    canManageEncountersRole && isEncounterCancellable(selectedEncounter);
+  const canReopenSelectedEncounter =
+    canManageEncountersRole && isEncounterReopenable(selectedEncounter);
+  const canManageCasesRole = canManageCases(viewerSession?.role);
+  const canUpdateSelectedCase = canManageCasesRole && isCaseEditable(selectedCondition);
+  const canDeleteSelectedCase = canManageCasesRole && isCaseDeletable(selectedCondition);
+  const canRelapseSelectedCase = canManageCasesRole && isCaseRelapsable(selectedCondition);
+  const canRemissionSelectedCase = canManageCasesRole && isCaseRemissionable(selectedCondition);
+  const canResolveSelectedCase = canManageCasesRole && isCaseResolvable(selectedCondition);
+  const canRegisterDocumentsRole = canRegisterDocument(
+    viewerSession?.role,
+    CEZIH_DOCUMENT_TYPE_AMBULANTA_PRIVATNA,
+  );
+  const canSearchDocumentsRole = canSearchDocuments(viewerSession?.role);
+  const canRetrieveDocumentsRole = canRetrieveDocuments(viewerSession?.role);
+  const canNewVersionSelectedDocument =
+    canRegisterDocumentsRole && isDocumentEditable(selectedDocument);
+  const canCancelSelectedDocument =
+    canRegisterDocumentsRole && isDocumentEditable(selectedDocument);
 
   const openCaseEncounters = useMemo(() => {
     if (!detail || !viewerSession) return [];
@@ -400,6 +421,20 @@ export function PatientKarton({
         encounter.practitionerHzjzId === viewerSession.hzjzId,
     );
   }, [detail, viewerSession]);
+
+  const createCaseDisabled = !canManageCasesRole || openCaseEncounters.length === 0;
+  const createCaseTitle = !canManageCasesRole
+    ? t('karton.caseRoleNotAllowed')
+    : openCaseEncounters.length === 0
+      ? t('karton.createCaseRequiresOpenEncounter')
+      : undefined;
+
+  const createDocumentDisabled = !canRegisterDocumentsRole || openCaseEncounters.length === 0;
+  const createDocumentTitle = !canRegisterDocumentsRole
+    ? t('karton.documentRegisterRoleNotAllowed')
+    : openCaseEncounters.length === 0
+      ? t('documentCreate.requiresOpenEncounter')
+      : undefined;
 
   const resolvedCases = useMemo(() => {
     if (!detail) return [];
@@ -699,105 +734,111 @@ export function PatientKarton({
       </div>
       {viewerSession && (
         <div className="karton-nav-actions">
-          <button
-            type="button"
-            className="secondary-button karton-nav-action"
-            onClick={() => {
-              setCreateSuccessMessage(null);
-              setShowCreateCase(false);
-              setShowCreateCaseRecurrence(false);
-              setShowUpdateCase(false);
-              setShowDeleteCase(false);
-              setShowRelapseCase(false);
-              setShowRemissionCase(false);
-              setShowResolveCase(false);
-              setShowCreateEncounter(true);
-            }}
+          <span
+            className={`nav-action-tooltip${!canManageEncountersRole ? ' is-disabled' : ''}`}
+            title={!canManageEncountersRole ? t('karton.encounterRoleNotAllowed') : undefined}
           >
-            {t('karton.newEncounter')}
-          </button>
-          <button
-            type="button"
-            className="secondary-button karton-nav-action"
-            disabled={openCaseEncounters.length === 0}
-            title={
-              openCaseEncounters.length === 0
-                ? t('karton.createCaseRequiresOpenEncounter')
-                : undefined
-            }
-            onClick={() => {
-              setCreateSuccessMessage(null);
-              setShowCreateEncounter(false);
-              setShowCreateCaseRecurrence(false);
-              setShowUpdateCase(false);
-              setShowDeleteCase(false);
-              setShowRelapseCase(false);
-              setShowRemissionCase(false);
-              setShowResolveCase(false);
-              setShowUpdateEncounter(false);
-              setShowCloseEncounter(false);
-              setShowCancelEncounter(false);
-              setShowReopenEncounter(false);
-              setShowCreateCase(true);
-            }}
+            <button
+              type="button"
+              className="secondary-button karton-nav-action"
+              disabled={!canManageEncountersRole}
+              onClick={() => {
+                setCreateSuccessMessage(null);
+                setShowCreateCase(false);
+                setShowCreateCaseRecurrence(false);
+                setShowUpdateCase(false);
+                setShowDeleteCase(false);
+                setShowRelapseCase(false);
+                setShowRemissionCase(false);
+                setShowResolveCase(false);
+                setShowCreateEncounter(true);
+              }}
+            >
+              {t('karton.newEncounter')}
+            </button>
+          </span>
+          <span
+            className={`nav-action-tooltip${createCaseDisabled ? ' is-disabled' : ''}`}
+            title={createCaseTitle}
           >
-            {t('karton.createCase')}
-          </button>
-          <button
-            type="button"
-            className="secondary-button karton-nav-action"
-            disabled={openCaseEncounters.length === 0}
-            title={
-              openCaseEncounters.length === 0
-                ? t('karton.createCaseRequiresOpenEncounter')
-                : undefined
-            }
-            onClick={() => {
-              setCreateSuccessMessage(null);
-              setShowCreateEncounter(false);
-              setShowCreateCase(false);
-              setShowUpdateCase(false);
-              setShowDeleteCase(false);
-              setShowRelapseCase(false);
-              setShowRemissionCase(false);
-              setShowResolveCase(false);
-              setShowUpdateEncounter(false);
-              setShowCloseEncounter(false);
-              setShowCancelEncounter(false);
-              setShowReopenEncounter(false);
-              setShowCreateCaseRecurrence(true);
-            }}
+            <button
+              type="button"
+              className="secondary-button karton-nav-action"
+              disabled={createCaseDisabled}
+              onClick={() => {
+                setCreateSuccessMessage(null);
+                setShowCreateEncounter(false);
+                setShowCreateCaseRecurrence(false);
+                setShowUpdateCase(false);
+                setShowDeleteCase(false);
+                setShowRelapseCase(false);
+                setShowRemissionCase(false);
+                setShowResolveCase(false);
+                setShowUpdateEncounter(false);
+                setShowCloseEncounter(false);
+                setShowCancelEncounter(false);
+                setShowReopenEncounter(false);
+                setShowCreateCase(true);
+              }}
+            >
+              {t('karton.createCase')}
+            </button>
+          </span>
+          <span
+            className={`nav-action-tooltip${createCaseDisabled ? ' is-disabled' : ''}`}
+            title={createCaseTitle}
           >
-            {t('karton.createCaseRecurrence')}
-          </button>
-          <button
-            type="button"
-            className="secondary-button karton-nav-action"
-            disabled={openCaseEncounters.length === 0}
-            title={
-              openCaseEncounters.length === 0
-                ? t('documentCreate.requiresOpenEncounter')
-                : undefined
-            }
-            onClick={() => {
-              setCreateSuccessMessage(null);
-              setShowCreateEncounter(false);
-              setShowCreateCase(false);
-              setShowCreateCaseRecurrence(false);
-              setShowUpdateCase(false);
-              setShowDeleteCase(false);
-              setShowRelapseCase(false);
-              setShowRemissionCase(false);
-              setShowResolveCase(false);
-              setShowUpdateEncounter(false);
-              setShowCloseEncounter(false);
-              setShowCancelEncounter(false);
-              setShowReopenEncounter(false);
-              setShowCreateDocument(true);
-            }}
+            <button
+              type="button"
+              className="secondary-button karton-nav-action"
+              disabled={createCaseDisabled}
+              onClick={() => {
+                setCreateSuccessMessage(null);
+                setShowCreateEncounter(false);
+                setShowCreateCase(false);
+                setShowUpdateCase(false);
+                setShowDeleteCase(false);
+                setShowRelapseCase(false);
+                setShowRemissionCase(false);
+                setShowResolveCase(false);
+                setShowUpdateEncounter(false);
+                setShowCloseEncounter(false);
+                setShowCancelEncounter(false);
+                setShowReopenEncounter(false);
+                setShowCreateCaseRecurrence(true);
+              }}
+            >
+              {t('karton.createCaseRecurrence')}
+            </button>
+          </span>
+          <span
+            className={`nav-action-tooltip${createDocumentDisabled ? ' is-disabled' : ''}`}
+            title={createDocumentTitle}
           >
-            {t('karton.submitDocument')}
-          </button>
+            <button
+              type="button"
+              className="secondary-button karton-nav-action"
+              disabled={createDocumentDisabled}
+              onClick={() => {
+                setCreateSuccessMessage(null);
+                setShowCreateEncounter(false);
+                setShowCreateCase(false);
+                setShowCreateCaseRecurrence(false);
+                setShowUpdateCase(false);
+                setShowDeleteCase(false);
+                setShowRelapseCase(false);
+                setShowRemissionCase(false);
+                setShowResolveCase(false);
+                setShowUpdateEncounter(false);
+                setShowCloseEncounter(false);
+                setShowCancelEncounter(false);
+                setShowReopenEncounter(false);
+                setShowCreateDocument(true);
+              }}
+            >
+              {t('karton.submitDocument')}
+            </button>
+          </span>
         </div>
       )}
     </div>
@@ -1098,6 +1139,10 @@ export function PatientKarton({
             defaultOpen={documents.length > 0}
             error={documentsError ?? undefined}
           >
+            {!canSearchDocumentsRole ? (
+              <p className="empty-section">{t('karton.documentSearchRoleNotAllowed')}</p>
+            ) : (
+              <>
             <div className="document-filters">
               <label>
                 {t('documentSearch.dateFrom')}
@@ -1191,6 +1236,8 @@ export function PatientKarton({
                 })}
               </ul>
             )}
+              </>
+            )}
           </KartonSection>
 
           {(['medications', 'allergies', 'procedures', 'referrals'] as const).map(
@@ -1272,6 +1319,8 @@ export function PatientKarton({
         {selection && (
           <KartonSelectionPanel
             selection={selection}
+            viewerSession={viewerSession}
+            canRetrieveDocument={canRetrieveDocumentsRole}
             encounterSummary={selectedEncounter}
             canUpdateEncounter={canUpdateSelectedEncounter}
             canCloseEncounter={canCloseSelectedEncounter}

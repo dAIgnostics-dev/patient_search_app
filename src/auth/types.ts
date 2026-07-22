@@ -4,6 +4,7 @@ export interface PractitionerSession {
   firstName: string;
   lastName: string;
   username: string;
+  role: string;
   auditSessionId: string;
 }
 

@@ -4,3 +4,4 @@ practitionerId=5466
 hzjzId=1234568
 firstName=Ana
 lastName=Knezevic
+role=private_care_specialist

@@ -8,8 +8,15 @@ export interface PractitionerAccount {
   hzjzId: string;
   firstName: string;
   lastName: string;
+  role: string;
   oib?: string;
 }
+
+/**
+ * POC default: aplikacija je namijenjena privatnicima. Ako account datoteka ne
+ * navodi `role=`, liječnik dobiva ulogu `private_care_specialist`.
+ */
+export const DEFAULT_PRACTITIONER_ROLE = 'private_care_specialist';
 
 export interface CardIdentityInput {
   cardId?: string;
@@ -31,12 +38,21 @@ function parseAccountFile(content: string): PractitionerAccount | null {
     fields[trimmed.slice(0, eq).trim()] = trimmed.slice(eq + 1).trim();
   }
 
-  const { username, password, practitionerId, hzjzId, firstName, lastName, oib } = fields;
+  const { username, password, practitionerId, hzjzId, firstName, lastName, role, oib } = fields;
   if (!username || !password || !practitionerId || !hzjzId || !firstName || !lastName) {
     return null;
   }
 
-  return { username, password, practitionerId, hzjzId, firstName, lastName, oib };
+  return {
+    username,
+    password,
+    practitionerId,
+    hzjzId,
+    firstName,
+    lastName,
+    role: role?.trim() || DEFAULT_PRACTITIONER_ROLE,
+    oib,
+  };
 }
 
 export function loadAccounts(accountsDir: string): PractitionerAccount[] {
@@ -112,5 +128,6 @@ export function toSessionPayload(account: PractitionerAccount) {
     firstName: account.firstName,
     lastName: account.lastName,
     username: account.username,
+    role: account.role || DEFAULT_PRACTITIONER_ROLE,
   };
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { PractitionerSession } from '../auth/types';
 import type { KartonSelection } from '../domain/models';
 import {
   getAllergyDetail,
@@ -34,6 +35,8 @@ import type {
 
 interface KartonSelectionPanelProps {
   selection: KartonSelection;
+  viewerSession?: PractitionerSession;
+  canRetrieveDocument?: boolean;
   encounterSummary?: EncounterSummary | null;
   canUpdateEncounter?: boolean;
   canCloseEncounter?: boolean;
@@ -64,6 +67,8 @@ interface KartonSelectionPanelProps {
 
 export function KartonSelectionPanel({
   selection,
+  viewerSession,
+  canRetrieveDocument = false,
   encounterSummary = null,
   canUpdateEncounter = false,
   canCloseEncounter = false,
@@ -461,10 +466,11 @@ export function KartonSelectionPanel({
         : document.caseId;
 
     async function handleOpenFullDocument() {
+      if (!viewerSession) return;
       setMetadataLoading(true);
       setMetadataError(null);
       try {
-        const metadata = await getDocumentMetadata(selection.id);
+        const metadata = await getDocumentMetadata(viewerSession, selection.id);
         if (!metadata) {
           setMetadataError(t('panel.metadataLoadFailed'));
           return;
@@ -479,10 +485,11 @@ export function KartonSelectionPanel({
     }
 
     async function handleDownloadAttachment() {
+      if (!viewerSession) return;
       setDownloadLoading(true);
       setDownloadError(null);
       try {
-        const content = await getDocumentContent(selection.id);
+        const content = await getDocumentContent(viewerSession, selection.id);
         if (!content?.base64Data) {
           setDownloadError(t('panel.contentLoadFailed'));
           return;
@@ -552,15 +559,17 @@ export function KartonSelectionPanel({
           ]}
         />
         <div className="selection-panel-actions">
-          <button
-            type="button"
-            className="secondary-button"
-            onClick={() => void handleOpenFullDocument()}
-            disabled={metadataLoading}
-          >
-            {metadataLoading ? t('panel.loading') : t('panel.openFullDocument')}
-          </button>
-          {(document.attachmentCount ?? 0) > 0 && (
+          {canRetrieveDocument && (
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => void handleOpenFullDocument()}
+              disabled={metadataLoading}
+            >
+              {metadataLoading ? t('panel.loading') : t('panel.openFullDocument')}
+            </button>
+          )}
+          {canRetrieveDocument && (document.attachmentCount ?? 0) > 0 && (
             <button
               type="button"
               className="secondary-button"
@@ -581,6 +590,9 @@ export function KartonSelectionPanel({
             </button>
           )}
         </div>
+        {!canRetrieveDocument && (
+          <p className="hint">{t('karton.documentRetrieveRoleNotAllowed')}</p>
+        )}
         {metadataError && <p className="error">{metadataError}</p>}
         {downloadError && <p className="error">{downloadError}</p>}
         {metadataOpen && documentMetadata && (

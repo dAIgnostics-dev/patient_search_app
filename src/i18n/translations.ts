@@ -131,6 +131,16 @@ const hr = {
     yearsFew: '{count} godine',
     newEncounter: 'Nova posjeta',
     createCase: 'Kreiraj slučaj',
+    caseRoleNotAllowed:
+      'Vaša uloga nema dopuštenja za rad sa slučajevima.',
+    encounterRoleNotAllowed:
+      'Vaša uloga nema dopuštenja za rad s posjetama.',
+    documentRegisterRoleNotAllowed:
+      'Vaša uloga nema dopuštenja za registraciju kliničkih dokumenata.',
+    documentSearchRoleNotAllowed:
+      'Vaša uloga nema dopuštenja za pretraživanje kliničkih dokumenata.',
+    documentRetrieveRoleNotAllowed:
+      'Vaša uloga nema dopuštenja za dohvat kliničkih dokumenata.',
     createCaseRequiresOpenEncounter:
       'Za kreiranje slučaja potrebna je otvorena posjeta ovog liječnika.',
     createCaseRecurrence: 'Kreiraj ponovljeni slučaj',
@@ -757,6 +767,16 @@ const en: TranslationMessages = {
     yearsFew: '{count} years',
     newEncounter: 'New encounter',
     createCase: 'Create case',
+    caseRoleNotAllowed:
+      'Your role is not permitted to manage cases.',
+    encounterRoleNotAllowed:
+      'Your role is not permitted to manage encounters.',
+    documentRegisterRoleNotAllowed:
+      'Your role is not permitted to register clinical documents.',
+    documentSearchRoleNotAllowed:
+      'Your role is not permitted to search clinical documents.',
+    documentRetrieveRoleNotAllowed:
+      'Your role is not permitted to retrieve clinical documents.',
     createCaseRequiresOpenEncounter:
       'Creating a case requires an open encounter for this practitioner.',
     createCaseRecurrence: 'Create recurring case',

@@ -4,3 +4,4 @@ practitionerId=1466
 hzjzId=1234567
 firstName=Ana
 lastName=Marković
+role=private_care_specialist

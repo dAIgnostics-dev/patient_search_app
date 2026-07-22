@@ -1,6 +1,8 @@
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2, Handler } from 'aws-lambda';
 import accounts from './accounts.json';
 
+const DEFAULT_PRACTITIONER_ROLE = 'private_care_specialist';
+
 interface PractitionerAccount {
   username: string;
   password: string;
@@ -8,6 +10,7 @@ interface PractitionerAccount {
   hzjzId: string;
   firstName: string;
   lastName: string;
+  role?: string;
 }
 
 function normalizePath(rawPath: string): string {
@@ -90,6 +93,7 @@ export const handler: Handler<APIGatewayProxyEventV2, APIGatewayProxyResultV2> =
         firstName: match.firstName,
         lastName: match.lastName,
         username: match.username,
+        role: match.role?.trim() || DEFAULT_PRACTITIONER_ROLE,
       });
     } catch {
       return jsonResponse(400, { error: 'Invalid request body.' });

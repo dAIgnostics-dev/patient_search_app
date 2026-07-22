@@ -4,3 +4,4 @@ practitionerId=3466
 hzjzId=3344556
 firstName=Ivana
 lastName=Jurić
+role=private_care_specialist

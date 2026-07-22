@@ -365,6 +365,22 @@ body::before {
   box-shadow: var(--shadow-sm);
 }
 
+.secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.nav-action-tooltip {
+  display: inline-flex;
+}
+
+.nav-action-tooltip.is-disabled {
+  cursor: not-allowed;
+}
+
 .secondary-button:hover:not(:disabled) {
   background: var(--color-primary-light);
   border-color: var(--color-hover-border);

@@ -1,3 +1,4 @@
+import { DEFAULT_PRACTITIONER_ROLE } from '../../auth/roles';
 import type { PractitionerSession } from '../../auth/types';
 import type { PatientSummary } from '../../domain/models';
 import type { PractitionerPatientSummary } from '../legacy/practitionerPatientsLegacy';
@@ -19,6 +20,7 @@ function toSession(context: ClinicianContext): PractitionerSession {
     firstName,
     lastName,
     hzjzId,
+    role: context.role?.trim() || DEFAULT_PRACTITIONER_ROLE,
     auditSessionId,
   };
 }

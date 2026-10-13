@@ -380,6 +380,7 @@ export class MockCezihFhirClient implements FhirClient {
     resourceType: FhirReadableResourceType,
     id: string,
   ): Promise<TResource | null> {
+    if (resourceType === 'Binary') return await getMockBinaryById(id) as TResource | null;
     await initMockStorage();
     const list = mockStorage.get(resourceType) ?? [];
     const match = list.find((resource) => resource.id === id);

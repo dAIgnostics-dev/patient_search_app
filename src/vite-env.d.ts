@@ -1,6 +1,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  readonly VITE_CEZIH_MODE?: 'mock' | 'cert-offline' | 'cert-live';
+  readonly VITE_CEZIH_CASE_MESSAGE_URL?: string;
+  readonly VITE_CEZIH_ENCOUNTER_MESSAGE_URL?: string;
   readonly VITE_API_BASE_URL?: string;
   readonly VITE_AUTH_API_URL?: string;
   readonly VITE_AUDIT_API_URL?: string;

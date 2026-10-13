@@ -1,0 +1,3 @@
+# Natuknice za reviziju dokumentacije
+
+- Prijava s pametnom karticom (PKCS#11 / card-reader bridge); u UI-u je prijava isključivo karticom, ne korisničkim imenom i lozinkom.

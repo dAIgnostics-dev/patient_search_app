@@ -1,5 +1,6 @@
-import { findMockEncounterByVisitId } from '../fhir-client/mockCezihClient';
-import { CEZIH_HZJZ_SYSTEM } from '../../fhir/types';
+import { MockCezihFhirClient } from '../fhir-client/mockCezihClient';
+import type { FhirClient } from '../fhir-client/types';
+import { CEZIH_HZJZ_SYSTEM, CEZIH_VISIT_SYSTEM, type FhirEncounter } from '../../fhir/types';
 import type { SubmitDocumentInput, SubmitDocumentValidationIssue } from './types';
 
 const MAX_ATTACHMENT_BYTES = 2 * 1024 * 1024;
@@ -54,11 +55,15 @@ export function validateSubmitDocumentInputSync(
 export async function validateSubmitDocumentInput(
   input: SubmitDocumentInput,
   practitionerHzjzId: string,
+  client: FhirClient = new MockCezihFhirClient(),
 ): Promise<SubmitDocumentValidationIssue[]> {
   const issues = validateSubmitDocumentInputSync(input);
   if (issues.length > 0) return issues;
 
-  const encounter = await findMockEncounterByVisitId(input.encounterVisitId.trim());
+  const encounters = await client.searchAll<FhirEncounter>('Encounter', { identifier: input.encounterVisitId.trim() });
+  const encounter = encounters.find((item) => item.identifier?.some(
+    (id) => id.system === CEZIH_VISIT_SYSTEM && id.value === input.encounterVisitId.trim(),
+  ));
   if (!encounter) {
     issues.push({ field: 'encounterVisitId', message: 'Encounter not found.' });
     return issues;

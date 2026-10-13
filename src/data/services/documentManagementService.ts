@@ -27,7 +27,9 @@ import { validateSubmitDocumentInput } from '../document-management/validateSubm
 import { validateUpdateDocumentInput } from '../document-management/validateUpdateDocumentInput';
 import { getLomNotificationClient } from '../lom-notification/lomNotificationClientFactory';
 import type { LomNotificationClient } from '../lom-notification/lomNotificationClient';
-import { appendMockBinary, findMockDocumentReferenceById, getMockBinaryById } from '../fhir-client/mockCezihClient';
+import { appendMockBinary, MockCezihFhirClient } from '../fhir-client/mockCezihClient';
+import type { FhirClient } from '../fhir-client/types';
+import type { FhirBinary } from '../../fhir/types';
 import type { DocumentExchangeRepository } from '../repositories/document-exchange/documentExchangeRepository';
 import type { ClinicianContext } from './types';
 
@@ -103,6 +105,7 @@ export class DocumentManagementService {
   constructor(
     private readonly repository: DocumentExchangeRepository,
     private readonly lomClient: LomNotificationClient = getLomNotificationClient(),
+    private readonly fhirClient: FhirClient = new MockCezihFhirClient(),
   ) {}
   async submitDocument(
     context: ClinicianContext,
@@ -122,29 +125,30 @@ export class DocumentManagementService {
       };
     }
 
-    const validationIssues = await validateSubmitDocumentInput(
-      { ...input, practitionerHzjzId },
-      practitionerHzjzId,
-    );
-    if (validationIssues.length > 0) {
-      return mapValidationIssues(validationIssues);
-    }
-
-    const { bundle, binaryId } = buildSubmitDocumentRequest(
-      { ...input, practitionerHzjzId },
-      { practitionerName: practitionerDisplayName(context) },
-    );
-
-    if (binaryId && input.attachment) {
-      await appendMockBinary({
-        resourceType: 'Binary',
-        id: binaryId,
-        contentType: input.attachment.contentType,
-        data: input.attachment.base64Data,
-      });
-    }
-
     try {
+      const validationIssues = await validateSubmitDocumentInput(
+        { ...input, practitionerHzjzId },
+        practitionerHzjzId,
+        this.fhirClient,
+      );
+      if (validationIssues.length > 0) {
+        return mapValidationIssues(validationIssues);
+      }
+
+      const { bundle, binaryId } = buildSubmitDocumentRequest(
+        { ...input, practitionerHzjzId },
+        { practitionerName: practitionerDisplayName(context) },
+      );
+
+      if (this.fhirClient instanceof MockCezihFhirClient && binaryId && input.attachment) {
+        await appendMockBinary({
+          resourceType: 'Binary',
+          id: binaryId,
+          contentType: input.attachment.contentType,
+          data: input.attachment.base64Data,
+        });
+      }
+
       const result = await this.repository.submitDocument({ bundle });
       const parsed = parseDocumentExchangeResponse(result);
       if (parsed.outcome === 'success') {
@@ -194,29 +198,30 @@ export class DocumentManagementService {
       };
     }
 
-    const validationIssues = await validateUpdateDocumentInput(
-      { ...input, practitionerHzjzId },
-      practitionerHzjzId,
-    );
-    if (validationIssues.length > 0) {
-      return mapValidationIssues(validationIssues);
-    }
-
-    const { bundle, binaryId } = buildSubmitDocumentRequest(
-      { ...input, practitionerHzjzId },
-      { practitionerName: practitionerDisplayName(context) },
-    );
-
-    if (binaryId && input.attachment) {
-      await appendMockBinary({
-        resourceType: 'Binary',
-        id: binaryId,
-        contentType: input.attachment.contentType,
-        data: input.attachment.base64Data,
-      });
-    }
-
     try {
+      const validationIssues = await validateUpdateDocumentInput(
+        { ...input, practitionerHzjzId },
+        practitionerHzjzId,
+        this.fhirClient,
+      );
+      if (validationIssues.length > 0) {
+        return mapValidationIssues(validationIssues);
+      }
+
+      const { bundle, binaryId } = buildSubmitDocumentRequest(
+        { ...input, practitionerHzjzId },
+        { practitionerName: practitionerDisplayName(context) },
+      );
+
+      if (this.fhirClient instanceof MockCezihFhirClient && binaryId && input.attachment) {
+        await appendMockBinary({
+          resourceType: 'Binary',
+          id: binaryId,
+          contentType: input.attachment.contentType,
+          data: input.attachment.base64Data,
+        });
+      }
+
       const result = await this.repository.updateDocument({
         replacesDocumentReferenceId: input.replacesDocumentReferenceId.trim(),
         bundle,
@@ -255,15 +260,15 @@ export class DocumentManagementService {
       };
     }
 
-    const validationIssues = await validateCancelDocumentInput({
-      ...input,
-      practitionerHzjzId,
-    });
-    if (validationIssues.length > 0) {
-      return mapValidationIssues(validationIssues);
-    }
-
     try {
+      const validationIssues = await validateCancelDocumentInput({
+        ...input,
+        practitionerHzjzId,
+      }, this.fhirClient);
+      if (validationIssues.length > 0) {
+        return mapValidationIssues(validationIssues);
+      }
+
       const result = await this.repository.cancelDocument({
         documentReferenceId: input.documentReferenceId.trim(),
         reason: input.reason.trim(),
@@ -298,7 +303,7 @@ export class DocumentManagementService {
   }
 
   async getDocumentMetadata(documentReferenceId: string): Promise<DocumentMetadataResult | null> {
-    const summaryResource = await findMockDocumentReferenceById(documentReferenceId);
+    const summaryResource = await this.fhirClient.read<FhirDocumentReference>('DocumentReference', documentReferenceId);
     const bundle = await this.repository.retrieveDocument(documentReferenceId);
     if (!bundle) return null;
 
@@ -351,7 +356,7 @@ export class DocumentManagementService {
     const url = attachment.url ?? '';
     const binaryMatch = url.match(/^Binary\/(.+)$/);
     if (binaryMatch) {
-      const binary = await getMockBinaryById(binaryMatch[1]);
+      const binary = await this.fhirClient.read<FhirBinary>('Binary', binaryMatch[1]);
       if (binary?.data) {
         return {
           contentType: binary.contentType ?? attachment.contentType ?? 'application/octet-stream',
@@ -368,6 +373,7 @@ export class DocumentManagementService {
 export function createDocumentManagementService(
   repository: DocumentExchangeRepository,
   lomClient?: LomNotificationClient,
+  fhirClient?: FhirClient,
 ): DocumentManagementService {
-  return new DocumentManagementService(repository, lomClient);
+  return new DocumentManagementService(repository, lomClient, fhirClient);
 }

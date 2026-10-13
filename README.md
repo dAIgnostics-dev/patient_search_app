@@ -2,6 +2,20 @@
 
 Aplikacija za rad zdravstvenog djelatnika s pacijentskim kartonom. Ovaj README opisuje **samo lokalni POC razvoj** — bez AWS deploya, Amplify sandboxa i produkcijskih integracija.
 
+Dobiveni CERT endpointi i priprema bez mrežnog pristupa opisani su u
+[CEZIH CERT integracija](docs/CEZIH_CERT_INTEGRATION.md). Zadani način ostaje mock;
+`cert-offline` usmjerava postojeće CEZIH klijente na lokalni gateway koji blokira
+sve vanjske pozive. URL/metoda za svih 50 ruta nalaze se u
+`src/config/cezihCertEndpoints.json`.
+
+Za stvarne CERT HTTP pozive pokrenite `npm run dev:cert-live` ili
+`npm run dev:cert-live:with-bridge` (mock kartica za demo prijavu) i otvorite
+`http://127.0.0.1:5173`. VPN mora biti dostupan računalu na kojem radi Vite.
+Opcionalni OAuth2 token i TLS datoteke postavljaju se u `.env.cert-live.local`
+prema `.env.cert-live.example`. Panel **CEZIH endpointi** tada provjerava stvarne
+GET pozive; POST operacije koriste postojeće poslovne forme. Automatski OAuth2
+login i potpis karticom još nisu implementirani. Detalji su u povezanom vodiču.
+
 ## 1) Što je uključeno u lokalni POC
 
 - prijava djelatnika putem čitača kartica (card-reader bridge)
@@ -13,7 +27,8 @@ Aplikacija za rad zdravstvenog djelatnika s pacijentskim kartonom. Ovaj README o
 - terminology servisni sloj (mock/static provideri)
 - audit zapis u lokalni JSONL
 
-Svi CEZIH/MHD/LOM pozivi u lokalnom modu idu na **mock implementacije** dok ne postavite live URL-ove i certifikat.
+Zadani lokalni demo koristi **mock implementacije**. `cert-live` omogućuje HTTP
+pozive preko lokalnog Vite proxyja prema dobivenim CERT rutama.
 
 ## 2) Preduvjeti
 
@@ -106,7 +121,7 @@ Preduvjeti sigurnosti dijele se na:
 - **Autentikacija** — identitet s certifikata pametne kartice (PKCS#11).
 - **Autorizacija** — provjera uloge (gore).
 - **Digitalni potpis** — privatnim ključem na kartici (PKCS#11 `sign`).
-- **Sigurnost na transportnom sloju (TLS/HTTPS, po potrebi mTLS)** — **zaseban je od kartice**. Ostvaruje se šifriranim kanalom prema CEZIH endpointima i konfigurira na deploymentu (`https://` u `VITE_CEZIH_*` URL-ovima + eventualni klijentski certifikat koji izdaje CEZIH). Trenutno je sve na mock implementacijama pa TLS nije konfiguriran.
+- **Sigurnost na transportnom sloju (TLS/HTTPS, po potrebi mTLS)** — šifrirani kanal prema CEZIH endpointima. U `cert-live` lokalni Vite proxy provjerava TLS certifikate; opcionalni CA i klijentski PEM certifikat/ključ konfiguriraju se serverskim `CEZIH_*_FILE` varijablama. Integracija pametne kartice i njezina potpisa još nije implementirana.
 
 ### Demo korisnici (mapiranje kartice / accounta)
 
@@ -360,7 +375,7 @@ Pojedinačne provjere:
 | -------------------------------------------- | --------------------------------------- |
 | CEZIH Pull notifikacije (`getNotifications`) | Nije implementirano                     |
 | CEZIH Push notifikacije (webhook)            | Nije implementirano                     |
-| Live CEZIH endpointi s certifikatom          | Nije konfigurirano                      |
+| Live CEZIH HTTP endpointi                   | Lokalni `cert-live` proxy; stvarni pristup još nije testiran |
 | Produkcijska autentifikacija                 | Nije implementirano (samo POC accounti) |
 | Dinamičke terminologije u UI formama         | Nije implementirano (servis postoji)    |
 | AWS Amplify deploy / HealthLake proxy        | Nije potrebno za lokalni POC            |
@@ -377,14 +392,14 @@ Pojedinačne provjere:
 | CEZIH Notifications | Pull/Push                            | Nije implementirano            |
 | Auth                | Prijava karticom                     | Implementirano (POC)           |
 | Autorizacija        | Provjera uloge za slučajeve          | Implementirano (POC default `private_care_specialist`) |
-| Transportni sloj    | TLS/mTLS prema CEZIH-u               | Nije konfigurirano (mock)      |
+| Transportni sloj    | TLS/mTLS prema CEZIH-u               | `cert-live` TLS proxy, opcionalni PEM certifikat; pristup nije testiran |
 | Audit               | Evidencija pristupa                  | Implementirano (lokalni JSONL) |
 
 ## 12) Sljedeći koraci (izvan lokalnog POC-a)
 
 Kad bude dostupan CEZIH certifikat i live endpointi:
 
-1. Postaviti `VITE_CEZIH_MESSAGE_URL`, `VITE_CEZIH_MHD_URL`, `VITE_CEZIH_API_BASE_URL`
+1. Pokrenuti `npm run dev:cert-live`; prema službenim uputama konfigurirati token i opcionalni TLS certifikat u `.env.cert-live.local`
 2. Postaviti `VITE_TERMINOLOGY_PROVIDER=cezih`
 3. Pokrenuti `syncTerminology()` za inkrementalni dohvat šifrarnika
 4. Implementirati CEZIH notification servis (Pull/Push) u backend integracijskom sloju

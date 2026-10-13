@@ -20,6 +20,8 @@ export type FhirReadableResourceType =
   | 'HealthcareService'
   | 'Location'
   | 'Endpoint'
+  | 'OrganizationAffiliation'
+  | 'StructureDefinition'
   | 'ValueSet'
   | 'CodeSystem';
 

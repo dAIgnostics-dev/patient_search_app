@@ -1,3 +1,5 @@
+import { resolveCezihMode } from './cezihEndpoints';
+
 export type ResourceSource = 'cezih' | 'healthlake' | 'mock-cezih';
 
 export type ResourceSourceKey =
@@ -14,6 +16,8 @@ export type ResourceSourceKey =
   | 'HealthcareService'
   | 'Location'
   | 'Endpoint'
+  | 'OrganizationAffiliation'
+  | 'StructureDefinition'
   | 'ValueSet'
   | 'CodeSystem';
 
@@ -37,6 +41,8 @@ const RESOURCE_KEYS: ResourceSourceKey[] = [
   'HealthcareService',
   'Location',
   'Endpoint',
+  'OrganizationAffiliation',
+  'StructureDefinition',
   'ValueSet',
   'CodeSystem',
 ];
@@ -55,6 +61,8 @@ const DEFAULT_BY_RESOURCE: Record<ResourceSourceKey, ResourceSource> = {
   HealthcareService: 'cezih',
   Location: 'cezih',
   Endpoint: 'cezih',
+  OrganizationAffiliation: 'cezih',
+  StructureDefinition: 'cezih',
   ValueSet: 'cezih',
   CodeSystem: 'cezih',
 };
@@ -83,12 +91,19 @@ function parseMap(raw: string | undefined): Partial<Record<ResourceSourceKey, Re
 }
 
 export function resolveResourceSourceConfig(): ResourceSourceConfig {
-  const defaultSource = parseSource(import.meta.env.VITE_RESOURCE_SOURCE_DEFAULT) ?? 'healthlake';
+  if (resolveCezihMode() !== 'mock') {
+    return {
+      defaultSource: 'cezih',
+      byResource: Object.fromEntries(RESOURCE_KEYS.map((key) => [key, 'cezih'])) as Record<ResourceSourceKey, ResourceSource>,
+      cezihBaseUrl: '/api/cezih',
+    };
+  }
+  const defaultSource = parseSource(import.meta.env?.VITE_RESOURCE_SOURCE_DEFAULT) ?? 'healthlake';
   const byResource = {
     ...DEFAULT_BY_RESOURCE,
-    ...parseMap(import.meta.env.VITE_RESOURCE_SOURCE_MAP),
+    ...parseMap(import.meta.env?.VITE_RESOURCE_SOURCE_MAP),
   };
-  const cezihBaseUrl = import.meta.env.VITE_CEZIH_API_BASE_URL?.trim() || null;
+  const cezihBaseUrl = import.meta.env?.VITE_CEZIH_API_BASE_URL?.trim() || null;
 
   return { defaultSource, byResource, cezihBaseUrl };
 }

@@ -1,6 +1,7 @@
 import { resolveCezihMessageUrl } from '../../config/runtime';
 import type { FhirMessageBundle } from '../../fhir/types';
 import type { CezihMessageClient } from './cezihMessageClient';
+import { cezihFetch } from './cezihFetch';
 
 /**
  * POST FHIR message bundles to CEZIH encounter-management endpoint.
@@ -10,7 +11,7 @@ export class CezihHttpMessageClient implements CezihMessageClient {
   constructor(private readonly messageUrl: string = resolveCezihMessageUrl()!) {}
 
   async postMessage(bundle: FhirMessageBundle): Promise<FhirMessageBundle> {
-    const response = await fetch(this.messageUrl, {
+    const response = await cezihFetch(this.messageUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/fhir+json',
@@ -19,10 +20,13 @@ export class CezihHttpMessageClient implements CezihMessageClient {
       body: JSON.stringify(bundle),
     });
 
-    const payload = (await response.json()) as FhirMessageBundle;
+    const payload = await response.json();
     if (!response.ok) {
-      throw new Error(`CEZIH message request failed (${response.status})`);
+      throw new Error(payload.issue?.[0]?.diagnostics ?? `CEZIH message request failed (${response.status})`);
     }
-    return payload;
+    if (payload.resourceType !== 'Bundle' || payload.type !== 'message') {
+      throw new Error('CEZIH did not return a message Bundle.');
+    }
+    return payload as FhirMessageBundle;
   }
 }

@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["ES2023"],
+    "lib": ["ES2023", "DOM"],
+    "allowImportingTsExtensions": true,
     "module": "ESNext",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
@@ -9,5 +10,5 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "server/**/*.ts", "scripts/**/*.ts"]
+  "include": ["vite.config.ts", "server/**/*.ts", "scripts/**/*.ts", "src/vite-env.d.ts"]
 }

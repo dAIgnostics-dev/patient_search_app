@@ -1,4 +1,6 @@
-import { findMockDocumentReferenceById } from '../fhir-client/mockCezihClient';
+import { MockCezihFhirClient } from '../fhir-client/mockCezihClient';
+import type { FhirClient } from '../fhir-client/types';
+import type { FhirDocumentReference } from '../../fhir/types';
 import { mapFhirDocumentReference } from '../../mappers/mapFhirDocumentReference';
 import { isWithinDocumentEditWindow } from './documentEditWindow';
 import type { CancelDocumentInput, SubmitDocumentValidationIssue } from './types';
@@ -26,11 +28,12 @@ export function validateCancelDocumentInputSync(
 
 export async function validateCancelDocumentInput(
   input: CancelDocumentInput,
+  client: FhirClient = new MockCezihFhirClient(),
 ): Promise<SubmitDocumentValidationIssue[]> {
   const issues = validateCancelDocumentInputSync(input);
   if (issues.length > 0) return issues;
 
-  const existing = await findMockDocumentReferenceById(input.documentReferenceId.trim());
+  const existing = await client.read<FhirDocumentReference>('DocumentReference', input.documentReferenceId.trim());
   if (!existing) {
     issues.push({ field: 'documentReferenceId', message: 'Document was not found.' });
     return issues;

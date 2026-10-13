@@ -1,4 +1,5 @@
 import outputs from '../../amplify_outputs.json';
+import { cezihProxyUrl, resolveCezihMode } from './cezihEndpoints';
 
 type AmplifyOutputs = {
   custom?: {
@@ -24,7 +25,8 @@ function resolveFromOutputs(key: keyof NonNullable<AmplifyOutputs['custom']>): s
  * 3. http://localhost:8787 — local mock fallback
  */
 export function resolveApiBaseUrl(): string {
-  const fromEnv = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+  if (resolveCezihMode() !== 'mock') return '/api/cezih';
+  const fromEnv = (import.meta.env?.VITE_API_BASE_URL as string | undefined)?.trim();
   if (fromEnv) return trimTrailingSlash(fromEnv);
 
   const fromOutputs = resolveFromOutputs('healthlakeApiUrl');
@@ -40,7 +42,8 @@ export function resolveApiBaseUrl(): string {
  * 3. null — use Vite dev middleware at /api/auth/*
  */
 export function resolveAuthApiBaseUrl(): string | null {
-  const fromEnv = (import.meta.env.VITE_AUTH_API_URL as string | undefined)?.trim();
+  if (resolveCezihMode() !== 'mock') return null;
+  const fromEnv = (import.meta.env?.VITE_AUTH_API_URL as string | undefined)?.trim();
   if (fromEnv) return trimTrailingSlash(fromEnv);
 
   return resolveFromOutputs('authApiUrl');
@@ -53,7 +56,8 @@ export function resolveAuthApiBaseUrl(): string | null {
  * 3. null — use Vite dev middleware at /api/audit/*
  */
 export function resolveAuditApiBaseUrl(): string | null {
-  const fromEnv = (import.meta.env.VITE_AUDIT_API_URL as string | undefined)?.trim();
+  if (resolveCezihMode() !== 'mock') return null;
+  const fromEnv = (import.meta.env?.VITE_AUDIT_API_URL as string | undefined)?.trim();
   if (fromEnv) return trimTrailingSlash(fromEnv);
 
   return resolveFromOutputs('auditApiUrl');
@@ -89,38 +93,45 @@ export const API_BASE_URL = resolveApiBaseUrl();
  * When unset, CEZIH repositories can fall back to mock providers.
  */
 export function resolveCezihApiBaseUrl(): string | null {
-  const fromEnv = (import.meta.env.VITE_CEZIH_API_BASE_URL as string | undefined)?.trim();
+  if (resolveCezihMode() !== 'mock') return '/api/cezih';
+  const fromEnv = (import.meta.env?.VITE_CEZIH_API_BASE_URL as string | undefined)?.trim();
   return fromEnv ? trimTrailingSlash(fromEnv) : null;
 }
 
 /** CEZIH FHIR message endpoint for encounter management (POST). */
-export function resolveCezihMessageUrl(): string | null {
-  const fromEnv = (import.meta.env.VITE_CEZIH_MESSAGE_URL as string | undefined)?.trim();
+export function resolveCezihMessageUrl(kind: 'case' | 'encounter' = 'encounter'): string | null {
+  if (resolveCezihMode() !== 'mock') return cezihProxyUrl(`${kind}.manage`);
+  const dedicated = kind === 'case'
+    ? import.meta.env?.VITE_CEZIH_CASE_MESSAGE_URL
+    : import.meta.env?.VITE_CEZIH_ENCOUNTER_MESSAGE_URL;
+  if (dedicated?.trim()) return trimTrailingSlash(dedicated.trim());
+  const fromEnv = (import.meta.env?.VITE_CEZIH_MESSAGE_URL as string | undefined)?.trim();
   return fromEnv ? trimTrailingSlash(fromEnv) : null;
 }
 
 /** CEZIH MHD endpoint for clinical document exchange (ITI-65/67/68). */
 export function resolveCezihMhdUrl(): string | null {
-  const fromEnv = (import.meta.env.VITE_CEZIH_MHD_URL as string | undefined)?.trim();
+  if (resolveCezihMode() !== 'mock') return cezihProxyUrl('document.submit');
+  const fromEnv = (import.meta.env?.VITE_CEZIH_MHD_URL as string | undefined)?.trim();
   return fromEnv ? trimTrailingSlash(fromEnv) : null;
 }
 
 /** MessageHeader.source.endpoint for outbound CEZIH messages. */
 export function resolveCezihSourceEndpoint(): string {
-  const fromEnv = (import.meta.env.VITE_CEZIH_SOURCE_ENDPOINT as string | undefined)?.trim();
+  const fromEnv = (import.meta.env?.VITE_CEZIH_SOURCE_ENDPOINT as string | undefined)?.trim();
   return fromEnv || 'urn:oid:1.2.3.4.5.6';
 }
 
 /** Default HZZO organization code for POC encounter forms. */
 export function resolveCezihDefaultOrgHzzo(): string {
-  const fromEnv = (import.meta.env.VITE_CEZIH_DEFAULT_ORG_HZZO as string | undefined)?.trim();
+  const fromEnv = (import.meta.env?.VITE_CEZIH_DEFAULT_ORG_HZZO as string | undefined)?.trim();
   return fromEnv || '1234';
 }
 
 export type TerminologyProviderMode = 'cezih' | 'mock' | 'static';
 
 export function resolveTerminologyProviderMode(): TerminologyProviderMode {
-  const fromEnv = (import.meta.env.VITE_TERMINOLOGY_PROVIDER as string | undefined)?.trim().toLowerCase();
+  const fromEnv = (import.meta.env?.VITE_TERMINOLOGY_PROVIDER as string | undefined)?.trim().toLowerCase();
   if (fromEnv === 'cezih' || fromEnv === 'mock' || fromEnv === 'static') {
     return fromEnv;
   }

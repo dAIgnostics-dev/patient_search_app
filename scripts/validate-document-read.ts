@@ -19,7 +19,11 @@ assert(summaries.length >= 2, 'expected at least 2 document reference summaries 
 
 const bundleById = new Map(
   bundles.map((bundle) => {
-    const mapped = mapClinicalDocumentBundle(bundle);
+    const storedSummary = summaries.find((item) => item.identifier?.some(
+      (identifier) => identifier.value === bundle.identifier?.value,
+    ));
+    assert(storedSummary, `missing DocumentReference for bundle ${bundle.id}`);
+    const mapped = mapClinicalDocumentBundle(bundle, storedSummary.id);
     return [bundle.id, mapped] as const;
   }),
 );
@@ -47,7 +51,7 @@ for (const [bundleId, mapped] of bundleById) {
     assert(summary.attachmentCount === 1, 'doc-bundle-003 must include one attachment');
   }
 
-  const expectedSummaryId = `doc-${bundleId.replace(/^doc-bundle-/, '')}`;
+  const expectedSummaryId = documentReference.id;
   const storedSummary = summaryById.get(expectedSummaryId);
   assert(storedSummary, `missing stored DocumentReference summary ${expectedSummaryId}`);
 

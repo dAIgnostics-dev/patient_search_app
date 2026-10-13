@@ -482,6 +482,55 @@ body::before {
   margin: 0 0 1rem;
 }
 
+.endpoint-table-scroll {
+  overflow-x: auto;
+}
+
+.endpoint-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.endpoint-table th,
+.endpoint-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.endpoint-table tbody th {
+  min-width: 160px;
+}
+
+.endpoint-table code {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 0.3rem;
+}
+
+.endpoint-table td:last-child {
+  min-width: 190px;
+}
+
+.endpoint-table details {
+  margin-top: 0.5rem;
+}
+
+.endpoint-table summary {
+  cursor: pointer;
+}
+
+.endpoint-table pre {
+  max-width: 280px;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+
 .detail-grid dt {
   font-weight: 600;
   color: var(--color-ink-muted);

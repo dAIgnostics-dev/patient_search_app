@@ -17,6 +17,7 @@ import type {
   UpdateDocumentResult,
 } from './document-management/types';
 import { getDocumentExchangeRepository } from './repositories/documentExchangeRegistry';
+import { getFhirClientForResource } from './repositories/registry';
 import {
   createDocumentManagementService,
   DocumentManagementService,
@@ -27,7 +28,7 @@ let cachedService: DocumentManagementService | null = null;
 
 function getDocumentService(): DocumentManagementService {
   if (!cachedService) {
-    cachedService = createDocumentManagementService(getDocumentExchangeRepository());
+    cachedService = createDocumentManagementService(getDocumentExchangeRepository(), undefined, getFhirClientForResource('DocumentReference'));
   }
   return cachedService;
 }

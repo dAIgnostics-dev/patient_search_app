@@ -64,6 +64,7 @@ const myPatients = await appRepository.getPatientsForPractitioner({
   lastName: 'Marković',
   username: 'ana.markovic',
   auditSessionId: 'validation-session',
+  role: 'private_care_specialist',
 });
 assert(
   myPatients.some((patient) => patient.id === '1442'),

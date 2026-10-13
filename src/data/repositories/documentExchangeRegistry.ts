@@ -1,5 +1,6 @@
 import { resolveCezihMhdUrl } from '../../config/runtime';
 import { getMhdClient } from '../mhd-client/mhdClientFactory';
+import { getFhirClientForResource } from './registry';
 import type { DocumentExchangeRepository } from './document-exchange/documentExchangeRepository';
 import {
   CezihDocumentExchangeRepository,
@@ -13,7 +14,7 @@ export function getDocumentExchangeRepository(): DocumentExchangeRepository {
 
   const mhdUrl = resolveCezihMhdUrl();
   cachedRepository = mhdUrl
-    ? new CezihDocumentExchangeRepository(getMhdClient())
+    ? new CezihDocumentExchangeRepository(getMhdClient(), getFhirClientForResource('DocumentReference'))
     : new MockDocumentExchangeRepository();
   return cachedRepository;
 }

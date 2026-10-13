@@ -5,3 +5,6 @@ dist
 amplify_outputs.json
 *.tsbuildinfo
 audit/
+.env.local
+.env.*.local
+.cezih-cert.local.json

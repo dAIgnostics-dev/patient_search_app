@@ -4,8 +4,9 @@ import { useLocale } from '../i18n/LocaleContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { MboLookup } from './MboLookup';
 import { MyPatients } from './MyPatients';
+import { CezihEndpointChecks } from './CezihEndpointChecks';
 
-type Tab = 'mbo' | 'my-patients';
+type Tab = 'mbo' | 'my-patients' | 'cezih-endpoints';
 
 export function AppShell() {
   const { session, logout } = useAuth();
@@ -50,9 +51,18 @@ export function AppShell() {
         >
           {t('tabs.myPatients')}
         </button>
+        {import.meta.env.DEV && (
+          <button
+            type="button"
+            className={tab === 'cezih-endpoints' ? 'tab-button tab-active' : 'tab-button'}
+            onClick={() => setTab('cezih-endpoints')}
+          >
+            {t('tabs.cezihEndpoints')}
+          </button>
+        )}
       </nav>
 
-      <main>{tab === 'mbo' ? <MboLookup /> : <MyPatients />}</main>
+      <main>{tab === 'mbo' ? <MboLookup /> : tab === 'my-patients' ? <MyPatients /> : import.meta.env.DEV ? <CezihEndpointChecks /> : null}</main>
     </>
   );
 }

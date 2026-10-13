@@ -6,14 +6,14 @@ import type { FhirClinicalDocumentBundle, FhirResource } from '../src/fhir/types
 import { CEZIH_MOCK_BUNDLES, CEZIH_MOCK_STORAGE, type CezihMockStorage } from '../src/data/mock/cezihBundles';
 import type { FhirReadableResourceType } from '../src/data/fhir-client/types';
 
-const SUPPORTED_RESOURCE_TYPES: FhirReadableResourceType[] = [
+const SUPPORTED_RESOURCE_TYPES = [
   'Patient',
   'Practitioner',
   'Organization',
   'Encounter',
   'Condition',
   'DocumentReference',
-];
+] as const satisfies readonly FhirReadableResourceType[];
 
 type MockStoragePayload = CezihMockStorage;
 
@@ -101,7 +101,7 @@ export function createMockCezihMiddleware(storageFile: string): Connect.NextHand
     const match = url.match(/^\/api\/mock-cezih\/resources\/([^/]+)(?:\/([^/]+))?$/);
     if (match && req.method === 'GET') {
       const resourceType = match[1] as FhirReadableResourceType;
-      if (!SUPPORTED_RESOURCE_TYPES.includes(resourceType)) {
+      if (!SUPPORTED_RESOURCE_TYPES.some((type) => type === resourceType)) {
         sendJson(res, 404, { error: 'Unsupported mock CEZIH resource type.' });
         return;
       }

@@ -25,13 +25,18 @@
     "validate:case-authorization": "tsx scripts/validate-case-authorization.ts",
     "validate:encounter-authorization": "tsx scripts/validate-encounter-authorization.ts",
     "validate:document-authorization": "tsx scripts/validate-document-authorization.ts",
+    "validate:cezih-cert-offline": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-cert-offline.ts",
+    "validate:architecture:offline": "node scripts/validate-offline.mjs",
     "validate:architecture": "npm run validate:routing && npm run validate:mappers && npm run validate:services && npm run validate:encounter-message && npm run validate:case-message && npm run validate:document-read && npm run validate:document-exchange && npm run validate:document-submit && npm run validate:document-search && npm run validate:document-update && npm run validate:document-cancel && npm run validate:lom-notification && npm run validate:terminology && npm run validate:card-auth && npm run validate:case-authorization && npm run validate:encounter-authorization && npm run validate:document-authorization",
     "card-reader:bridge": "npm --prefix card-reader-bridge run start",
     "dev:with-bridge": "CARD_READER_MODE=mock concurrently -k \"npm run card-reader:bridge\" \"npm run dev\"",
     "sandbox": "ampx sandbox",
     "verify:healthlake": "bash scripts/verify-healthlake-setup.sh",
     "verify:healthlake:fhir": "tsx scripts/verify-healthlake-fhir.ts",
-    "verify:healthlake:proxy": "bash scripts/verify-healthlake-proxy.sh"
+    "verify:healthlake:proxy": "bash scripts/verify-healthlake-proxy.sh",
+    "dev:cert-live": "vite --mode cert-live --host 127.0.0.1",
+    "dev:cert-live:with-bridge": "CARD_READER_MODE=mock concurrently -k \"npm run card-reader:bridge\" \"npm run dev:cert-live\"",
+    "validate:cezih-live": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-live.ts"
   },
   "dependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",

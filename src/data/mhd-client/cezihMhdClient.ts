@@ -1,6 +1,9 @@
 import { resolveCezihMhdUrl } from '../../config/runtime';
-import type { FhirBundle, FhirClinicalDocumentBundle, FhirDocumentReference } from '../../fhir/types';
+import type { FhirBundle, FhirDocumentReference } from '../../fhir/types';
 import type { MhdClient } from './mhdClient';
+import { cezihProxyUrl, cezihNextPageUrl } from '../../config/cezihEndpoints';
+import { cezihFetch } from '../fhir-client/cezihFetch';
+import { mapFhirDocumentReference } from '../../mappers/mapFhirDocumentReference';
 import type {
   CancelDocumentRequest,
   CancelDocumentResponse,
@@ -24,30 +27,8 @@ function trimBase(url: string): string {
 export class CezihMhdClient implements MhdClient {
   constructor(private readonly mhdUrl: string = resolveCezihMhdUrl()!) {}
 
-  private async postBundle(bundle: FhirClinicalDocumentBundle): Promise<FhirClinicalDocumentBundle> {
-    const response = await fetch(this.mhdUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/fhir+json',
-        Accept: 'application/fhir+json',
-      },
-      body: JSON.stringify(bundle),
-    });
-    const payload = (await response.json()) as FhirClinicalDocumentBundle;
-    if (!response.ok) {
-      throw new Error(`CEZIH MHD submit failed (${response.status})`);
-    }
-    return payload;
-  }
-
-  async submitDocument(request: SubmitDocumentRequest): Promise<SubmitDocumentResponse> {
-    const bundle = await this.postBundle(request.bundle);
-    const documentReferenceId = bundle.id;
-    return {
-      bundleId: bundle.id,
-      documentId: bundle.identifier?.value ?? bundle.id,
-      documentReferenceId,
-    };
+  async submitDocument(_request: SubmitDocumentRequest): Promise<SubmitDocumentResponse> {
+    throw new Error('ITI-65 response mapping requires the CEZIH registration response contract.');
   }
 
   async searchDocuments(request: SearchDocumentsRequest): Promise<SearchDocumentsResponse> {
@@ -60,62 +41,51 @@ export class CezihMhdClient implements MhdClient {
     if (request.dateFrom) params.set('date', `ge${request.dateFrom}`);
     if (request.dateTo) params.append('date', `le${request.dateTo}`);
 
-    const url = `${trimBase(this.mhdUrl)}/DocumentReference?${params.toString()}`;
-    const response = await fetch(url, {
-      headers: { Accept: 'application/fhir+json' },
-    });
-    const payload = (await response.json()) as FhirBundle<FhirDocumentReference>;
-    if (!response.ok) {
-      throw new Error(`CEZIH MHD search failed (${response.status})`);
+    const searchUrl = this.mhdUrl === cezihProxyUrl('document.submit')
+      ? cezihProxyUrl('DocumentReference.search')
+      : `${trimBase(this.mhdUrl)}/DocumentReference`;
+    let url = `${searchUrl}?${params.toString()}`;
+    const entries: FhirDocumentReference[] = [];
+    const visited = new Set<string>();
+    let total: number | undefined;
+    while (url) {
+      if (visited.has(url)) throw new Error('CEZIH MHD pagination contains a cycle.');
+      visited.add(url);
+      const response = await cezihFetch(url, { headers: { Accept: 'application/fhir+json' } });
+      const payload = await response.json();
+      if (!response.ok || payload.resourceType === 'OperationOutcome') {
+        throw new Error(payload.issue?.[0]?.diagnostics ?? `CEZIH MHD search failed (${response.status})`);
+      }
+      if (payload.resourceType !== 'Bundle' || payload.type !== 'searchset') {
+        throw new Error('CEZIH MHD search did not return a searchset Bundle.');
+      }
+      const bundle = payload as FhirBundle<FhirDocumentReference>;
+      total ??= bundle.total;
+      entries.push(...(bundle.entry ?? []).map((entry) => entry.resource));
+      const next = bundle.link?.find((link) => link.relation === 'next')?.url;
+      url = next ? cezihNextPageUrl('DocumentReference.search', next) : '';
     }
-    const entries = payload.entry?.map((entry) => entry.resource) ?? [];
-    return { total: payload.total ?? entries.length, entries };
+    if (request.compositionStatus) {
+      const filtered = entries.filter((entry) => mapFhirDocumentReference(entry).compositionStatus === request.compositionStatus);
+      return { total: filtered.length, entries: filtered };
+    }
+    return { total: total ?? entries.length, entries };
   }
 
   async retrieveDocument(request: RetrieveDocumentRequest): Promise<RetrieveDocumentResponse> {
     const id = request.documentReferenceId ?? request.documentId;
     if (!id) throw new Error('documentReferenceId or documentId is required.');
 
-    const url = `${trimBase(this.mhdUrl)}/Bundle/${encodeURIComponent(id)}`;
-    const response = await fetch(url, {
-      headers: { Accept: 'application/fhir+json' },
-    });
-    const payload = (await response.json()) as FhirClinicalDocumentBundle;
-    if (!response.ok) {
-      throw new Error(`CEZIH MHD retrieve failed (${response.status})`);
-    }
-    return { bundle: payload };
+    throw new Error('ITI-68 query parameters and response format are missing; document retrieval is disabled.');
   }
 
   async updateDocument(request: UpdateDocumentRequest): Promise<SubmitDocumentResponse> {
-    return this.submitDocument({ bundle: request.bundle });
+    if (!request.replacesDocumentReferenceId.trim()) throw new Error('Replacement target is required.');
+    throw new Error('ITI-65 replacement contract is missing; document update is disabled.');
   }
 
   async cancelDocument(request: CancelDocumentRequest): Promise<CancelDocumentResponse> {
-    const reference = await this.retrieveDocument({
-      documentReferenceId: request.documentReferenceId,
-    });
-    const compositionEntry = reference.bundle.entry?.find(
-      (entry) => entry.resource.resourceType === 'Composition',
-    );
-    if (!compositionEntry || compositionEntry.resource.resourceType !== 'Composition') {
-      throw new Error('Cancelled bundle is missing Composition.');
-    }
-    const cancelledBundle: FhirClinicalDocumentBundle = {
-      ...reference.bundle,
-      entry: reference.bundle.entry.map((entry) =>
-        entry.resource.resourceType === 'Composition'
-          ? {
-              ...entry,
-              resource: { ...entry.resource, status: 'entered-in-error' },
-            }
-          : entry,
-      ),
-    };
-    await this.postBundle(cancelledBundle);
-    return {
-      documentReferenceId: request.documentReferenceId,
-      compositionStatus: 'entered-in-error',
-    };
+    if (!request.documentReferenceId.trim()) throw new Error('Cancellation target is required.');
+    throw new Error('ITI-65 cancellation contract is missing; document cancellation is disabled.');
   }
 }

@@ -1,7 +1,6 @@
-import {
-  findMockDocumentReferenceById,
-  findMockDocumentReferenceReplacing,
-} from '../fhir-client/mockCezihClient';
+import { MockCezihFhirClient } from '../fhir-client/mockCezihClient';
+import type { FhirClient } from '../fhir-client/types';
+import type { FhirDocumentReference } from '../../fhir/types';
 import { mapFhirDocumentReference } from '../../mappers/mapFhirDocumentReference';
 import { isWithinDocumentEditWindow } from './documentEditWindow';
 import { validateSubmitDocumentInputSync } from './validateSubmitDocumentInput';
@@ -10,6 +9,7 @@ import type { SubmitDocumentValidationIssue, UpdateDocumentInput } from './types
 export async function validateUpdateDocumentInput(
   input: UpdateDocumentInput,
   practitionerHzjzId: string,
+  client: FhirClient = new MockCezihFhirClient(),
 ): Promise<SubmitDocumentValidationIssue[]> {
   const issues = validateSubmitDocumentInputSync(input);
 
@@ -23,7 +23,7 @@ export async function validateUpdateDocumentInput(
 
   if (issues.length > 0) return issues;
 
-  const existing = await findMockDocumentReferenceById(input.replacesDocumentReferenceId.trim());
+  const existing = await client.read<FhirDocumentReference>('DocumentReference', input.replacesDocumentReferenceId.trim());
   if (!existing) {
     issues.push({
       field: 'replacesDocumentReferenceId',
@@ -41,7 +41,14 @@ export async function validateUpdateDocumentInput(
     });
   }
 
-  const alreadyReplaced = await findMockDocumentReferenceReplacing(input.replacesDocumentReferenceId.trim());
+  const replacements = await client.searchAll<FhirDocumentReference>('DocumentReference', {
+    relatesto: `DocumentReference/${input.replacesDocumentReferenceId.trim()}`,
+  });
+  const alreadyReplaced = replacements.some((item) => item.relatesTo?.some((relation) =>
+    relation.code === 'replaces' &&
+    (relation.target?.reference === `DocumentReference/${input.replacesDocumentReferenceId.trim()}` ||
+      relation.target?.reference === input.replacesDocumentReferenceId.trim()),
+  ));
   if (alreadyReplaced) {
     issues.push({
       field: 'replacesDocumentReferenceId',

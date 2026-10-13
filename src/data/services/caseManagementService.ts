@@ -94,7 +94,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -150,7 +150,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -206,7 +206,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -262,7 +262,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -318,7 +318,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -374,7 +374,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {
@@ -430,7 +430,7 @@ export class CaseManagementService {
     });
 
     try {
-      const response = await getCezihMessageClient().postMessage(requestBundle);
+      const response = await getCezihMessageClient("case").postMessage(requestBundle);
       return parseCaseManagementResponse(requestBundle.id, response);
     } catch (err) {
       return {

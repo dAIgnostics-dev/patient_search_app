@@ -1,12 +1,14 @@
 import type { FhirBundle, FhirResource } from '../../fhir/types';
+import { CEZIH_CERT_ENDPOINTS, cezihNextPageUrl, resolveCezihResourceUrl } from '../../config/cezihEndpoints';
+import { cezihFetch } from './cezihFetch';
 import type { FhirClient, FhirReadableResourceType, FhirSearchParams } from './types';
 
-function buildUrl(baseUrl: string, resourceType: FhirReadableResourceType, id?: string): URL {
+function buildUrl(baseUrl: string, resourceType: FhirReadableResourceType, id?: string): string {
   const normalizedBase = baseUrl.replace(/\/+$/, '');
-  const path = id
-    ? `/fhir/${resourceType}/${encodeURIComponent(id)}`
-    : `/fhir/${resourceType}`;
-  return new URL(path, `${normalizedBase}/`);
+  if (baseUrl === '/api/cezih') {
+    return `${resolveCezihResourceUrl(resourceType, id ? 'read' : 'search')}${id ? `/${encodeURIComponent(id)}` : ''}`;
+  }
+  return `${normalizedBase}/${resourceType}${id ? `/${encodeURIComponent(id)}` : ''}`;
 }
 
 export class CezihFhirClient implements FhirClient {
@@ -16,32 +18,63 @@ export class CezihFhirClient implements FhirClient {
     resourceType: FhirReadableResourceType,
     id: string,
   ): Promise<TResource | null> {
-    const response = await fetch(buildUrl(this.baseUrl, resourceType, id));
+    if (this.baseUrl === '/api/cezih' && !CEZIH_CERT_ENDPOINTS.some((item) => item.id === `${resourceType}.read`)) {
+      const resources = await this.searchAll<TResource>(resourceType, { _id: id });
+      return resources.find((item) => item.id === id) ?? null;
+    }
+    const response = await cezihFetch(buildUrl(this.baseUrl, resourceType, id));
     if (response.status === 404) return null;
-    if (!response.ok) throw new Error(`CEZIH read failed (${response.status})`);
-    return (await response.json()) as TResource;
+    const payload = await response.json();
+    if (!response.ok || payload.resourceType === 'OperationOutcome') {
+      throw new Error(payload.issue?.[0]?.diagnostics ?? `CEZIH read failed (${response.status})`);
+    }
+    if (payload.resourceType !== resourceType || payload.id !== id) {
+      throw new Error('CEZIH returned an unexpected resource.');
+    }
+    return payload as TResource;
+  }
+
+  private async fetchBundle<TResource extends FhirResource>(url: string): Promise<FhirBundle<TResource>> {
+    const response = await cezihFetch(url, { headers: { Accept: 'application/fhir+json' } });
+    const payload = await response.json();
+    if (!response.ok || payload.resourceType === 'OperationOutcome') {
+      throw new Error(payload.issue?.[0]?.diagnostics ?? `CEZIH search failed (${response.status})`);
+    }
+    if (payload.resourceType !== 'Bundle' || payload.type !== 'searchset') {
+      throw new Error('CEZIH search did not return a searchset Bundle.');
+    }
+    return payload as FhirBundle<TResource>;
   }
 
   async search<TResource extends FhirResource = FhirResource>(
     resourceType: FhirReadableResourceType,
     params?: FhirSearchParams,
   ): Promise<FhirBundle<TResource>> {
-    const url = buildUrl(this.baseUrl, resourceType);
+    const query = new URLSearchParams();
     if (params) {
       for (const [key, value] of Object.entries(params)) {
-        if (value?.trim()) url.searchParams.set(key, value.trim());
+        if (value?.trim()) query.set(key, value.trim());
       }
     }
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`CEZIH search failed (${response.status})`);
-    return (await response.json()) as FhirBundle<TResource>;
+    const suffix = query.size ? `?${query}` : '';
+    return this.fetchBundle<TResource>(`${buildUrl(this.baseUrl, resourceType)}${suffix}`);
   }
 
   async searchAll<TResource extends FhirResource = FhirResource>(
     resourceType: FhirReadableResourceType,
     params?: FhirSearchParams,
   ): Promise<TResource[]> {
-    const bundle = await this.search<TResource>(resourceType, params);
-    return (bundle.entry ?? []).map((entry) => entry.resource);
+    let bundle = await this.search<TResource>(resourceType, params);
+    const resources: TResource[] = [];
+    const visited = new Set<string>();
+    for (;;) {
+      resources.push(...(bundle.entry ?? []).map((entry) => entry.resource));
+      const next = bundle.link?.find((link) => link.relation === 'next')?.url;
+      if (!next) return resources;
+      const local = cezihNextPageUrl(`${resourceType}.search`, next);
+      if (visited.has(local)) throw new Error('CEZIH pagination contains a cycle.');
+      visited.add(local);
+      bundle = await this.fetchBundle<TResource>(local);
+    }
   }
 }

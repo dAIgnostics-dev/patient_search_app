@@ -214,10 +214,10 @@ export class CezihAppRepository implements AppRepository {
   async findPatientByMbo(mbo: string): Promise<PatientSummary | null> {
     const trimmed = mbo.trim();
     if (!trimmed) return null;
-    const patients = await this.loadPatients();
+    const patients = await this.client.searchAll<FhirPatient>('Patient', { identifier: trimmed });
     const match = patients.find((patient) => {
       const patientMbo = findIdentifier(patient.identifier, CEZIH_MBO_SYSTEM);
-      return patientMbo === trimmed || patientMbo?.includes(trimmed);
+      return patientMbo === trimmed;
     });
     return match ? this.enrichPatientSummary(toPatientSummary(match)) : null;
   }

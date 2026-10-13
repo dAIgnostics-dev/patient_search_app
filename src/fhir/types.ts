@@ -305,8 +305,16 @@ export type FhirResource =
   | FhirDiagnosticReport
   | FhirImagingStudy
   | FhirBinary
+  | FhirHealthcareService
+  | FhirDirectoryResource
   | FhirCodeSystem
   | FhirValueSet;
+
+export interface FhirDirectoryResource {
+  resourceType: 'Location' | 'PractitionerRole' | 'OrganizationAffiliation' | 'Endpoint' | 'StructureDefinition';
+  id: string;
+  [key: string]: unknown;
+}
 
 export interface FhirBundleEntry<T extends FhirResource = FhirResource> {
   resource: T;

@@ -6,7 +6,9 @@ import type { MhdClient } from '../../mhd-client/mhdClient';
 import { MhdClientError } from '../../mhd-client/mhdClientError';
 import { MockMhdClient } from '../../mhd-client/mockMhdClient';
 import type { SubmitDocumentResponse } from '../../mhd-client/types';
-import { findMockDocumentReferenceById } from '../../fhir-client/mockCezihClient';
+import { MockCezihFhirClient } from '../../fhir-client/mockCezihClient';
+import type { FhirClient } from '../../fhir-client/types';
+import type { FhirDocumentReference } from '../../../fhir/types';
 import type { DocumentExchangeRepository } from './documentExchangeRepository';
 import type {
   CancelClinicalDocumentInput,
@@ -48,8 +50,9 @@ function toDocumentSummary(resource: { id: string } & ReturnType<typeof mapFhirD
 async function resolveSummaryAfterWrite(
   response: SubmitDocumentResponse,
   bundle: FhirClinicalDocumentBundle,
+  client: FhirClient,
 ): Promise<DocumentSummary> {
-  const fromStore = await findMockDocumentReferenceById(response.documentReferenceId);
+  const fromStore = await client.read<FhirDocumentReference>('DocumentReference', response.documentReferenceId);
   if (fromStore) {
     return toDocumentSummary({ id: fromStore.id, ...mapFhirDocumentReference(fromStore) });
   }
@@ -77,12 +80,12 @@ function mapMhdError(error: unknown): DocumentExchangeResult {
 }
 
 export class BaseDocumentExchangeRepository implements DocumentExchangeRepository {
-  constructor(private readonly client: MhdClient) {}
+  constructor(private readonly client: MhdClient, private readonly fhirClient: FhirClient = new MockCezihFhirClient()) {}
 
   async submitDocument(input: SubmitClinicalDocumentInput): Promise<DocumentExchangeResult> {
     try {
       const response = await this.client.submitDocument({ bundle: input.bundle });
-      const summary = await resolveSummaryAfterWrite(response, input.bundle);
+      const summary = await resolveSummaryAfterWrite(response, input.bundle, this.fhirClient);
       return {
         outcome: 'success',
         documentReferenceId: response.documentReferenceId,
@@ -127,7 +130,7 @@ export class BaseDocumentExchangeRepository implements DocumentExchangeRepositor
         replacesDocumentReferenceId: input.replacesDocumentReferenceId,
         bundle: input.bundle,
       });
-      const summary = await resolveSummaryAfterWrite(response, input.bundle);
+      const summary = await resolveSummaryAfterWrite(response, input.bundle, this.fhirClient);
       return {
         outcome: 'success',
         documentReferenceId: response.documentReferenceId,
@@ -146,7 +149,7 @@ export class BaseDocumentExchangeRepository implements DocumentExchangeRepositor
         documentReferenceId: input.documentReferenceId,
         reason: input.reason,
       });
-      const existing = await findMockDocumentReferenceById(response.documentReferenceId);
+      const existing = await this.fhirClient.read<FhirDocumentReference>('DocumentReference', response.documentReferenceId);
       const summary = existing
         ? toDocumentSummary({ id: existing.id, ...mapFhirDocumentReference(existing) })
         : toDocumentSummary({
@@ -183,7 +186,7 @@ export class MockDocumentExchangeRepository extends BaseDocumentExchangeReposito
 }
 
 export class CezihDocumentExchangeRepository extends BaseDocumentExchangeRepository {
-  constructor(client: MhdClient) {
-    super(client);
+  constructor(client: MhdClient, fhirClient: FhirClient) {
+    super(client, fhirClient);
   }
 }

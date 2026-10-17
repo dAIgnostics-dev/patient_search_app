@@ -486,6 +486,60 @@ body::before {
   overflow-x: auto;
 }
 
+.cezih-auth-panel {
+  min-width: 0;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.cezih-auth-panel legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+
+.cezih-auth-panel .search-actions + .search-actions {
+  margin-top: 0.75rem;
+}
+
+.cezih-auth-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.cezih-auth-fields label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.cezih-auth-fields select {
+  max-width: 100%;
+  padding: 0.6rem;
+  font: inherit;
+  color: var(--color-ink);
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.cezih-signing-panel .search-actions {
+  flex-wrap: wrap;
+}
+
+.cezih-signing-panel pre {
+  max-height: 28rem;
+  overflow: auto;
+  padding: 0.75rem;
+  background: var(--color-surface-raised);
+}
+
+.cezih-signing-fingerprint {
+  overflow-wrap: anywhere;
+}
+
 .endpoint-table {
   width: 100%;
   border-collapse: collapse;

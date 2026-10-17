@@ -11,6 +11,7 @@ import { DEFAULT_PRACTITIONER_ROLE } from './roles';
 import { logAuthLogin, logAuthLogout } from '../data/auditAccess';
 import { createAuditSessionId, ensureAuditSessionId } from '../data/auditSession';
 import { SESSION_STORAGE_KEY, type PractitionerSession } from './types';
+import { cezihUserAuth } from '../data/cezihUserAuth';
 
 export interface CardLoginInput {
   givenName: string;
@@ -19,7 +20,7 @@ export interface CardLoginInput {
 interface AuthContextValue {
   session: PractitionerSession | null;
   loginWithCard: (input: CardLoginInput, locale?: string) => Promise<void>;
-  logout: (locale?: string) => void;
+  logout: (locale?: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -59,6 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!response.ok) {
       throw new Error(payload.error ?? 'card_login_failed');
     }
+    if (import.meta.env?.DEV) await cezihUserAuth('logout');
 
     const next: PractitionerSession = {
       practitionerId: payload.practitionerId,
@@ -74,7 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logAuthLogin(next, locale, 'card');
   }, []);
 
-  const logout = useCallback((locale?: string) => {
+  const logout = useCallback(async (locale?: string) => {
+    if (import.meta.env?.DEV) await cezihUserAuth('logout');
     const current = loadSession();
     if (current) logAuthLogout(current, locale);
     sessionStorage.removeItem(SESSION_STORAGE_KEY);

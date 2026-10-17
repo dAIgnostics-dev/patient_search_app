@@ -1,0 +1,32 @@
+{
+  "caseManagement": [
+    "specialist", "physicians", "pediatrician", "gynecologist", "physician_school",
+    "emergency_tehnician", "emergency_physician", "specialist_colonoscopy", "specialist_cytology",
+    "specialist_epidemiology", "specialist_patology", "specialist_pulmology", "specialist_radiology",
+    "radiology_manager", "private_care_specialist", "resident", "dentist"
+  ],
+  "encounterManagement": [
+    "sgp_administrator", "sgp_laboratory_technician", "specialist", "specialistic_nurse",
+    "specialistic_technician", "admission_officer", "physicians", "pediatrician", "gynecologist",
+    "physician_school", "emergency_tehnician", "emergency_physician", "resident",
+    "specialist_colonoscopy", "specialist_cytology", "specialist_epidemiology", "specialist_patology",
+    "specialist_pulmology", "specialist_radiology", "radiology_manager", "radiology_engineer",
+    "private_care_specialist", "private_care_specialistic_nurse", "private_care_specialistic_technician",
+    "dentist", "nurse", "laboratory_technician", "biochemistry_engineer", "home_therapist", "home_caregiver"
+  ],
+  "documentSearch": [
+    "dentist", "emergency_physician", "emergency_tehnician", "gynecologist", "health_visitor",
+    "home_caregiver", "home_therapist", "occupational_physician", "pediatrician", "physician_school",
+    "physicians", "radiology_manager", "resident", "specialist", "specialist_colonoscopy",
+    "specialist_cytology", "specialist_epidemiology", "specialist_patology", "specialist_pulmology",
+    "specialist_radiology", "specialistic_nurse", "specialistic_technician", "private_care_specialist",
+    "private_care_specialistic_nurse", "private_care_specialistic_technician", "helpdesk_clinical_documents"
+  ],
+  "documentRetrieve": [
+    "dentist", "emergency_physician", "emergency_tehnician", "gynecologist", "health_visitor",
+    "home_caregiver", "home_therapist", "occupational_physician", "pediatrician", "physician_school",
+    "physicians", "radiology_manager", "resident", "specialist", "specialist_colonoscopy",
+    "specialist_cytology", "specialist_epidemiology", "specialist_patology", "specialist_pulmology",
+    "specialist_radiology", "private_care_specialist", "helpdesk_clinical_documents"
+  ]
+}

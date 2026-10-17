@@ -4,7 +4,7 @@ export type PractitionerRole = string;
  * Uloge koje smiju izvoditi operacije nad slučajevima (CEZIH events 2.1–2.7).
  * Popis je zadan specifikacijom i namjerno se čuva doslovno (uključujući
  * `physicians` i `emergency_tehnician`) radi buduće usklađenosti s
- * dokumentacijom pametne kartice.
+ * CEZIH autorizacijskim ugovorom.
  */
 export const CASE_MANAGEMENT_ROLES: ReadonlySet<PractitionerRole> = new Set([
   'specialist',
@@ -160,9 +160,8 @@ export const DOCUMENT_REGISTRATION_ROLES_BY_TYPE: Readonly<
 };
 
 /**
- * POC default: aplikacija je namijenjena privatnicima, pa liječnik pri prijavi
- * karticom dobiva ulogu `private_care_specialist` dok ne bude dostupna
- * dokumentacija za čitanje uloge s kartice.
+ * Zadana uloga lokalnog POC računa. Ne odobrava live CEZIH pristup: proxy
+ * koristi isključivo uloge iz provjerene serverske CEZIH korisničke sesije.
  */
 export const DEFAULT_PRACTITIONER_ROLE: PractitionerRole = 'private_care_specialist';
 

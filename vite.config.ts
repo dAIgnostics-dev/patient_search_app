@@ -7,8 +7,7 @@ import { createAuthMiddleware } from './server/authMiddleware';
 import { createCardReaderMiddleware } from './server/cardReaderMiddleware';
 import { createLomNotificationMiddleware, defaultLomQueuePath } from './server/lomNotificationMiddleware';
 import { createMockCezihMiddleware } from './server/mockCezihMiddleware';
-import { createCezihMiddleware } from './server/cezihMiddleware';
-import { createCezihProxy } from './server/cezihProxy';
+import { createCezihIntegration } from './server/cezihProxy';
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
 const accountsDir = path.join(rootDir, 'auth/accounts');
@@ -28,14 +27,14 @@ export default defineConfig(({ mode, command, isPreview }) => {
   if (live && (mode !== 'cert-live' || command !== 'serve' || isPreview)) {
     throw new Error('cert-live is available only through npm run dev:cert-live (local development).');
   }
-  const proxy = createCezihProxy(env, rootDir);
+  const cezih = createCezihIntegration(env, rootDir);
   return {
     plugins: [
       react(),
       {
         name: 'auth-middleware',
         configureServer(server) {
-          server.middlewares.use(createCezihMiddleware(live));
+          server.middlewares.use(cezih.middleware);
           server.middlewares.use(createAuditMiddleware(auditDir));
           server.middlewares.use(createCardReaderMiddleware());
           server.middlewares.use(createAuthMiddleware(accountsDir));
@@ -43,7 +42,7 @@ export default defineConfig(({ mode, command, isPreview }) => {
           server.middlewares.use(createMockCezihMiddleware(mockCezihStorageFile));
         },
         configurePreviewServer(server) {
-          server.middlewares.use(createCezihMiddleware());
+          server.middlewares.use(cezih.middleware);
           server.middlewares.use(createAuditMiddleware(auditDir));
           server.middlewares.use(createCardReaderMiddleware());
           server.middlewares.use(createAuthMiddleware(accountsDir));
@@ -58,7 +57,7 @@ export default defineConfig(({ mode, command, isPreview }) => {
       },
     },
     server: {
-      ...(live ? { host: '127.0.0.1', strictPort: true, proxy } : {}),
+      ...(live ? { host: '127.0.0.1', strictPort: true, proxy: cezih.proxy } : {}),
       fs: {
         deny: ['.env', '.env.*', '*.{crt,pem,key,p12,pfx}', '**/.git/**', '**/.cezih-cert.local.json',
           ...['CEZIH_CA_FILE', 'CEZIH_CERT_FILE', 'CEZIH_KEY_FILE'].flatMap((name) =>

@@ -36,7 +36,10 @@
     "verify:healthlake:proxy": "bash scripts/verify-healthlake-proxy.sh",
     "dev:cert-live": "vite --mode cert-live --host 127.0.0.1",
     "dev:cert-live:with-bridge": "CARD_READER_MODE=mock concurrently -k \"npm run card-reader:bridge\" \"npm run dev:cert-live\"",
-    "validate:cezih-live": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-live.ts"
+    "validate:cezih-live": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-live.ts",
+    "validate:cezih-oauth": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-oauth.ts",
+    "validate:cezih-user-session": "node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-user-session.ts",
+    "validate:cezih-signing": "TSX_TSCONFIG_PATH=tsconfig.app.json node --import ./scripts/offline-only.mjs --import tsx scripts/validate-cezih-signing.ts"
   },
   "dependencies": {
     "@aws-crypto/sha256-js": "^5.2.0",

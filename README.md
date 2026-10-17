@@ -11,10 +11,14 @@ sve vanjske pozive. URL/metoda za svih 50 ruta nalaze se u
 Za stvarne CERT HTTP pozive pokrenite `npm run dev:cert-live` ili
 `npm run dev:cert-live:with-bridge` (mock kartica za demo prijavu) i otvorite
 `http://127.0.0.1:5173`. VPN mora biti dostupan računalu na kojem radi Vite.
-Opcionalni OAuth2 token i TLS datoteke postavljaju se u `.env.cert-live.local`
-prema `.env.cert-live.example`. Panel **CEZIH endpointi** tada provjerava stvarne
-GET pozive; POST operacije koriste postojeće poslovne forme. Automatski OAuth2
-login i potpis karticom još nisu implementirani. Detalji su u povezanom vodiču.
+OAuth2 client ID, client secret, Basic/POST metoda i opcionalne TLS datoteke
+postavljaju se u `.env.cert-live.local` prema `.env.cert-live.example`.
+Panel **CEZIH endpointi** prikazuje OAuth2 status i provjerava stvarne GET pozive.
+Serverski Client Credentials tok dohvaća i obnavlja aplikacijski token za šifrarnike,
+ValueSet i Pull notifikacije. Za kartičnu prijavu pripremljeni su serverske sesije
+i simulacija u web aplikaciji; stvarni SSO povrat i potpis karticom još nisu
+implementirani. Klinički live pozivi bez provjerene korisničke sesije vraćaju
+lokalni 401. Detalji su u povezanom vodiču.
 
 ## 1) Što je uključeno u lokalni POC
 
@@ -79,6 +83,22 @@ Prijava je moguća **isključivo karticom**. UI prikazuje status čitača i kart
 **Mapiranje (POC):** ako uneseno ime odgovara imenu s kartice, prijava ide na račun `ana.markovic` (1466). Za osobnu iskaznicu konfigurirajte `PKCS11_MODULE` u bridge okruženju kad AKD/eOI middleware bude dostupan.
 
 **Dev bez kartice:** na login ekranu (samo u dev modu) koristite gumbove „Mock kartica: Ana/Luka” — zahtijeva `CARD_READER_MODE=mock` (`npm run dev:with-bridge`).
+
+**Simulacija CEZIH korisničke sesije bez VPN-a:** nakon demo prijave otvorite
+**CEZIH endpointi → Prijava u CEZIH pametnom karticom**. Pokrenite i završite
+simuliranu prijavu; možete provjeriti lokalni pristup, odustajanje, nedostupnu
+karticu, HTTP 403, istek i odjavu. Ova simulacija ne šalje ništa CEZIH-u.
+U `cert-live` načinu stvarna prijava ostaje blokirana do potvrde SSO ugovora.
+
+**Testno potpisivanje bez kartice i VPN-a:** u zadanom mock ili `cert-offline`
+načinu otvorite **CEZIH endpointi → Testno potpisivanje FHIR poruka i dokumenata**.
+Odaberite poruku/dokument i algoritam, izradite testni potpis i provjerite ga.
+Nakon **Izmijeni potpisani sadržaj** provjera mora odbiti potpis. Nakon vraćanja
+izvornika i promjene redoslijeda JSON ključeva mora ponovno proći. Obrada je
+potpuno lokalna u pregledniku, s javnim razvojnim ključevima i sintetičkim podacima.
+Testni panel nije dostupan u `cert-live` načinu ni produkcijskom buildu i nije
+povezan s poslovnim slanjem kliničkih podataka. Offline provjera:
+`npm run validate:cezih-signing`.
 
 ### Autorizacija po ulozi (operacije nad slučajevima)
 

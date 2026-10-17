@@ -12,6 +12,15 @@ export function AppShell() {
   const { session, logout } = useAuth();
   const { locale, t } = useLocale();
   const [tab, setTab] = useState<Tab>('mbo');
+  const [logoutFailed, setLogoutFailed] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function signOut() {
+    setLoggingOut(true); setLogoutFailed(false);
+    try { await logout(locale); }
+    catch { setLogoutFailed(true); }
+    finally { setLoggingOut(false); }
+  }
 
   if (!session) return null;
 
@@ -30,11 +39,12 @@ export function AppShell() {
         </div>
         <div className="header-actions">
           <LanguageSwitcher />
-          <button type="button" className="secondary-button" onClick={() => logout(locale)}>
+          <button type="button" className="secondary-button" disabled={loggingOut} onClick={() => void signOut()}>
             {t('app.logout')}
           </button>
         </div>
       </header>
+      {logoutFailed && <p className="error" role="alert">{t('cardSession.logoutFailed')}</p>}
 
       <nav className="tab-nav" aria-label={t('app.navMain')}>
         <button

@@ -1,5 +1,6 @@
 import { cezihProxyUrl, getCezihEndpoint, resolveCezihMode } from '../config/cezihEndpoints';
 import { cezihFetch } from './fhir-client/cezihFetch';
+import { CEZIH_USER_ENDPOINTS } from '../config/cezihUserAuth';
 
 export interface CezihEndpointProbeResult {
   status: 'verified' | 'responded' | 'failed' | 'websocket' | 'postDisabled';
@@ -21,13 +22,13 @@ export async function probeCezihEndpoint(id: string): Promise<CezihEndpointProbe
   const localUrl = cezihProxyUrl(id) + (endpoint.url.includes('{id}') ? '/demo-id' : '') +
     (live && id.endsWith('.search') ? '?_count=1' : '');
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), live ? 15000 : 5000);
+  const timeout = setTimeout(() => controller.abort(), live ? 30000 : 5000);
   let httpStatus: number | null = null;
   let response = '';
   try {
     const result = await cezihFetch(localUrl, {
       method: endpoint.method,
-      credentials: 'omit',
+      credentials: live && CEZIH_USER_ENDPOINTS.includes(id) ? 'same-origin' : 'omit',
       headers: { Accept: 'application/fhir+json' },
       signal: controller.signal,
     });

@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { CEZIH_CERT_ENDPOINTS, resolveCezihMode } from '../config/cezihEndpoints';
 import { probeCezihEndpoint, type CezihEndpointProbeResult } from '../data/cezihEndpointProbe';
 import { useLocale } from '../i18n/LocaleContext';
+import { CezihAuthStatusPanel } from './CezihAuthStatusPanel';
+import { CezihCardSessionPanel } from './CezihCardSessionPanel';
+import { CezihTestSigningPanel } from './CezihTestSigningPanel';
 
 export function CezihEndpointChecks() {
   const { t } = useLocale();
@@ -27,6 +30,9 @@ export function CezihEndpointChecks() {
   return (
     <section className="panel">
       <h2>{t('cezihProbe.title')}</h2>
+      <CezihCardSessionPanel />
+      {!live && <CezihTestSigningPanel />}
+      {live && <CezihAuthStatusPanel />}
       <p className="search-hint">{t(live ? 'cezihProbe.hintLive' : 'cezihProbe.hint')}</p>
       <p className="warning-banner">{t(live ? 'cezihProbe.limitLive' : 'cezihProbe.limit')}</p>
       <div className="search-actions">

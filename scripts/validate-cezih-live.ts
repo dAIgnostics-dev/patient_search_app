@@ -4,20 +4,20 @@ import { IncomingMessage, ServerResponse } from 'node:http';
 import { Socket } from 'node:net';
 import type { Connect, ProxyOptions } from 'vite';
 import { createCezihMiddleware } from '../server/cezihMiddleware';
-import { createCezihProxy } from '../server/cezihProxy';
+import { createCezihIntegration } from '../server/cezihProxy';
 import { CEZIH_CERT_ENDPOINTS, resolveCezihMode } from '../src/config/cezihEndpoints';
 import { probeCezihEndpoint } from '../src/data/cezihEndpointProbe';
 
 // All network APIs are blocked by offline-only.mjs; proxy events are simulated in memory.
-assert.deepEqual(createCezihProxy({ VITE_CEZIH_MODE: 'mock' }, '.'), {});
-assert.deepEqual(createCezihProxy({ VITE_CEZIH_MODE: 'cert-offline', CEZIH_ACCESS_TOKEN: 'demo' }, '.'), {});
-assert.throws(() => createCezihProxy({ VITE_CEZIH_MODE: 'cert-live', CEZIH_CERT_FILE: 'missing.pem' }, '.'), /together/);
-assert.throws(() => createCezihProxy({ VITE_CEZIH_MODE: 'cert-live', CEZIH_ACCESS_TOKEN: 'bad\r\nheader' }, '.'), /Invalid/);
+assert.deepEqual(createCezihIntegration({ VITE_CEZIH_MODE: 'mock' }, '.').proxy, {});
+assert.deepEqual(createCezihIntegration({ VITE_CEZIH_MODE: 'cert-offline', CEZIH_ACCESS_TOKEN: 'demo' }, '.').proxy, {});
+assert.throws(() => createCezihIntegration({ VITE_CEZIH_MODE: 'cert-live', CEZIH_CERT_FILE: 'missing.pem' }, '.'), /together/);
+assert.throws(() => createCezihIntegration({ VITE_CEZIH_MODE: 'cert-live', CEZIH_ACCESS_TOKEN: 'bad\r\nheader' }, '.'), /Invalid/);
 
-const proxy = createCezihProxy({ VITE_CEZIH_MODE: 'cert-live', CEZIH_ACCESS_TOKEN: 'local-test-token' }, '.');
+const proxy = createCezihIntegration({ VITE_CEZIH_MODE: 'cert-live', CEZIH_ACCESS_TOKEN: 'local-test-token' }, '.').proxy;
 const routes = Object.entries(proxy);
-assert.equal(routes.length, 49);
-for (const endpoint of CEZIH_CERT_ENDPOINTS.filter((item) => item.method)) {
+assert.equal(routes.length, 48);
+for (const endpoint of CEZIH_CERT_ENDPOINTS.filter((item) => item.method && item.id !== 'oauth.token')) {
   const local = `/api/cezih/${endpoint.id}` + (endpoint.url.includes('{id}') ? '/test-123' : '') + '?_count=1&identifier=a%7Cb';
   const matches = routes.filter(([pattern]) => new RegExp(pattern).test(local));
   assert.equal(matches.length, 1, `Exactly one proxy for ${endpoint.id}`);
@@ -25,7 +25,7 @@ for (const endpoint of CEZIH_CERT_ENDPOINTS.filter((item) => item.method)) {
   const upstream = new URL(endpoint.url.replace('{id}', 'test-123'));
   assert.equal(options.target, upstream.origin);
   assert.equal(options.rewrite!(local), upstream.pathname + '?_count=1&identifier=a%7Cb');
-  assert.equal(options.headers?.Authorization, endpoint.id === 'oauth.token' ? undefined : 'Bearer local-test-token');
+  assert.equal(options.headers?.Authorization, undefined, 'Tokens are attached per request, not stored in proxy config');
   assert.equal(options.secure, true);
   assert.equal(options.followRedirects, false);
   assert.equal(options.ws, false);
@@ -55,6 +55,7 @@ assert.equal(post.req.headers.origin, undefined);
 assert.equal(post.req.headers.expect, undefined);
 assert.equal(gate('/api/cezih/Patient.search', 'POST').status, 405);
 assert.equal(gate('/api/cezih/missing').status, 404);
+assert.equal(gate('/api/cezih/oauth.token', 'POST').status, 403);
 assert.equal(gate('/api/cezih/Patient.search/extra').status, 404);
 assert.equal(gate('/api/cezih/notification.push').forwarded, false);
 assert.equal(gate('/api/cezih/Organization.read/%2Foutside').status, 400);
@@ -96,7 +97,7 @@ try {
   const config = await configFactory({ mode: 'cert-live', command: 'serve', isPreview: false });
   assert.equal(config.server?.host, '127.0.0.1');
   assert.equal(config.server?.strictPort, true);
-  assert.equal(Object.keys(config.server?.proxy ?? {}).length, 49);
+  assert.equal(Object.keys(config.server?.proxy ?? {}).length, 48);
   assert(config.server?.fs?.deny?.includes('**/.cezih-cert.local.json'));
   await assert.rejects(async () => configFactory({ mode: 'cert-live', command: 'build' }), /local development/);
   await assert.rejects(async () => configFactory({ mode: 'cert-live', command: 'serve', isPreview: true }), /local development/);
@@ -119,7 +120,7 @@ try {
     calls++;
     assert.equal(url, '/api/cezih/Patient.search?_count=1');
     assert.equal(init?.method, 'GET');
-    assert.equal(init?.credentials, 'omit');
+    assert.equal(init?.credentials, 'same-origin');
     assert.equal(init?.body, undefined);
     return new Response('Unauthorized', { status: 401, headers: {
       'x-cezih-endpoint': 'Patient.search', 'x-cezih-upstream-status': '401',

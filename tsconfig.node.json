@@ -4,6 +4,7 @@
     "lib": ["ES2023", "DOM"],
     "allowImportingTsExtensions": true,
     "module": "ESNext",
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "strict": true,

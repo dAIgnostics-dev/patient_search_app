@@ -2,6 +2,11 @@
 
 Practitioner-facing app to look up patient kartons from **AWS HealthLake** via a Gen 2 Lambda FHIR proxy deployed from this project.
 
+> **Hosted POC retired (2026-11-05).** The Amplify Hosting app `patient_search_app` (id `d1ndk7lhtj7ld5`, branches `main`
+> and `patient_search_app_dev`) with its Lambda proxies and audit bucket was deleted on 2026-11-04/05 during the IAM role
+> cleanup. The HealthLake datastore `populationhealthdemo` was not touched. Redeploy with `npm run sandbox` (personal
+> sandbox) or by connecting this repository to a new Amplify app.
+
 ## Features
 
 - **Login** — plain-text account files per practitioner (POC only)

@@ -5,6 +5,11 @@ const SERVER_ERROR_KEYS: Record<string, TranslationKey> = {
   'Username and password are required.': 'login.credentialsRequired',
   'Invalid request body.': 'login.invalidRequest',
   'Login failed': 'login.failed',
+  'Card login requires HTTPS (npm run dev:card).': 'login.cardRequiresHttps',
+  'No card certificate presented.': 'login.cardNoCertificate',
+  'Card certificate is not trusted.': 'login.cardUntrusted',
+  'Card certificate is not valid for login.': 'login.cardWrongUsage',
+  'Card is not registered to a practitioner account.': 'login.cardNotRegistered',
 };
 
 export type LoginErrorDisplay =

@@ -69,4 +69,12 @@ export function resolveAuditAccessUrl(): string {
   return base ? `${base}/access` : '/api/audit/access';
 }
 
+/**
+ * Smart card login is served by the local Vite middleware over mutual TLS
+ * (npm run dev:card). Lambda Function URLs cannot request client certificates,
+ * so the button is only offered in that mode.
+ */
+export const CARD_LOGIN_ENABLED = import.meta.env.MODE === 'card';
+export const CARD_LOGIN_URL = '/api/auth/card-login';
+
 export const API_BASE_URL = resolveApiBaseUrl();

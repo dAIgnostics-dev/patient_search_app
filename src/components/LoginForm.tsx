@@ -1,12 +1,13 @@
 import { type FormEvent, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
+import { CARD_LOGIN_ENABLED } from '../config/runtime';
 import { useLocale } from '../i18n/LocaleContext';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { logAuthLoginFailed } from '../data/auditAccess';
 import { parseLoginError, type LoginErrorDisplay } from '../utils/translateLoginError';
 
 export function LoginForm() {
-  const { login } = useAuth();
+  const { login, loginWithCard } = useAuth();
   const { locale, t } = useLocale();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -21,6 +22,19 @@ export function LoginForm() {
       await login(username, password, locale);
     } catch (err) {
       logAuthLoginFailed(username, locale);
+      setError(parseLoginError(err));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCardLogin() {
+    setLoading(true);
+    setError(null);
+    try {
+      await loginWithCard(locale);
+    } catch (err) {
+      logAuthLoginFailed('card', locale);
       setError(parseLoginError(err));
     } finally {
       setLoading(false);
@@ -70,6 +84,17 @@ export function LoginForm() {
           </button>
         </div>
       </form>
+      {CARD_LOGIN_ENABLED && (
+        <div className="card-login">
+          <p className="card-login-divider">{t('login.or')}</p>
+          <p className="search-hint">{t('login.cardHint')}</p>
+          <div className="search-actions">
+            <button type="button" onClick={handleCardLogin} disabled={loading}>
+              {loading ? t('login.signingIn') : t('login.signInWithCard')}
+            </button>
+          </div>
+        </div>
+      )}
       {errorMessage && <p className="error">{errorMessage}</p>}
     </section>
   );

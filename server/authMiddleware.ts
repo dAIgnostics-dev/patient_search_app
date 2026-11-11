@@ -1,16 +1,23 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import type { ServerResponse } from 'node:http';
 import { join } from 'node:path';
+import type { TLSSocket } from 'node:tls';
 import type { Connect } from 'vite';
 
 export interface PractitionerAccount {
   username: string;
-  password: string;
+  /** Absent for card-only accounts (password login disabled). */
+  password?: string;
   practitionerId: string;
   hzjzId: string;
   firstName: string;
   lastName: string;
+  /** Smart card certificate subject serialNumber (e.g. PNOHR-<OIB>); enables card login. */
+  certSerialNumber?: string;
 }
+
+/** Extended key usage OID for TLS client authentication. */
+const CLIENT_AUTH_EKU = '1.3.6.1.5.5.7.3.2';
 
 function parseAccountFile(content: string): PractitionerAccount | null {
   const fields: Record<string, string> = {};
@@ -22,12 +29,20 @@ function parseAccountFile(content: string): PractitionerAccount | null {
     fields[trimmed.slice(0, eq).trim()] = trimmed.slice(eq + 1).trim();
   }
 
-  const { username, password, practitionerId, hzjzId, firstName, lastName } = fields;
-  if (!username || !password || !practitionerId || !hzjzId || !firstName || !lastName) {
-    return null;
-  }
+  const { username, password, practitionerId, firstName, lastName, certSerialNumber } = fields;
+  const hzjzId = fields.hzjzId ?? '';
+  if (!username || !practitionerId || !firstName || !lastName) return null;
+  if (!password && !certSerialNumber) return null;
 
-  return { username, password, practitionerId, hzjzId, firstName, lastName };
+  return {
+    username,
+    password: password || undefined,
+    practitionerId,
+    hzjzId,
+    firstName,
+    lastName,
+    certSerialNumber: certSerialNumber || undefined,
+  };
 }
 
 function loadAccounts(accountsDir: string): PractitionerAccount[] {
@@ -57,6 +72,64 @@ function readJsonBody(req: Connect.IncomingMessage): Promise<unknown> {
     });
     req.on('error', reject);
   });
+}
+
+function toSession(account: PractitionerAccount) {
+  return {
+    practitionerId: account.practitionerId,
+    hzjzId: account.hzjzId,
+    firstName: account.firstName,
+    lastName: account.lastName,
+    username: account.username,
+  };
+}
+
+function firstValue(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/**
+ * Card login: the TLS layer (see vite.config.ts, mode "card") requests a client
+ * certificate and verifies it against auth/ca/. Here we only accept certificates
+ * that chained to that CA, are meant for client authentication, and whose
+ * subject serialNumber is registered in an account file.
+ * Revocation (CRL/OCSP) is NOT checked — local POC only.
+ */
+function handleCardLogin(req: Connect.IncomingMessage, res: ServerResponse, accountsDir: string) {
+  const socket = req.socket as Partial<TLSSocket>;
+  if (typeof socket.getPeerCertificate !== 'function') {
+    sendJson(res, 400, { error: 'Card login requires HTTPS (npm run dev:card).' });
+    return;
+  }
+
+  const cert = socket.getPeerCertificate();
+  if (!cert || Object.keys(cert).length === 0) {
+    sendJson(res, 401, { error: 'No card certificate presented.' });
+    return;
+  }
+
+  if (!socket.authorized) {
+    console.warn(`[card-login] untrusted certificate: ${String(socket.authorizationError)}`);
+    sendJson(res, 401, { error: 'Card certificate is not trusted.' });
+    return;
+  }
+
+  if (!cert.ext_key_usage?.includes(CLIENT_AUTH_EKU)) {
+    sendJson(res, 403, { error: 'Card certificate is not valid for login.' });
+    return;
+  }
+
+  const serial = firstValue((cert.subject as Record<string, string | string[] | undefined>).serialNumber);
+  const match = serial
+    ? loadAccounts(accountsDir).find((a) => a.certSerialNumber === serial)
+    : undefined;
+
+  if (!match) {
+    sendJson(res, 403, { error: 'Card is not registered to a practitioner account.' });
+    return;
+  }
+
+  sendJson(res, 200, toSession(match));
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -96,23 +169,24 @@ export function createAuthMiddleware(accountsDir: string): Connect.NextHandleFun
         }
 
         const accounts = loadAccounts(accountsDir);
-        const match = accounts.find((a) => a.username === username && a.password === password);
+        const match = accounts.find(
+          (a) => a.password !== undefined && a.username === username && a.password === password,
+        );
 
         if (!match) {
           sendJson(res, 401, { error: 'Invalid username or password.' });
           return;
         }
 
-        sendJson(res, 200, {
-          practitionerId: match.practitionerId,
-          hzjzId: match.hzjzId,
-          firstName: match.firstName,
-          lastName: match.lastName,
-          username: match.username,
-        });
+        sendJson(res, 200, toSession(match));
       } catch {
         sendJson(res, 400, { error: 'Invalid request body.' });
       }
+      return;
+    }
+
+    if (url === '/api/auth/card-login' && req.method === 'POST') {
+      handleCardLogin(req, res, accountsDir);
       return;
     }
 

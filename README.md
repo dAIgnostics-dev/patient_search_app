@@ -59,6 +59,39 @@ After `npm run auth:generate`, default password for all accounts is **`cezih-dem
 | `ivana.juric` | Ivana Jurić | 3344556 |
 | `ana.knezevic` | Ana Knezevic | 1234568 |
 
+## Smart card login (local POC)
+
+Practitioners can sign in with the client-authentication certificate on an AKD/Certilia smart card
+(currently the **test** PKI: `TESTCERTILIA` → `TESTAKDCA Root`, public CA certs in [`auth/ca/`](auth/ca/)).
+
+```bash
+npm run dev:card      # https://localhost:5173 — HTTPS + client certificate request
+```
+
+1. Insert the card; Windows needs the card middleware so the certificate shows up in the user store.
+2. Open https://localhost:5173 (accept the self-signed dev certificate), pick the card certificate and enter the PIN.
+3. Click **Prijava karticom / Sign in with card**.
+
+How it works: in Vite mode `card` the dev/preview server requests a client certificate and verifies it
+against `auth/ca/*.pem`. `POST /api/auth/card-login` then requires a trusted chain, the TLS client-auth
+EKU, and a subject `serialNumber` (e.g. `PNOHR-<OIB>`) that matches `certSerialNumber=` in an account file.
+Password login keeps working in the same mode.
+
+Card accounts live in `auth/accounts/*.local.txt` (**gitignored** — they contain the cardholder's OIB).
+A card-only account has no `password=` line, so it cannot be used for password login:
+
+```txt
+username=ime.prezime
+practitionerId=card-local-1
+hzjzId=
+firstName=Ime
+lastName=Prezime
+certSerialNumber=PNOHR-<OIB>
+```
+
+Limits: local dev/preview only (Lambda Function URLs cannot request client certificates, so the button is
+hidden in the deployed build); no CRL/OCSP revocation check; this logs in to **this app**, not to CEZIH.
+
 ## Example MBOs
 
 | MBO | Patient |

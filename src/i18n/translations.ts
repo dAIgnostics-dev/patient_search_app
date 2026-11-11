@@ -23,6 +23,15 @@ const hr = {
     invalidCredentials: 'Neispravno korisničko ime ili lozinka.',
     credentialsRequired: 'Korisničko ime i lozinka su obavezni.',
     invalidRequest: 'Neispravan zahtjev.',
+    or: 'ili',
+    signInWithCard: 'Prijava karticom',
+    cardHint: 'Umetnite karticu u čitač. Preglednik će ponuditi certifikat i zatražiti PIN.',
+    cardRequiresHttps: 'Prijava karticom radi samo preko HTTPS-a (npm run dev:card).',
+    cardNoCertificate:
+      'Preglednik nije poslao certifikat s kartice. Provjerite je li kartica u čitaču, zatvorite sve prozore preglednika i pokušajte ponovno.',
+    cardUntrusted: 'Certifikat s kartice nije izdan od podržanog izdavatelja.',
+    cardWrongUsage: 'Certifikat s kartice nije namijenjen prijavi.',
+    cardNotRegistered: 'Kartica nije povezana ni s jednim računom liječnika.',
   },
   mbo: {
     title: 'Pretraga pacijenta po MBO',
@@ -234,6 +243,15 @@ const en: TranslationMessages = {
     invalidCredentials: 'Invalid username or password.',
     credentialsRequired: 'Username and password are required.',
     invalidRequest: 'Invalid request body.',
+    or: 'or',
+    signInWithCard: 'Sign in with card',
+    cardHint: 'Insert the card into the reader. The browser will offer the certificate and ask for the PIN.',
+    cardRequiresHttps: 'Card login only works over HTTPS (npm run dev:card).',
+    cardNoCertificate:
+      'The browser did not send a card certificate. Check the card is in the reader, close all browser windows and try again.',
+    cardUntrusted: 'The card certificate was not issued by a supported issuer.',
+    cardWrongUsage: 'The card certificate is not meant for login.',
+    cardNotRegistered: 'This card is not linked to any practitioner account.',
   },
   mbo: {
     title: 'Patient lookup by MBO',

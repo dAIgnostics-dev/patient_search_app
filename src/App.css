@@ -1043,3 +1043,13 @@ code {
   font-size: 1rem;
   color: var(--color-ink);
 }
+
+.card-login {
+  margin-top: 1rem;
+}
+
+.card-login-divider {
+  text-align: center;
+  opacity: 0.7;
+  margin: 0 0 0.5rem;
+}

@@ -6,7 +6,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { resolveAuthLoginUrl } from '../config/runtime';
+import { CARD_LOGIN_URL, resolveAuthLoginUrl } from '../config/runtime';
 import { logAuthLogin, logAuthLogout } from '../data/auditAccess';
 import { createAuditSessionId, ensureAuditSessionId } from '../data/auditSession';
 import { SESSION_STORAGE_KEY, type PractitionerSession } from './types';
@@ -14,6 +14,7 @@ import { SESSION_STORAGE_KEY, type PractitionerSession } from './types';
 interface AuthContextValue {
   session: PractitionerSession | null;
   login: (username: string, password: string, locale?: string) => Promise<void>;
+  loginWithCard: (locale?: string) => Promise<void>;
   logout: (locale?: string) => void;
 }
 
@@ -37,13 +38,7 @@ function loadSession(): PractitionerSession | null {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<PractitionerSession | null>(() => loadSession());
 
-  const login = useCallback(async (username: string, password: string, locale?: string) => {
-    const response = await fetch(resolveAuthLoginUrl(), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
-
+  const startSession = useCallback(async (response: Response, locale?: string) => {
     const payload = (await response.json()) as PractitionerSession & { error?: string };
     if (!response.ok) {
       throw new Error(payload.error ?? 'Login failed');
@@ -62,6 +57,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logAuthLogin(next, locale);
   }, []);
 
+  const login = useCallback(
+    async (username: string, password: string, locale?: string) => {
+      const response = await fetch(resolveAuthLoginUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+      await startSession(response, locale);
+    },
+    [startSession],
+  );
+
+  // The card certificate is presented during the TLS handshake (browser prompts
+  // for certificate + PIN); the request itself carries no credentials.
+  const loginWithCard = useCallback(
+    async (locale?: string) => {
+      const response = await fetch(CARD_LOGIN_URL, { method: 'POST' });
+      await startSession(response, locale);
+    },
+    [startSession],
+  );
+
   const logout = useCallback((locale?: string) => {
     const current = loadSession();
     if (current) logAuthLogout(current, locale);
@@ -70,8 +87,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ session, login, logout }),
-    [session, login, logout],
+    () => ({ session, login, loginWithCard, logout }),
+    [session, login, loginWithCard, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

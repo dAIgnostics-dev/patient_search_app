@@ -5,3 +5,4 @@ dist
 amplify_outputs.json
 *.tsbuildinfo
 audit/
+auth/accounts/*.local.txt
